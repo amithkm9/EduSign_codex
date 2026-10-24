@@ -1,0 +1,170 @@
+[
+  {
+    "id": "lsf-bonjour",
+    "title": "Bonjour, le monde !",
+    "topic": "Les premiers mots",
+    "youtubeId": "ZZ4UM27Ae90",
+    "sourceTitle": "La politesse",
+    "creator": "MAE Langue des Signes",
+    "sourceUrl": "https://www.maelanguedessignes.com/didactique-lsf",
+    "checkedAt": "2026-10-24",
+    "ageGroup": "1-4",
+    "tint": "peach",
+    "description": "Dire bonjour, remercier et prendre congé : de petits échanges pour se rapprocher.",
+    "practiceMinutes": 10,
+    "objectives": [
+      "Observer les salutations en LSF",
+      "Repérer le regard et les expressions",
+      "Rejouer une rencontre à deux"
+    ],
+    "parentTip": "Inventez une rencontre entre deux peluches. Regardez le modèle ensemble avant de refaire les signes.",
+    "challenge": "À tour de rôle, accueillez votre partenaire puis remerciez-le."
+  },
+  {
+    "id": "lsf-couleurs",
+    "title": "Un monde en couleurs",
+    "topic": "Les premiers mots",
+    "youtubeId": "-EMX6QOhuac",
+    "sourceTitle": "Les couleurs",
+    "creator": "MAE Langue des Signes",
+    "sourceUrl": "https://www.maelanguedessignes.com/didactique-lsf",
+    "checkedAt": "2026-10-24",
+    "ageGroup": "1-4",
+    "tint": "yellow",
+    "description": "Transformez les objets de la maison en petites découvertes visuelles.",
+    "practiceMinutes": 10,
+    "objectives": [
+      "Découvrir le vocabulaire des couleurs",
+      "Associer un signe à un objet",
+      "Observer les variantes présentées"
+    ],
+    "parentTip": "Préparez trois objets colorés. Laissez votre enfant choisir le premier à explorer.",
+    "challenge": "Choisissez trois couleurs dans la vidéo et retrouvez-les autour de vous."
+  },
+  {
+    "id": "lsf-famille",
+    "title": "Les personnes qui comptent",
+    "topic": "En famille",
+    "youtubeId": "SkvGtmPHQpU",
+    "sourceTitle": "Les personnes",
+    "creator": "MAE Langue des Signes",
+    "sourceUrl": "https://www.maelanguedessignes.com/didactique-lsf",
+    "checkedAt": "2026-10-24",
+    "ageGroup": "1-4",
+    "tint": "pink",
+    "description": "Découvrez les signes pour parler des personnes et de la famille.",
+    "practiceMinutes": 10,
+    "objectives": [
+      "Repérer les signes des personnes",
+      "Associer les mots à des photos",
+      "Pratiquer avec un proche"
+    ],
+    "parentTip": "Utilisez des photos de personnes connues. Il est possible que certains signes varient selon les régions.",
+    "challenge": "Choisissez deux personnes sur une photo et recherchez leurs signes dans la vidéo."
+  },
+  {
+    "id": "lsf-alphabet",
+    "title": "Les lettres prennent vie",
+    "topic": "À l’école",
+    "youtubeId": "X7IwChDRG-4",
+    "sourceTitle": "La dactylologie",
+    "creator": "MAE Langue des Signes",
+    "sourceUrl": "https://www.maelanguedessignes.com/didactique-lsf",
+    "checkedAt": "2026-10-24",
+    "ageGroup": "5-10",
+    "tint": "blue",
+    "description": "Explorez l’alphabet manuel français, une lettre après l’autre.",
+    "practiceMinutes": 10,
+    "objectives": [
+      "Observer l’alphabet manuel de la LSF",
+      "Repérer la forme et l’orientation des mains",
+      "Essayer les lettres de son prénom"
+    ],
+    "parentTip": "Commencez par deux lettres du prénom. Faites une pause et laissez le temps d’observer.",
+    "challenge": "Retrouvez dans la vidéo les trois premières lettres de votre prénom."
+  },
+  {
+    "id": "lsf-nombres",
+    "title": "À vous de compter",
+    "topic": "À l’école",
+    "youtubeId": "iXDmwxzrdVo",
+    "sourceTitle": "LSF — Point par point : Les nombres",
+    "creator": "Dico Plus LSF",
+    "sourceUrl": "https://karinevermot.wixsite.com/website-1/post/lsf-point-par-point-les-nombres",
+    "checkedAt": "2026-10-24",
+    "ageGroup": "5-10",
+    "tint": "mint",
+    "description": "Découvrez les chiffres et les nombres en LSF avec Dico Plus LSF.",
+    "practiceMinutes": 10,
+    "objectives": [
+      "Observer les nombres signés",
+      "Distinguer les mouvements présentés",
+      "S’entraîner avec de petits groupes d’objets"
+    ],
+    "parentTip": "Posez quelques crayons devant vous et cherchez ensemble les nombres correspondants.",
+    "challenge": "Choisissez un petit nombre d’objets et retrouvez son signe dans la vidéo."
+  },
+  {
+    "id": "lsf-ecole",
+    "title": "Une journée à l’école",
+    "topic": "À l’école",
+    "youtubeId": "GDYYflcreGY",
+    "sourceTitle": "L’école — La rentrée (1)",
+    "creator": "MAE Langue des Signes",
+    "sourceUrl": "https://www.maelanguedessignes.com/didactique-lsf",
+    "checkedAt": "2026-10-24",
+    "ageGroup": "5-10",
+    "tint": "yellow",
+    "description": "De la classe au professeur, explorez les mots de la rentrée scolaire.",
+    "practiceMinutes": 10,
+    "objectives": [
+      "Découvrir les lieux de l’école",
+      "Observer les personnes de la classe",
+      "Repérer le vocabulaire de la rentrée"
+    ],
+    "parentTip": "Laissez votre enfant choisir un objet de son cartable pour commencer la discussion.",
+    "challenge": "Retrouvez les mots « école », « classe » et « professeur » dans la vidéo."
+  },
+  {
+    "id": "lsf-emotions",
+    "title": "Comment tu te sens ?",
+    "topic": "Le quotidien",
+    "youtubeId": "sn-A7EQNKTs",
+    "sourceTitle": "Les émotions et sentiments",
+    "creator": "MAE Langue des Signes",
+    "sourceUrl": "https://www.maelanguedessignes.com/didactique-lsf",
+    "checkedAt": "2026-10-24",
+    "ageGroup": "15+",
+    "tint": "pink",
+    "description": "Mettez les émotions au cœur de l’échange, avec les mains et le visage.",
+    "practiceMinutes": 10,
+    "objectives": [
+      "Observer le vocabulaire des émotions",
+      "Porter attention au visage",
+      "Partager une découverte avec un proche"
+    ],
+    "parentTip": "Proposez une émotion et laissez votre enfant en choisir une autre, sans imposer de réponse.",
+    "challenge": "Choisissez une émotion dans la vidéo et observez le visage autant que les mains."
+  },
+  {
+    "id": "lsf-dialogue",
+    "title": "On fait connaissance ?",
+    "topic": "Le quotidien",
+    "youtubeId": "kS_Fw6tQAIA",
+    "sourceTitle": "La politesse — petit dialogue",
+    "creator": "MAE Langue des Signes",
+    "sourceUrl": "https://www.maelanguedessignes.com/didactique-lsf",
+    "checkedAt": "2026-10-24",
+    "ageGroup": "15+",
+    "tint": "mint",
+    "description": "Observez un court dialogue pour relier les premiers signes à une situation.",
+    "practiceMinutes": 10,
+    "objectives": [
+      "Repérer le début et la fin d’un échange",
+      "Observer une demande de répétition",
+      "S’entraîner à tour de rôle"
+    ],
+    "parentTip": "Regardez une première fois sans interrompre, puis faites pause pour discuter de ce que vous avez compris.",
+    "challenge": "Repérez comment la personne demande de répéter. Rejouez ce passage ensemble."
+  }
+]
