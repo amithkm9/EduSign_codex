@@ -27,6 +27,8 @@ For example, a parent who wants to teach their child “bonjour” can ask the a
 - [The product](#the-product)
 - [Architecture](#architecture)
 - [How the assistant works](#how-the-assistant-works)
+- [Built with Codex](#built-with-codex)
+- [How I used OpenAI API credits](#how-i-used-openai-api-credits)
 - [Run locally](#run-locally)
 - [Configuration](#configuration)
 - [Project structure](#project-structure)
@@ -164,6 +166,46 @@ flowchart TD
 - **Conversation history is temporary.** Messages remain in the current page session and survive an interface-language switch; there is no persistent conversation archive.
 
 Text lookup and guided exercises require the Python service but do not require an OpenAI key. Generative coaching and speech require a working provider configuration. The workshops remain available when the AI service is offline.
+
+## Built with Codex
+
+I used **OpenAI Codex as a development partner** to build and refine EduSign around a clear product goal: help children aged 3–15 and their parents learn French Sign Language together. The work began with an existing application, video collection, and recognition model. Those assets were preserved while the learning experience, bilingual assistant, and supporting workflows were developed further.
+
+I provided the product direction, examples of how parents would use the assistant, and feedback on the interface. Codex helped turn that direction into implementation changes, inspect the running application, run checks, and document the result. A central example was: **a parent asks for “bonjour,” receives the corresponding demonstration, and watches it with their child.**
+
+| Area | How I worked with Codex |
+| --- | --- |
+| **Product and interface** | Reviewed the existing project, clarified the child-and-parent audience, redesigned the homepage and assistant, and unified colours and feedback states. |
+| **Bilingual experience** | Added French/English interface copy and message-language handling so supported French requests receive French replies and English requests receive English replies. |
+| **Video assistant** | Connected supported-word lookup to the video catalogue, prepared playback derivatives, integrated private Supabase storage, and kept sourced LSF clips distinct from unverified project clips. |
+| **Interactive coaching** | Implemented short learning plans, contextual follow-ups, server-checked questions, editable voice transcripts, and spoken responses. |
+| **Learning records** | Developed viewing-progress tracking, server-graded quiz persistence, and reports that distinguish activity from signing proficiency. |
+| **Review and verification** | Used computer-use tools to inspect real screens and interactions, alongside TypeScript, lint, build, Python, HTTP, and temporary-account checks. Verification limits are recorded in the product plan. |
+| **Launch presentation** | Captured real application screenshots and assembled the product film with editorial motion, AI narration, captions, music, and creator credits. |
+| **Documentation and delivery** | Wrote architecture diagrams and setup guides, organised changes into focused commits, and pushed the project to GitHub. |
+
+The development process was iterative: **describe a user need → implement → inspect the real experience → test → refine**. Browser feedback informed the next changes, particularly the sign-language focus of the homepage, the assistant’s demonstration layout, and visible practice feedback.
+
+Codex’s role here was development and production assistance. The running application uses its own FastAPI service and configured OpenAI API models for its AI features. The [product plan](docs/EDUSIGN_PLAN.md) and Git history document the implementation work; original media and model weights remain preserved.
+
+## How I used OpenAI API credits
+
+I used **OpenAI API credits to develop and test EduSign’s AI interactions**, including French and English coaching, speech transcription, spoken replies, and the launch-film narration. The project also uses provider-generated report insights to explain recorded learning activity.
+
+| Use of API credits | What the requests support | Implementation |
+| --- | --- | --- |
+| **Bilingual coaching** | Short learning plans, conversational follow-ups, and suggestions linked to selected LSF resources. | [Coaching service](ai-service/app/lsf.py) |
+| **Voice input** | Transcribing a recorded message so the user can review and edit it before sending. | [Speech adapter](ai-service/app/voice.py) |
+| **Spoken responses** | Reading assistant replies aloud in the resolved response language. | [Speech adapter](ai-service/app/voice.py) |
+| **Learning reports** | Generating family-oriented summaries and suggestions from recorded activity and quiz data. | [Report insights](ai-service/app/report.py) |
+| **Live evaluation** | Testing French and English prompts, follow-up questions, and the synthesis → transcription → coaching → speech pipeline with synthetic examples. | [Opt-in provider checks](ai-service/tests/verify_live_coach.py) |
+| **Launch-film production** | Generating the English narrator and transcribing that narration to obtain word timings for captions. | [Narration preparation](launch-film/prepare.py) · [Caption alignment](launch-film/align-captions.py) |
+
+The optional [French label-authoring helper](ai-service/scripts/translate_sign_labels.py) also uses the API to translate catalogue labels for search. These labels are stored in the repository, so they do not need to be regenerated for each lookup. Translating a label does not validate the sign shown in its video.
+
+Several parts of EduSign run without OpenAI requests: deterministic video lookup, interface translations, guided-question grading, media playback, and the local experimental recognition model. Speech playback is user-controlled, automated live-provider tests require `--live-api`, and film-generation scripts reuse existing audio outputs. These choices keep API usage tied to the features and development checks that need it.
+
+Provider credentials are loaded from ignored environment files on the server. The [configuration section](#configuration) lists the model settings; the [testing section](#testing-and-verification) distinguishes local checks from billable provider calls.
 
 ## Run locally
 
