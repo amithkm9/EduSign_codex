@@ -120,7 +120,7 @@ export default async function Packages() {
         <p className="eyebrow">
           <T text="À CHACUN SA FAÇON D’APPRENDRE" />
         </p>
-        <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
+        <h1 className="mt-4 text-4xl font-semibold leading-tight sm:text-5xl">
           <T text="Un petit pas aujourd’hui." />
           <br />
           <span className="text-primary">
@@ -160,14 +160,16 @@ export default async function Packages() {
             <p className="mt-7 text-[10px] font-bold tracking-widest text-muted-foreground">
               <T text={plan.label} />
             </p>
-            <h2 className="mt-2 text-2xl font-extrabold">
+            <h2 className="mt-2 text-2xl font-semibold">
               <T text={plan.name} />
             </h2>
             <p className="mt-3 min-h-20 text-sm leading-relaxed text-muted-foreground">
               <T text={plan.description} />
             </p>
             <div className="my-6 border-y border-border py-5">
-              <p className="text-4xl font-extrabold tracking-tight">
+              <p
+                className={`font-semibold tracking-tight ${plan.price === "Tarif à confirmer" ? "text-2xl" : "text-4xl"}`}
+              >
                 <T text={plan.price} />
               </p>
               <p className="mt-2 text-xs text-muted-foreground">

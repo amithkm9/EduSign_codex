@@ -18,7 +18,7 @@ export async function SiteHeader() {
       : t("Mon espace");
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-white/95 backdrop-blur">
-      <div className="container relative flex h-20 items-center justify-between gap-2 sm:gap-3">
+      <div className="container relative flex h-[4.5rem] items-center justify-between gap-2 sm:gap-3">
         <Brand compactOnMobile={!!user} />
         <MainNav isAuthed={!!user} />
         <div className="ml-auto flex items-center gap-2 xl:ml-0">

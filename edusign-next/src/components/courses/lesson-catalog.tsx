@@ -45,7 +45,7 @@ export function LessonCatalog({
     <div>
       <div className="mb-7 flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
         <div
-          className="flex flex-wrap gap-2"
+          className="flex flex-wrap gap-1 rounded-xl bg-[#eceef2] p-1"
           aria-label={_t("Thèmes des leçons")}
         >
           {topics.map((t) => (
@@ -53,13 +53,13 @@ export function LessonCatalog({
               key={t}
               onClick={() => setTopic(t)}
               aria-pressed={topic === t}
-              className={`min-h-11 rounded-full border px-4 text-sm font-semibold transition-colors ${t === topic ? "border-primary bg-primary text-white" : "border-border bg-white hover:border-primary/40"}`}
+              className={`min-h-11 rounded-lg px-4 text-sm font-semibold transition-colors ${t === topic ? "bg-white text-primary shadow-sm" : "text-muted-foreground hover:bg-white/60"}`}
             >
               <T text={t} />
             </button>
           ))}
         </div>
-        <label className="flex min-h-12 items-center gap-2 rounded-full border border-border bg-white px-4">
+        <label className="flex min-h-12 items-center gap-2 rounded-xl border border-border bg-white px-4">
           <Search className="size-4 text-muted-foreground" />
           <span className="sr-only">
             <T text={"Rechercher une leçon"} />
@@ -72,6 +72,8 @@ export function LessonCatalog({
           />
           {query && (
             <button
+              type="button"
+              className="grid size-9 shrink-0 place-items-center rounded-lg hover:bg-secondary"
               aria-label={_t("Effacer la recherche")}
               onClick={() => setQuery("")}
             >

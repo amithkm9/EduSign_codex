@@ -9,13 +9,13 @@
       ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
       sans-serif;
     --font-display: var(--font-sans);
-    --background: 40 60% 98%;
-    --foreground: 224 49% 23%;
+    --background: 42 33% 97%;
+    --foreground: 220 39% 19%;
     --card: 0 0% 100%;
     --card-foreground: 224 49% 23%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 49% 23%;
-    --primary: 226 65% 49%;
+    --primary: 226 64% 45%;
     --primary-foreground: 0 0% 100%;
     --secondary: 220 70% 96%;
     --secondary-foreground: 224 49% 23%;
@@ -25,7 +25,7 @@
     --accent-foreground: 224 49% 23%;
     --destructive: 0 63% 40%;
     --destructive-foreground: 0 0% 100%;
-    --border: 222 25% 89%;
+    --border: 220 19% 88%;
     --input: 222 25% 80%;
     --ring: 226 65% 49%;
     --radius: 1rem;
@@ -90,7 +90,8 @@
   h2,
   h3 {
     font-family: var(--font-display), var(--font-sans), sans-serif;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
   }
 }
 
@@ -183,7 +184,7 @@
 
 /* Restrained surface treatment for the public landing experience. */
 .landing-hero {
-  background: #fafbfdf2;
+  background: #f7f7f2;
 }
 .landing-page h1,
 .landing-page h2,
@@ -200,5 +201,39 @@
 @media (prefers-reduced-motion: reduce) {
   .lesson-card:hover {
     transform: none;
+  }
+}
+
+/* Shared visual rhythm: warm paper, ink, and a restrained blue accent. */
+@layer components {
+  .page-heading {
+    @apply text-3xl font-semibold leading-[1.12] tracking-tight sm:text-5xl;
+  }
+  .section-surface {
+    @apply rounded-2xl border border-border bg-white;
+  }
+}
+.hero-accent {
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  color: #367269;
+}
+.hero-preview {
+  background: #202f49;
+  background-image: radial-gradient(
+    ellipse at 90% 0%,
+    #39576a 0,
+    transparent 65%
+  );
+}
+.lesson-card:focus-within {
+  border-color: hsl(var(--primary));
+}
+@media (max-width: 639px) {
+  .container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 }

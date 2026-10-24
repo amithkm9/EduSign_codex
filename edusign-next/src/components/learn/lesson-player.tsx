@@ -39,13 +39,17 @@ export function LessonPlayer({
     "saving" | "saved" | "error"
   >("saved");
   const [quizOpen, setQuizOpen] = useState(false);
+  const [activity, setActivity] = useState<"camera" | "quiz">("camera");
+  const [quizVisited, setQuizVisited] = useState(false);
   const controls = useRef<YouTubeControls | null>(null);
   const quizRegion = useRef<HTMLDivElement>(null);
   const videoRegion = useRef<HTMLDivElement>(null);
-  function openQuiz() {
+  function openQuiz(kind: "camera" | "quiz" = "camera") {
     if (controls.current) controls.current.pause();
     else setLoaded(false);
     setQuizOpen(true);
+    setActivity(kind);
+    if (kind === "quiz") setQuizVisited(true);
     requestAnimationFrame(() => {
       quizRegion.current?.scrollIntoView({
         behavior: "instant",
@@ -55,6 +59,8 @@ export function LessonPlayer({
     });
   }
   function replay() {
+    controls.current?.pause();
+    setQuizOpen(false);
     setLoaded(false);
     requestAnimationFrame(() => {
       videoRegion.current?.scrollIntoView({
@@ -96,7 +102,32 @@ export function LessonPlayer({
     }
   }
   return (
-    <div className="overflow-hidden rounded-[1.6rem] border border-border bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+      <div
+        className="flex items-center gap-1 border-b border-border bg-white p-3"
+        role="group"
+        aria-label={_t("Votre atelier, à votre rythme")}
+      >
+        {(["1. Regarder", "2. Pratiquer", "3. Quiz"] as const).map(
+          (label, i) => (
+            <button
+              key={label}
+              type="button"
+              onClick={() =>
+                i === 0 ? replay() : openQuiz(i === 1 ? "camera" : "quiz")
+              }
+              aria-pressed={
+                i === 0
+                  ? !quizOpen
+                  : quizOpen && activity === (i === 1 ? "camera" : "quiz")
+              }
+              className="min-h-11 flex-1 rounded-lg px-2 text-xs font-semibold text-muted-foreground transition-colors hover:bg-secondary aria-pressed:bg-secondary aria-pressed:text-primary sm:text-sm"
+            >
+              {_t(label)}
+            </button>
+          ),
+        )}
+      </div>
       <div
         ref={videoRegion}
         className="aspect-video min-h-[200px] scroll-mt-28 bg-[#24366b]"
@@ -104,7 +135,7 @@ export function LessonPlayer({
         {loaded ? (
           <YouTubePlayer
             lesson={lesson}
-            onEnded={openQuiz}
+            onEnded={() => openQuiz()}
             controls={controls}
             track={track}
             onProgress={setVideoProgress}
@@ -210,51 +241,79 @@ export function LessonPlayer({
             )}
           </p>
         </section>
-        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-primary/15 bg-[#f4f7ff] p-5">
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-primary/15 bg-secondary/60 p-5">
           <div>
             <p className="font-bold">
-              <T text="Une vidéo, puis un défi signé" />
+              <T text="Choisissez votre activité" />
             </p>
             <p className="mt-1 max-w-md text-sm text-muted-foreground">
-              <T text="Le défi caméra s’ouvre à la fin de la vidéo. Un quiz de compréhension est aussi disponible." />
+              <T text="Une capture de 3 secondes, ou 3 questions sans caméra. Vous pouvez essayer les deux." />
             </p>
           </div>
-          <Button
-            onClick={openQuiz}
-            className="rounded-full"
-            aria-expanded={quizOpen}
-            aria-controls="lesson-quiz"
-          >
-            <T text="Commencer le défi caméra" />
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={() => openQuiz()}
+              className="rounded-lg"
+              aria-expanded={quizOpen}
+              aria-controls="lesson-quiz"
+            >
+              <T text="Commencer le défi caméra" />
+            </Button>
+            <Button variant="outline" onClick={() => openQuiz("quiz")}>
+              <T text="Faire le quiz sans caméra" />
+            </Button>
+          </div>
         </div>
         <div
           id="lesson-quiz"
           ref={quizRegion}
           tabIndex={-1}
           role="region"
-          aria-label={_t("Mini-quiz de la leçon")}
+          aria-label={_t("Activités de la leçon")}
           className="mt-6 scroll-mt-28 rounded-3xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
         >
           {quizOpen && (
-            <div className="space-y-5">
-              <CameraPractice
+            <div className="space-y-4">
+              <div
+                className="flex flex-wrap gap-2"
+                role="group"
+                aria-label={_t("Choisissez votre activité")}
+              >
+                {(["camera", "quiz"] as const).map((kind) => (
+                  <button
+                    key={kind}
+                    type="button"
+                    aria-pressed={activity === kind}
+                    className="min-h-11 rounded-lg border border-border px-4 text-sm font-semibold aria-pressed:border-primary aria-pressed:bg-primary aria-pressed:text-white"
+                    onClick={() => {
+                      setActivity(kind);
+                      if (kind === "quiz") setQuizVisited(true);
+                    }}
+                  >
+                    {_t(
+                      kind === "camera"
+                        ? "Pratique caméra"
+                        : "Quiz de compréhension",
+                    )}
+                  </button>
+                ))}
+              </div>
+              {activity === "camera" && (
+                <CameraPractice
+                  courseId={lesson.id}
+                  onReplay={replay}
+                  track={track}
+                />
+              )}
+            </div>
+          )}
+          {quizVisited && (
+            <div className="mt-4" hidden={!quizOpen || activity !== "quiz"}>
+              <LessonQuiz
                 courseId={lesson.id}
-                onReplay={replay}
                 track={track}
+                onReplay={replay}
               />
-              <details className="rounded-2xl border border-border p-4">
-                <summary className="cursor-pointer font-semibold text-primary">
-                  {_t("Quiz de compréhension (facultatif)")}
-                </summary>
-                <div className="mt-4">
-                  <LessonQuiz
-                    courseId={lesson.id}
-                    track={track}
-                    onReplay={replay}
-                  />
-                </div>
-              </details>
             </div>
           )}
         </div>

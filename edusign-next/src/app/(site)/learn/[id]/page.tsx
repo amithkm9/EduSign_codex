@@ -48,11 +48,13 @@ export default async function Lesson({
   }
   const user = await getUser();
   const progress = user ? await getUserProgressForCourses(user.id, [id]) : {};
-  const video = user ? (await getVideoProgress(user.id)).find((v) => v.courseId === id) : undefined;
+  const video = user
+    ? (await getVideoProgress(user.id)).find((v) => v.courseId === id)
+    : undefined;
   const next =
     LSF_LESSONS[(LSF_LESSONS.indexOf(lesson) + 1) % LSF_LESSONS.length];
   return (
-    <div className="container py-9 sm:py-12">
+    <div className="container py-6 sm:py-8">
       <Link
         href="/courses"
         className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"
@@ -64,7 +66,7 @@ export default async function Lesson({
         <p className="eyebrow">
           <T text={lesson.topic} /> <T text={"· LANGUE DES SIGNES FRANÇAISE"} />
         </p>
-        <h1 className="mt-3 text-4xl font-extrabold sm:text-5xl">
+        <h1 className="mt-3 page-heading">
           <T text={lesson.title} />
         </h1>
         <p className="mt-4 max-w-2xl leading-relaxed text-muted-foreground">
@@ -84,7 +86,7 @@ export default async function Lesson({
           initialProgress={progress[id]?.progressPercentage}
           initialVideo={video}
         />
-        <aside className="space-y-5">
+        <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
           <div className="rounded-3xl border border-border bg-white p-6">
             <h2 className="text-lg font-bold">
               <T text={"Votre petite feuille de route"} />
@@ -100,7 +102,7 @@ export default async function Lesson({
               ))}
             </ol>
           </div>
-          <div className="rounded-3xl bg-[#fff0b5] p-6">
+          <div className="rounded-2xl border border-[#dce6dc] bg-[#edf2e9] p-6">
             <h2 className="flex items-center gap-2 font-bold">
               <Heart className="size-5" />{" "}
               <T text={"Le petit coup de pouce parent"} />{" "}

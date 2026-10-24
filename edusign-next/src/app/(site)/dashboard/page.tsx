@@ -18,12 +18,12 @@ export default async function Dashboard() {
   const s = await getDashboardSummary(p.id);
   return (
     <div className="container py-12">
-      <div className="flex flex-wrap items-center justify-between gap-6 rounded-[2rem] bg-[#dceaff] p-8 sm:p-10">
+      <div className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-[#dce6dc] bg-[#edf2e9] p-8 sm:p-10">
         <div>
           <p className="eyebrow">
             <T text={"MON CARNET DE DÉCOUVERTES"} />
           </p>
-          <h1 className="mt-3 text-3xl font-extrabold sm:text-4xl">
+          <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">
             <T text={"Bonjour,"} /> {p.name} !
           </h1>
           <p className="mt-3 text-muted-foreground">
@@ -116,7 +116,7 @@ export default async function Dashboard() {
             <T text={"Toutes les leçons →"} />{" "}
           </Link>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           {LSF_LESSONS.slice(0, 3).map((l, i) => (
             <CourseCard lesson={l} index={i} key={l.id} />
           ))}

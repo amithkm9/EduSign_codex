@@ -102,3 +102,13 @@ Modèle chargé sans compilation, dimensions d’entrée et de sortie vérifiée
 Tuteur personnel : 99 €/mois. Contact écoles : amithkm9@gmail.com, lien mailto visible. Valeurs confirmées utilisées par défaut, surcharge possible via environnement. Prix Standard toujours en attente. Réservation/paiement toujours fermés.
 
 Vérification : TypeScript, lint, build, 29 tests Node et 11 tests Python réussis. Pages FR/EN, tarif et e-mail affichés, protections et parcours Supabase avec modèle réel vérifiés ; compte temporaire supprimé. Poids du modèle inchangés.
+
+## Revue UI et parcours de leçon — 24 octobre 2026
+
+Revue par contrôle du navigateur dans Chrome et Safari. Présentation harmonisée : fond papier chaud, encre bleu nuit, accent vert dans le titre d’accueil, aperçu contrasté, titres moins lourds, cartes et boutons plus lisibles. Navigation principale recentrée sur le parcours d’apprentissage, état actif conservé dans une leçon, liens secondaires disponibles dans le menu mobile et le pied de page. Catalogue, espace personnel, leçons et formules suivent cette hiérarchie. Les boutons partagés acceptent les libellés longs et proposent une cible minimale de 44 px.
+
+La leçon propose trois entrées explicites : regarder, pratiquer, quiz. Le quiz sans caméra est accessible directement. Le passage entre les activités conserve les réponses du quiz ; quitter la pratique démonte le composant caméra et déclenche son nettoyage. Revoir la vidéo ferme l’activité et replace le focus sur le lecteur. Les nouveaux textes et libellés accessibles existent en français et en anglais ; la langue des signes enseignée reste la LSF.
+
+Vérifications visuelles et interactions : accueil français dans Chrome ; accueil anglais, sélection alphabet/nombres, recherche et filtre du catalogue, leçon nombres, réponses et résultat 3/3, conservation de la réponse après changement d’activité, retour à la vidéo et formules dans Safari. Le menu compact, son ouverture/fermeture après navigation et le repli de la mise en page ont été vérifiés au zoom du navigateur, puis le zoom a été rétabli. Ce contrôle ne remplace pas un essai sur téléphone réel. Aucun compte ni résultat d’élève n’a été modifié.
+
+Validation technique : TypeScript, lint, 29 tests Node, 11 tests Python et build de production réussis. Contrôles HTTP des routes, des protections et des deux langues réussis sur le port 3100. Le contrôle HTTP a détecté qu’un chargement global rendait les redirections et erreurs 404 en flux HTTP 200 ; cette limite de chargement a été retirée et les statuts attendus revérifiés. La capture webcam réelle, la fin de lecture YouTube, la persistance connectée et les écrans protégés n’ont pas été revérifiés visuellement dans cette revue.

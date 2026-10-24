@@ -28,9 +28,7 @@ export async function generateMetadata() {
     ),
   };
 }
-const featured = ["lsf-alphabet", "lsf-nombres"].map((id) =>
-  getLsfLesson(id)!,
-);
+const featured = ["lsf-alphabet", "lsf-nombres"].map((id) => getLsfLesson(id)!);
 const questions = [
   [
     "Est-ce adapté si nous débutons complètement ?",
@@ -56,21 +54,23 @@ export default async function HomePage() {
       <section className="landing-hero relative overflow-hidden border-b border-border/60">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 hidden w-[44%] bg-[#f0f3fa]/70 lg:block"
+          className="pointer-events-none absolute -right-40 -top-40 size-[44rem] rounded-full border-[100px] border-[#e8eee6]/60"
         />
-        <div className="container relative grid items-center gap-14 pb-14 pt-12 sm:pb-20 sm:pt-16 lg:grid-cols-[1.06fr_1fr] lg:gap-16 lg:py-24">
+        <div className="container relative grid items-center gap-10 pb-12 pt-10 sm:pb-16 sm:pt-14 lg:grid-cols-[1fr_1fr] lg:gap-14 lg:py-16">
           <div className="max-w-xl">
             <p className="flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[.16em] text-primary">
               <span className="h-px w-7 bg-primary/50" aria-hidden />
               <T text="LA LANGUE DES SIGNES, À PARTAGER" />
             </p>
-            <h1 className="mt-6 text-[clamp(2.65rem,5vw,4.5rem)] font-semibold leading-[1.08] tracking-[-.055em]">
+            <h1 className="mt-6 text-[clamp(2.6rem,4.5vw,4.25rem)] font-semibold leading-[1.08] tracking-[-.055em]">
               <T text="Apprenez la LSF." />
               <br />
-              <span className="text-primary">
+              <span>
                 <T text="Un signe." />
                 <br />
-                <T text="Un lien de plus." />
+                <span className="hero-accent">
+                  <T text="Un lien de plus." />
+                </span>
               </span>
             </h1>
             <p className="mt-7 max-w-md text-base leading-[1.8] text-muted-foreground sm:text-lg">
@@ -103,7 +103,7 @@ export default async function HomePage() {
               </span>
             </div>
           </div>
-          <div className="px-3 pb-1 pt-2 sm:px-5 lg:pl-3">
+          <div className="hero-preview relative rounded-[1.75rem] px-5 py-7 sm:p-8 lg:p-9">
             <LessonPreview />
           </div>
         </div>
@@ -165,7 +165,7 @@ export default async function HomePage() {
               <T text="Une nouvelle façon d’échanger." />
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-              <T text="Deux essentiels pour commencer : l’alphabet et les nombres. Chaque vidéo se termine par un mini-quiz." />
+              <T text="Deux essentiels pour commencer : l’alphabet et les nombres. Regardez, pratiquez, puis testez votre compréhension." />
             </p>
           </div>
           <Link
@@ -256,7 +256,7 @@ export default async function HomePage() {
                 number: "03",
                 Icon: Sprout,
                 title: "Testez vos découvertes",
-                text: "Après la vidéo, répondez au mini-quiz. Un compte gratuit permet de conserver vos résultats dans votre bilan.",
+                text: "Essayez le défi caméra ou le quiz de compréhension, à votre rythme. Un compte gratuit permet de retrouver votre activité dans le bilan.",
               },
             ].map(({ number, Icon, title, text }) => (
               <article key={number} className="border-t border-border pt-6">

@@ -31,21 +31,20 @@ export default async function CoursesPage() {
           <p className="eyebrow">
             <T text={"LE PLAISIR D’APPRENDRE"} />
           </p>
-          <h1 className="mt-4 text-4xl font-extrabold sm:text-5xl">
-            <T text={"À chaque jour,"} /> <br />
-            <T text={"sa petite découverte."} />{" "}
+          <h1 className="mt-4 page-heading">
+            <T text="Votre prochain signe commence ici." />{" "}
           </h1>
           <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">
             <T
               text={
-                "Commencez par l’alphabet ou les nombres en LSF. Regardez la vidéo, puis jouez au mini-quiz avec votre enfant."
+                "Deux ateliers gratuits pour débuter en LSF. Une vidéo, un moment pour pratiquer et un quiz pour faire le point."
               }
             />{" "}
           </p>
         </div>
         <Link
           href="/parents"
-          className="flex max-w-xs items-center gap-4 rounded-2xl bg-[#fff0b5] p-5"
+          className="flex max-w-xs items-center gap-4 rounded-2xl border border-[#dce6dc] bg-[#edf2e9] p-5"
         >
           <Heart className="size-8 shrink-0" />
           <span className="text-sm">

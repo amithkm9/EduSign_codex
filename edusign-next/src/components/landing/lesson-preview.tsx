@@ -19,9 +19,9 @@ export function LessonPreview() {
     <div className="relative mx-auto w-full max-w-[540px]">
       <div
         aria-hidden
-        className="absolute -inset-3 rounded-[2.2rem] bg-[#e8edf8] sm:-inset-5"
+        className="absolute -right-2 -top-2 size-20 rounded-full border border-white/15"
       />
-      <div className="relative overflow-hidden rounded-[1.5rem] border border-white bg-white shadow-[0_24px_60px_-32px_rgba(23,42,83,.4)]">
+      <div className="relative overflow-hidden rounded-2xl border border-white/30 bg-white shadow-[0_24px_60px_-32px_rgba(23,42,83,.4)]">
         <div className="flex items-center justify-between gap-3 border-b border-border/70 px-5 py-4 sm:px-6">
           <span className="flex items-center gap-2 text-xs font-semibold text-foreground">
             <BookOpen aria-hidden className="size-4 text-primary" />
@@ -80,9 +80,9 @@ export function LessonPreview() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[.12em] text-primary">
-                  {t("Votre première découverte")}
+                  {t("Un atelier pour commencer")}
                 </p>
-                <h2 className="mt-2 min-h-[3.5rem] text-xl font-bold leading-snug sm:text-2xl">
+                <h2 className="mt-2 text-xl font-semibold leading-snug sm:text-2xl">
                   {t(lesson.title)}
                 </h2>
               </div>
@@ -101,7 +101,7 @@ export function LessonPreview() {
           </div>
         </div>
       </div>
-      <p className="relative mt-8 text-center text-xs leading-relaxed text-muted-foreground">
+      <p className="relative mt-5 text-center text-xs leading-relaxed text-white/75">
         {t(
           "Un aperçu réel de nos ateliers. Le temps indiqué est une suggestion de pratique.",
         )}
