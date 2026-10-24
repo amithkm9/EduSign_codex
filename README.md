@@ -8,9 +8,20 @@ An **AI-powered platform for learning French Sign Language (LSF)**, designed for
 
 **Ages 3–15 · French & English · Video lessons · AI learning assistant · Parent–child learning**
 
-[Explore the product](#the-product) · [Architecture](#architecture) · [Run locally](#run-locally) · [Documentation](#documentation)
+[Watch the demo](#product-film) · [Explore the product](#the-product) · [Architecture](#architecture) · [Run locally](#run-locally)
 
 </div>
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/amithkm9/EduSign_codex/main/docs/media/EduSign-launch.mp4">
+    <img src="docs/media/EduSign-preview.jpg" alt="Watch the EduSign product film: a real application walkthrough with English narration, captions, and music" width="800">
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://raw.githubusercontent.com/amithkm9/EduSign_codex/main/docs/media/EduSign-launch.mp4"><strong>▶ Watch the 2-minute EduSign film</strong></a><br>
+  1080p · English narration · Captions · Music
+</p>
 
 ---
 
@@ -437,11 +448,13 @@ The [product plan](docs/EDUSIGN_PLAN.md) records implementation history and earl
 
 ## Product film
 
-The repository includes the sources for a **120-second, 1920 × 1080 launch film**: real application screenshots, editorial motion, English AI narration, captions, an original instrumental score, and a separately credited Elix source-video excerpt.
+**[▶ Watch or download the product film](https://raw.githubusercontent.com/amithkm9/EduSign_codex/main/docs/media/EduSign-launch.mp4)** · [English captions](docs/media/EduSign-launch.en.srt)
+
+The **120-second, 1920 × 1080 launch film** combines real application screenshots, editorial motion, English AI narration, captions, an original instrumental score, and a separately credited Elix source-video excerpt. Click the preview at the top of this README to open the full MP4 with its embedded audio track.
 
 See the [production guide and credits](launch-film/production-guide.html), [edit plan](launch-film/edit-plan.json), and [production record](launch-film/production-report.json).
 
-The MP4, narration, and source captures are local artifacts excluded from Git. When available, the main export is `launch-film/renders/EduSign-launch-120s.mp4`. Re-rendering requires the original capture/audio directories, FFmpeg, Pillow, NumPy, and the fonts documented by the renderer. The film is an animated product walkthrough, not continuous screen recording.
+The published MP4, preview image, and subtitle file are versioned in `docs/media/`. Original captures, audio sources, and intermediate renders remain local and excluded from Git. Re-rendering requires the original capture/audio directories, FFmpeg, Pillow, NumPy, and the fonts documented by the renderer. The film is an animated product walkthrough, not continuous screen recording.
 
 ## Documentation
 
