@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* EduSign: a bright, welcoming learning space for students and families. */
+/* EduSign: clear, welcoming typography for students and families. */
 @layer base {
   :root {
     --font-sans:
-      ui-rounded, "Arial Rounded MT Bold", ui-sans-serif, system-ui,
-      -apple-system, "Segoe UI", sans-serif;
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
     --font-display: var(--font-sans);
     --background: 40 60% 98%;
     --foreground: 224 49% 23%;
@@ -161,13 +161,13 @@
 }
 
 .lesson-card {
-  box-shadow: 0 3px 0 hsl(var(--border) / 0.6);
+  box-shadow: 0 4px 18px -12px hsl(var(--foreground) / 0.2);
   transition:
     transform 0.2s,
     box-shadow 0.2s;
 }
 .lesson-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
   box-shadow: 0 12px 26px -12px hsl(var(--primary) / 0.25);
 }
 @media print {
@@ -178,5 +178,27 @@
   }
   body {
     background: white;
+  }
+}
+
+/* Restrained surface treatment for the public landing experience. */
+.landing-hero {
+  background: #fafbfdf2;
+}
+.landing-page h1,
+.landing-page h2,
+.landing-page h3 {
+  text-wrap: balance;
+}
+.landing-faq summary::-webkit-details-marker {
+  display: none;
+}
+.landing-faq[open] summary {
+  color: hsl(var(--primary));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lesson-card:hover {
+    transform: none;
   }
 }

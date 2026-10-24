@@ -51,13 +51,13 @@ export function UserMenu({ name, email }: { name: string; email: string }) {
         aria-controls="user-menu"
         aria-label={_t("Mon compte")}
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full border border-border bg-card py-1 pl-1 pr-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent"
+        className="flex items-center gap-2 rounded-full border border-border bg-card py-1 pl-1 pr-1 text-sm min-[400px]:pr-3 font-medium shadow-sm transition-colors hover:bg-accent"
       >
         <span className="flex size-8 items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-          <T text={initials(name)} />
+          {initials(name)}
         </span>
         <span className="hidden max-w-[8rem] truncate sm:inline">{name}</span>
-        <ChevronDown className="size-4 text-muted-foreground" />
+        <ChevronDown className="hidden size-4 text-muted-foreground min-[400px]:block" />
       </button>
 
       {open && (

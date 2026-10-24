@@ -44,10 +44,10 @@ export function MainNav({ isAuthed }: { isAuthed: boolean }) {
   const active = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
   return (
-    <div ref={root}>
+    <div ref={root} className="order-last xl:order-none">
       <nav
         aria-label={_t("Navigation principale")}
-        className="hidden items-center gap-5 xl:flex"
+        className="hidden items-center gap-4 xl:flex"
       >
         {links.map((l) => (
           <Link
@@ -55,7 +55,7 @@ export function MainNav({ isAuthed }: { isAuthed: boolean }) {
             href={l.href}
             aria-current={active(l.href) ? "page" : undefined}
             className={cn(
-              "py-3 text-sm transition-colors hover:text-primary",
+              "py-3 text-[13px] font-medium transition-colors hover:text-primary",
               active(l.href)
                 ? "font-semibold text-primary underline decoration-2 underline-offset-8"
                 : "text-muted-foreground",
@@ -80,12 +80,18 @@ export function MainNav({ isAuthed }: { isAuthed: boolean }) {
         <nav
           id="mobile-navigation"
           aria-label={_t("Navigation mobile")}
-          className="absolute inset-x-0 top-full flex flex-col gap-1 border-b border-border bg-background p-5 shadow-lg xl:hidden"
+          className="absolute inset-x-0 top-full flex max-h-[calc(100dvh-5rem)] flex-col gap-1 overflow-y-auto border-b border-border bg-background p-5 shadow-lg xl:hidden"
         >
           {[
             ...links,
             { href: "/quiz", label: "Pratiquer" },
             { href: "/parents", label: "Parents" },
+            ...(!isAuthed
+              ? [
+                  { href: "/login", label: "Connexion" },
+                  { href: "/register", label: "Créer un compte" },
+                ]
+              : []),
           ].map((l) => (
             <Link
               key={l.href}

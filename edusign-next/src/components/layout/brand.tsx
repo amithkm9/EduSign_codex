@@ -6,7 +6,13 @@ import Link from "next/link";
 import { Hand } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function Brand({ light = false }: { light?: boolean }) {
+export function Brand({
+  light = false,
+  compactOnMobile = false,
+}: {
+  light?: boolean;
+  compactOnMobile?: boolean;
+}) {
   const { t: _t } = useInterfaceLocale();
 
   return (
@@ -14,20 +20,27 @@ export function Brand({ light = false }: { light?: boolean }) {
       href="/"
       aria-label={_t("EduSign — accueil")}
       className={cn(
-        "inline-flex items-center gap-2.5 text-xl font-semibold tracking-tight",
+        "inline-flex items-center gap-2 text-lg font-semibold sm:gap-2.5 sm:text-xl tracking-tight",
         light && "text-white",
       )}
     >
       <span
         className={cn(
-          "grid size-9 place-items-center rounded-xl bg-primary text-white",
+          "grid size-8 place-items-center rounded-lg sm:size-9 sm:rounded-xl bg-primary text-white",
           light && "bg-white/15",
         )}
       >
         <Hand aria-hidden className="size-5" />
       </span>
-      <T text={"EduSign"} />{" "}
-      <span className="mb-3 size-1.5 rounded-full bg-[#df8b62]" aria-hidden />
+      <span
+        className={cn(
+          "inline-flex items-start gap-1",
+          compactOnMobile && "hidden min-[400px]:inline-flex",
+        )}
+      >
+        <T text="EduSign" />
+        <span className="mt-1 size-1.5 rounded-full bg-[#df8b62]" aria-hidden />
+      </span>
     </Link>
   );
 }

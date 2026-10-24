@@ -58,3 +58,9 @@ Sélecteur FR / EN persistant, rendu initial et attribut HTML lang adaptés au c
 - Navigation et textes des nouvelles pages dans les deux langues. Les anciens renvois de /packages et /community sont remplacés par leurs pages dédiées.
 
 Vérification de ces ajouts : compilation de production, TypeScript, lint et 22 tests Node réussis. Les pages produit sont rendues en français et en anglais. Les formulaires Google gèrent le fournisseur désactivé dans les deux langues ; les annulations et erreurs OAuth ne quittent pas l’application. Les huit aperçus passent par l’optimiseur d’images. Un compte d’inscription temporaire a vérifié le refus avant confirmation, la confirmation, le profil, la connexion e-mail et le nettoyage, sans envoi d’e-mail. La configuration locale NEXT_PUBLIC_SITE_URL manquante a été complétée avec localhost:3100. Le build signale un avertissement de compatibilité Edge provenant du SDK Supabase ; les contrôles HTTP des sessions passent. La revue visuelle et le partage natif nécessitent encore un navigateur autorisé.
+
+## Accueil et présentation — 24 octobre 2026
+
+L’accueil adopte une typographie plus sobre, une hiérarchie claire et un aperçu interactif de trois leçons LSF. Les sections expliquent le parcours, les ressources, l’accompagnement des parents et le rôle de l’assistant. Une FAQ et des appels à l’action distincts permettent d’explorer sans compte ou de créer un carnet. L’en-tête, les contrôles mobiles et le pied de page sont harmonisés dans les deux langues. Les valeurs affichées proviennent du catalogue, sans témoignages ou compteurs inventés.
+
+Compilation, TypeScript, lint, 22 tests Node et contrôles HTTP français/anglais réussis. La revue visuelle desktop/mobile et les interactions du sélecteur d’aperçu restent à vérifier dans un navigateur autorisé.

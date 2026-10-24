@@ -1,54 +1,86 @@
 "use client";
-import { useLocale as useInterfaceLocale } from "@/components/i18n/locale-provider";
 
-import { T } from "@/components/i18n/locale-provider";
 import Link from "next/link";
+import { ArrowUpRight, Heart } from "lucide-react";
 import { Brand } from "./brand";
-import { Heart, ArrowUpRight } from "lucide-react";
+import { useLocale } from "@/components/i18n/locale-provider";
+const groups = [
+  {
+    title: "Apprendre",
+    links: [
+      ["Les ateliers LSF", "/courses"],
+      ["Pratiquer", "/quiz"],
+      ["L’assistant IA", "/tutor"],
+      ["Nos formules", "/packages"],
+    ],
+  },
+  {
+    title: "Ensemble",
+    links: [
+      ["Le coin des parents", "/parents"],
+      ["La communauté", "/community"],
+      ["Ressources LSF", "/resources"],
+    ],
+  },
+  {
+    title: "EduSign",
+    links: [
+      ["À propos de nous", "/about"],
+      ["Mon espace", "/dashboard"],
+      ["Créer un compte", "/register"],
+    ],
+  },
+];
 export function SiteFooter() {
-  const { t: _t } = useInterfaceLocale();
-
+  const { t } = useLocale();
   return (
     <footer className="border-t border-border bg-white">
-      <div className="container flex flex-wrap items-start justify-between gap-8 py-10">
+      <div className="container grid gap-10 py-12 sm:py-16 lg:grid-cols-[1.1fr_1.5fr] lg:gap-20">
         <div>
           <Brand />
-          <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            <T text={"De petites découvertes."} /> <br />
-            <T text={"De grands moments ensemble."} />{" "}
+          <p className="mt-5 max-w-xs text-sm leading-[1.8] text-muted-foreground">
+            {t(
+              "Découvrir la langue des signes française. Apprendre à son rythme. Se rapprocher, ensemble.",
+            )}
           </p>
+          <span className="mt-5 inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-[11px] font-medium text-muted-foreground">
+            <span aria-hidden className="size-1.5 rounded-full bg-[#3b765c]" />
+            {t("Langue enseignée : LSF · Interface : FR / EN")}
+          </span>
         </div>
         <nav
-          aria-label={_t("Liens utiles")}
-          className="flex flex-wrap gap-x-8 gap-y-4 text-sm font-semibold"
+          aria-label={t("Liens utiles")}
+          className="grid grid-cols-2 gap-x-6 gap-y-8 sm:grid-cols-3"
         >
-          <Link href="/courses">
-            <T text={"Les leçons"} />
-          </Link>
-          <Link href="/parents">
-            <T text={"Parents"} />
-          </Link>
-          <Link href="/resources" className="flex items-center gap-1">
-            <T text={"Ressources LSF"} /> <ArrowUpRight className="size-3" />
-          </Link>
-          <Link href="/packages">
-            <T text="Formules" />
-          </Link>
-          <Link href="/community">
-            <T text="Communauté" />
-          </Link>
-          <Link href="/about">
-            <T text="À propos de nous" />
-          </Link>
+          {groups.map((group) => (
+            <div key={group.title}>
+              <p className="mb-4 text-xs font-semibold text-foreground">
+                {t(group.title)}
+              </p>
+              <ul className="space-y-1">
+                {group.links.map(([label, href]) => (
+                  <li key={href}>
+                    <Link
+                      href={href}
+                      className="inline-flex min-h-10 items-center gap-1.5 py-1 text-xs leading-relaxed text-muted-foreground transition-colors hover:text-primary"
+                    >
+                      {t(label)}
+                      {href === "/resources" && (
+                        <ArrowUpRight aria-hidden className="size-3" />
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </nav>
       </div>
-      <div className="container flex flex-wrap justify-between gap-3 border-t border-border py-5 text-xs text-muted-foreground">
-        <span>
-          <T text={"EduSign · Un projet pour découvrir la LSF."} />
-        </span>
-        <span className="flex items-center gap-1.5">
-          <T text={"Apprendre, essayer, partager"} />{" "}
-          <Heart className="size-3" />
+      <div className="container flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-border py-6 text-[11px] leading-relaxed text-muted-foreground">
+        <span>EduSign · {t("Un signe. Un lien de plus.")}</span>
+        <span className="inline-flex items-center gap-1.5">
+          <Heart aria-hidden className="size-3" />
+          {t("Pour les élèves et ceux qui les accompagnent.")}
         </span>
       </div>
     </footer>

@@ -1,5 +1,5 @@
 import { getTranslator } from "@/lib/i18n/server";
-import { LogIn } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LanguageSwitch } from "@/components/i18n/language-switch";
 
 import { T } from "@/components/i18n/locale-provider";
@@ -17,27 +17,35 @@ export async function SiteHeader() {
       ? user.user_metadata.name
       : t("Mon espace");
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur">
-      <div className="container relative flex h-20 items-center justify-between gap-3">
-        <Brand />
+    <header className="sticky top-0 z-40 border-b border-border/70 bg-white/95 backdrop-blur">
+      <div className="container relative flex h-20 items-center justify-between gap-2 sm:gap-3">
+        <Brand compactOnMobile={!!user} />
         <MainNav isAuthed={!!user} />
-        <div className="flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-2 xl:ml-0">
           <LanguageSwitch />
           {user ? (
             <UserMenu name={name} email={user.email ?? ""} />
           ) : (
-            <Button
-              asChild
-              variant="outline"
-              className="rounded-full border-primary/25 bg-transparent px-3 sm:px-5"
-            >
-              <Link href="/login">
-                <LogIn className="size-4 sm:hidden" />
-                <span className="sr-only sm:not-sr-only">
-                  <T text={"Connexion"} />
-                </span>
-              </Link>
-            </Button>
+            <>
+              <Button
+                asChild
+                variant="ghost"
+                className="hidden rounded-xl px-3 text-sm sm:inline-flex"
+              >
+                <Link href="/login">
+                  <T text="Connexion" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                className="hidden rounded-xl px-4 text-xs md:inline-flex"
+              >
+                <Link href="/register">
+                  <T text="Commencer" />
+                  <ArrowRight aria-hidden className="size-3.5" />
+                </Link>
+              </Button>
+            </>
           )}
         </div>
       </div>

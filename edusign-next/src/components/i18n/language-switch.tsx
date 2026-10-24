@@ -8,7 +8,7 @@ export function LanguageSwitch() {
   const router = useRouter();
   const [pending, start] = useTransition();
   return (
-    <label className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-border bg-white px-3 text-xs font-bold text-foreground">
+    <label className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-border bg-white px-3 text-xs font-bold text-foreground">
       <Languages aria-hidden className="hidden size-4 sm:block" />
       <span className="sr-only">
         {locale === "fr" ? "Langue de l’interface" : "Interface language"}
