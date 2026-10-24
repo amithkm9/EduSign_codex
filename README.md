@@ -1,108 +1,431 @@
-# EduSign_codex
+<div align="center">
 
-Un espace de découverte de la **langue des signes française (LSF)** pour les élèves et leurs parents : regarder, essayer, partager.
+# EduSign
 
-## Le produit
+### Watch. Try. Connect.
 
-- Interface en français et en anglais : accueil, leçons, activités, assistant, carnet et bilan.
-- Deux ateliers — alphabet et nombres — avec vidéos YouTube LSF, crédits et liens directs vers les créateurs.
-- Un défi caméra après chaque vidéo : capture, replay et analyse expérimentale par le modèle historique pour A/B/C et 1/2/3. Correspondance, différence ou résultat incertain ; ce modèle n’est pas validé pour la LSF.
-- Quiz de compréhension facultatif : correction expliquée, nouvel essai et résultats Supabase.
-- Suivi vidéo : temps de lecture visible, couverture unique et dernière position, inclus dans le bilan connecté.
-- Recherche et filtres par thème, objectifs simples et conseils aux parents.
-- Authentification et données d’apprentissage dans Supabase : e-mail et intégration Google OAuth (activation du fournisseur requise).
-- Aperçus des vidéos dans les cartes de cours, pages Formules, À propos et Communauté avec partage de leçons.
-- Assistant en français ou en anglais : un mot saisi ou dicté ouvre sa démonstration vidéo ; coach interactif disponible dans un second mode.
-- Bibliothèque du projet : 354 clips dans Supabase privé, recherche bilingue, ralenti et boucle. Collection LSF sourcée distincte de six clips Elix.
+A bilingual learning platform for students and families discovering **French Sign Language (LSF)**.
 
-Une activité terminée est une **déclaration de pratique**, pas une évaluation des gestes. Le lecteur détecte la fin de la vidéo via l’API IFrame YouTube pour ouvrir le défi caméra. La lecture active dans l’onglet visible est estimée et enregistrée ; les pauses, le buffering, les sauts et le visionnage sur le site YouTube sont exclus. Ce suivi ne mesure pas l’attention. Les scores des quiz portent sur la compréhension et les exercices de lettres/nombres, pas sur la qualité des gestes. Un compte représente un carnet partagé, sans profils enfants séparés.
+**French & English interface · Video workshops · Interactive assistant · Family learning**
+
+[Explore the product](#the-product) · [Architecture](#architecture) · [Run locally](#run-locally) · [Documentation](#documentation)
+
+</div>
+
+---
+
+EduSign brings credited sign-language videos, guided practice, and a bilingual assistant into one learning journey. A parent can find a supported word, watch its demonstration with their child, and return to a workshop or a short learning activity.
+
+**LSF** means *Langue des signes française* — French Sign Language. Switching the interface to English translates the experience; the lessons continue to teach LSF.
+
+*En français : EduSign accompagne les élèves et leurs parents dans la découverte de la langue des signes française, avec des vidéos, des activités et un assistant bilingue.*
+
+## Contents
+
+- [The product](#the-product)
+- [Architecture](#architecture)
+- [How the assistant works](#how-the-assistant-works)
+- [Run locally](#run-locally)
+- [Configuration](#configuration)
+- [Project structure](#project-structure)
+- [Testing and verification](#testing-and-verification)
+- [Learning records and privacy](#learning-records-and-privacy)
+- [Current scope and next steps](#current-scope-and-next-steps)
+- [Product film](#product-film)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [Sources and licensing](#sources-and-licensing)
+
+## The product
+
+A focused starting point for learning together, built around two workshops: **the alphabet** and **numbers**.
+
+```mermaid
+flowchart LR
+    Discover["Discover a workshop"] --> Watch["Watch a credited LSF video"]
+    Watch --> Try["Try camera practice"]
+    Watch --> Quiz["Explore a comprehension quiz"]
+    Try --> Reflect["Review your learning activity"]
+    Quiz --> Reflect
+    Reflect --> Together["Keep learning together"]
+    Assistant["Find a sign or ask the coach"] -.-> Watch
+    Assistant -.-> Together
+
+    classDef main fill:#faf8f3,stroke:#203049,color:#203049
+    classDef accent fill:#e8f0e9,stroke:#497663,color:#203049
+    class Discover,Watch,Try,Quiz,Reflect main
+    class Assistant,Together accent
+```
+
+| Experience | What learners can do |
+| --- | --- |
+| **Discover** | Explore the homepage and filter the workshop catalogue in French or English. |
+| **Watch** | Follow alphabet and numbers resources with learning objectives, creator credits, and direct source links. |
+| **Practise** | Record a short camera attempt, replay it, and try again. Experimental recognition is available for a limited demo vocabulary. |
+| **Reflect** | Answer optional comprehension questions and see explanations. Saved scores are recalculated on the server. |
+| **Find a sign** | Search supported French or English words, open one matching video, and use slow playback or looping. |
+| **Ask the coach** | Request short learning plans, answer interactive questions, dictate a message, or listen to a response. |
+| **Learn together** | View activity records and quiz results, read parent guidance, and share a lesson link. |
+
+> **Two collections, clearly distinguished.** The assistant includes six sourced LSF clips from Elix and a separate imported collection of 354 clips labelled **“Sign language unverified.”** Translated search labels do not establish a clip’s sign language. Select the sourced LSF collection for LSF demonstrations.
+
+### Main pages
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Product introduction and workshop previews |
+| `/courses` | Searchable lesson catalogue |
+| `/learn/lsf-alphabet` · `/learn/lsf-nombres` | Video, camera practice, and comprehension quiz |
+| `/tutor` | Video lookup and interactive coach |
+| `/dashboard` · `/report` | Personal learning notebook and report |
+| `/parents` · `/resources` | Family guidance and learning resources |
+| `/community` | Shared activities and lesson sharing |
+| `/about` · `/packages` | Project mission and planned offers |
 
 ## Architecture
 
-| Dossier | Rôle |
+The **Next.js application** owns the user experience, session checks, and learning-data access. The **FastAPI service** handles assistant requests, speech, report insights, and experimental recognition. Supabase provides authentication, PostgreSQL, and private video storage.
+
+```mermaid
+flowchart TB
+    Browser["Browser<br/>French / English interface"]
+
+    subgraph App["EduSign application"]
+        Web["Next.js 15 + React 19<br/>Pages and authenticated API routes"]
+        Python["FastAPI<br/>Stateless AI service"]
+        Model["Legacy recognition model<br/>TensorFlow + MediaPipe"]
+    end
+
+    subgraph Supabase["Supabase"]
+        Auth["Auth<br/>Email / Google OAuth"]
+        DB[("PostgreSQL<br/>Learning records")]
+        Storage["Private Storage<br/>Project video collection"]
+    end
+
+    OpenAI["OpenAI<br/>Coaching and speech"]
+    Sources["Credited media<br/>YouTube workshops / Elix clips"]
+
+    Browser --> Web
+    Browser <-->|"Sign-in and session"| Auth
+    Web -->|"Verify user"| Auth
+    Web <-->|"Drizzle ORM"| DB
+    Web -->|"Create temporary media URL"| Storage
+    Browser -->|"Play signed video URL"| Storage
+    Browser -->|"Watch source media"| Sources
+    Web <-->|"Internal token"| Python
+    Python <-->|"Model requests"| OpenAI
+    Python --> Model
+
+    classDef app fill:#faf8f3,stroke:#203049,color:#203049
+    classDef service fill:#e8f0e9,stroke:#497663,color:#203049
+    class Browser,Web,Python,Model app
+    class Auth,DB,Storage,OpenAI,Sources service
+```
+
+The Python service has **no direct database connection**. Next.js sends the context needed for each request. Browser-facing assistant, voice, and recognition routes require an authenticated Supabase user; the internal gateway supplies `X-Internal-Token` when configured.
+
+| Layer | Technologies |
 | --- | --- |
-| `edusign-next/` | Next.js / React / TypeScript : interface, sessions Supabase, accès aux données et API |
-| `ai-service/` | FastAPI : assistant, transcription, synthèse vocale, bilan et modèle de reconnaissance historique |
-| `docs/EDUSIGN_PLAN.md` | État du projet, choix de produit et travail restant |
+| Web | Next.js 15, React 19, TypeScript |
+| Interface | Tailwind CSS, Radix Slot, Lucide icons, Recharts |
+| Identity and data | Supabase Auth, PostgreSQL, Drizzle ORM, Supabase Storage |
+| AI service | Python, FastAPI, OpenAI SDK, Pydantic |
+| Experimental recognition | TensorFlow, MediaPipe, OpenCV |
+| Verification | Node.js test runner, Python unittest, HTTP and connected journey scripts |
 
-L’ancienne bibliothèque vidéo et les poids du modèle sont conservés. Ils ne sont pas utilisés comme démonstrations LSF dans le parcours public. Le modèle historique est connecté uniquement pour la démonstration, à la demande du propriétaire. L’ordre de ses six classes est supposé ; sa reconnaissance n’a pas été validée pour la LSF. Les résultats démo ne deviennent pas des notes dans le bilan.
+## How the assistant works
 
-## Démarrer
+The assistant separates **finding a known video** from **generating learning guidance**. A word lookup uses a deterministic catalogue; it does not ask a language model to invent a sign or media URL.
 
-Dans `edusign-next/` :
+```mermaid
+flowchart TD
+    Input["Type a message or dictate"] --> Text["Text message<br/>Dictation can be reviewed before sending"]
+    Text --> Language["Resolve French or English<br/>Ambiguous words use the interface language"]
+    Language --> Mode{"Selected mode"}
+    Mode -->|"Find a sign"| Lookup["Search the selected collection<br/>Known words and aliases"]
+    Lookup --> Match{"Supported word?"}
+    Match -->|"Yes"| Video["One matching video<br/>Collection label and source details"]
+    Match -->|"No"| Missing["Explain the missing word<br/>No invented demonstration"]
+    Mode -->|"Ask the coach"| Coach["Short plan, guided question,<br/>or resource recommendation"]
+    Coach --> Reply["Reply in the resolved language<br/>Optional spoken playback"]
+
+    classDef main fill:#faf8f3,stroke:#203049,color:#203049
+    classDef accent fill:#e8f0e9,stroke:#497663,color:#203049
+    class Input,Text,Language,Mode,Lookup,Match,Coach main
+    class Video,Missing,Reply accent
+```
+
+- **Language follows the message.** `bonjour` receives a French response; `hello` receives an English response, even when the interface uses the other language. Shared words, letters, and numbers use the interface language.
+- **The collection controls the demonstration.** In the sourced LSF collection, `bonjour` selects Elix’s Bonjour clip. The imported collection resolves to its own corresponding clip and retains its unverified label.
+- **Coaching is grounded in selected resources.** Responses use structured output and approved resource identifiers. Guided questions are checked on the server; fallback guidance is explicitly labelled.
+- **Voice is optional.** Dictation records up to 60 seconds and offers an editable transcript. Replies have individual playback controls; automatic reading is optional.
+- **Conversation history is temporary.** Messages remain in the current page session and survive an interface-language switch; there is no persistent conversation archive.
+
+Text lookup and guided exercises require the Python service but do not require an OpenAI key. Generative coaching and speech require a working provider configuration. The workshops remain available when the AI service is offline.
+
+## Run locally
+
+### Prerequisites
+
+- Node.js 20 or newer, with npm.
+- Python 3.10 or 3.11 for the pinned recognition dependencies. The AI Dockerfile uses Python 3.11.
+- A Supabase project with database access and API keys.
+- An OpenAI API key for generative coaching and voice.
+- FFmpeg and FFprobe only if preparing video derivatives or rendering the product film.
+
+Commands below assume a macOS/Linux shell. Start from the repository root and use separate terminals for the two services.
+
+### 1. Install and configure the web application
 
 ```sh
-npm install
-cp .env.local.example .env.local
-# Renseigner les valeurs dans le fichier local, jamais dans Git.
-npm run config:check
+cd edusign-next
+npm ci
+cp -n .env.local.example .env.local
+```
+
+Fill in `.env.local` using the [configuration reference](#configuration). Keep existing credentials: `.env.local` takes precedence over `.env`. Use the exact **Transaction pooler** connection string supplied by your Supabase project.
+
+### 2. Prepare the database and start the app
+
+Run these commands inside `edusign-next/` after configuring the environment:
+
+```sh
 npm run db:setup
 npm run db:seed
+npm run config:check
+npm run db:verify
 npm run dev -- --port 3100
 ```
 
-Si votre fichier `.env` est déjà configuré, conservez-le : `.env.local` prend priorité. Utilisez la chaîne exacte du **Transaction pooler** fournie par Supabase. Définissez les URL de redirection dans Supabase pour la connexion et la récupération de mot de passe.
+`db:setup` applies migrations, profile triggers, and ownership policies. `db:seed` publishes the alphabet and numbers workshops, unpublishes known legacy courses, and disables known legacy packages. It preserves users and learning history. Use a development Supabase project when setting up a new environment.
 
-Dans `ai-service/` :
+Open **http://localhost:3100**.
+
+### 3. Install and start the AI service
+
+In a second terminal, starting at the repository root:
 
 ```sh
-python3.10 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-cp .env.example .env
+cd ai-service
+python3.11 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+cp -n .env.example .env
+```
+
+Set `OPENAI_API_KEY` in `ai-service/.env`. If using an internal token, put the same `INTERNAL_API_TOKEN` in both services. Then start FastAPI:
+
+```sh
 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8100
 ```
 
-`OPENAI_API_KEY` reste dans le fichier ignoré `ai-service/.env`. Redémarrez le service après un changement de clé. Les modèles sont configurables via `OPENAI_TUTOR_MODEL` (gpt-4o-mini), `OPENAI_TRANSCRIBE_MODEL` (gpt-transcribe) et `OPENAI_TTS_MODEL` (gpt-4o-mini-tts).
+The health endpoint is **http://localhost:8100/health**. Its `openai` field indicates that a key is configured, not that every configured model or quota is available. The assistant’s status check verifies provider/model access separately.
 
-L’assistant propose des programmes courts, des questions interactives corrigées côté serveur et des liens LSF vérifiés. La conversation reste dans la session de la page ; FR / EN conserve les messages et change la langue de l’interface. Les nouveaux échanges suivent la langue détectée du message ; les mots ambigus utilisent la langue de l’interface. Le service reçoit les derniers messages et uniquement des agrégats de progression pour la personnalisation, sans nom ni âge dans le prompt. La connexion fournisseur est vérifiée et mise en cache pendant 60 secondes ; un statut connecté ne garantit pas les quotas de chaque modèle vocal. Les réponses de secours sont explicitement marquées « Réponse guidée ».
+### 4. Configure authentication and media
 
-La dictée enregistre au maximum 60 secondes, respecte le format réel du navigateur (notamment MP4 sur Safari), puis propose une transcription modifiable avant envoi. Annuler ou masquer l’onglet arrête la capture. Chaque réponse peut être écoutée ; la lecture automatique est facultative. Les exercices guidés ne nécessitent pas de clé OpenAI, mais nécessitent le service Python. Sans service IA, les leçons restent accessibles.
+Set Supabase’s site URL and callback allowlist to match `http://localhost:3100`. Email confirmation and password recovery need working email delivery; Google sign-in needs its provider configuration. Follow [the authentication guide](docs/AUTH_SETUP.md).
 
-## Vérifier
+A fresh clone does **not** include the large imported video library, generated derivatives, or launch-film captures. Project-library playback requires the matching objects in the private `sign-demonstrations` bucket. See [video-library setup and synchronization](docs/SIGN_VIDEO_LIBRARY.md). The sourced Elix collection has its own [attribution record](edusign-next/public/signs/ATTRIBUTION.md).
 
-Dans `edusign-next/` :
+For a local production build, stop the development server before running:
 
 ```sh
+# Inside edusign-next/
+npm run build
+npm run start -- --port 3100
+```
+
+## Configuration
+
+Copy the checked-in examples; never commit real keys. Only the Supabase URL and publishable key belong in browser configuration. Database credentials, service-role keys, OpenAI keys, and the internal token stay server-side.
+
+### Web application — `edusign-next/.env.local`
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Application origin for authentication links; locally `http://localhost:3100`. |
+| `SUPABASE_URL` | Supabase project URL. Supported public aliases are documented in the configuration helper. |
+| `SUPABASE_PUBLISHABLE_KEY` | Browser-safe Supabase API key. |
+| `SUPABASE_SECRET_KEY` | Server-only administrative access and private-video URL signing. |
+| `DATABASE_URL` | PostgreSQL transaction-pooler connection string. |
+| `MIGRATION_DATABASE_URL` | Optional migration connection; falls back to `DATABASE_URL`. |
+| `AI_SERVICE_URL` | FastAPI origin; locally `http://localhost:8100`. |
+| `INTERNAL_API_TOKEN` | Shared secret sent to FastAPI. Set a matching nonempty value when deploying. |
+| `NEXT_PUBLIC_MEDIA_BASE_URL` | Optional base URL for existing media paths; separate from private sign-video signing. |
+| `EDUSIGN_STANDARD_MONTHLY_EUR` | Optional Standard plan display price. Does not enable payment. |
+| `EDUSIGN_TUTOR_MONTHLY_EUR` | Tutor plan display price; current default is €99/month. |
+| `EDUSIGN_SCHOOLS_EMAIL` | Public school-enquiry address displayed on the Plans page. |
+
+### AI service — `ai-service/.env`
+
+| Variable | Purpose / configured default |
+| --- | --- |
+| `OPENAI_API_KEY` | Provider key for generative coaching and voice. |
+| `INTERNAL_API_TOKEN` | Must match the web gateway’s token. An empty value skips internal authentication for local development. |
+| `OPENAI_TUTOR_MODEL` | Coaching model; `gpt-4o-mini`. |
+| `OPENAI_TRANSCRIBE_MODEL` | Transcription model; `gpt-transcribe`. |
+| `OPENAI_TTS_MODEL` | Speech model; `gpt-4o-mini-tts`. |
+| `AI_SERVICE_PORT` | Port used by the Python entry point; defaults to `8100`. An explicit Uvicorn `--port` takes precedence. |
+
+Model names above reflect the repository’s configuration defaults. Confirm access with your provider account and override them as needed. Restart the AI service after changing its environment.
+
+## Project structure
+
+```text
+.
+├── edusign-next/                 # Web application and authenticated gateway
+│   ├── src/app/                  # Pages, auth callbacks, and API routes
+│   ├── src/components/           # Lessons, assistant, reports, and shared UI
+│   ├── src/lib/
+│   │   ├── data/                 # Workshop and sign-video catalogues
+│   │   ├── db/                   # Drizzle connection and schema
+│   │   ├── i18n/                 # Locale handling and English translations
+│   │   ├── quiz/                 # Versioned questions and server grading
+│   │   └── video/                # Viewing-progress tracking and persistence
+│   ├── public/signs/             # Sourced Elix clips and attribution
+│   ├── drizzle/                  # Database migrations and ownership policies
+│   ├── scripts/                  # Setup, media synchronization, smoke checks
+│   └── tests/                    # Web contract and logic tests
+├── ai-service/
+│   ├── app/                      # Coaching, lookup, voice, reports, recognition
+│   │   ├── data/                 # Mirrored catalogues and prompt resources
+│   │   └── models/               # Preserved legacy recognition weights
+│   ├── tests/                    # Python tests and opt-in live verification
+│   ├── requirements.txt          # AI and pinned recognition dependencies
+│   └── Dockerfile                # Python 3.11 service image
+├── docs/                         # Product history, auth, and media guides
+├── launch-film/                  # Film sources, edit plan, and production record
+└── AGENTS.md                     # Repository contribution instructions
+```
+
+## Testing and verification
+
+### Local code checks
+
+```sh
+# Inside edusign-next/
 npm run typecheck
 npm run lint
 npm test
 npm run build
+```
+
+```sh
+# Inside ai-service/
+.venv/bin/python -m unittest discover -s tests
+```
+
+### HTTP checks
+
+With the web app running on **port 3100**, run from `edusign-next/`:
+
+```sh
 node scripts/smoke-auth.mjs
 node scripts/smoke-http.mjs
 node scripts/smoke-locales.mjs
 node scripts/smoke-product-pages.mjs
 node scripts/verify-lsf-links.mjs
-# Test connecté (compte temporaire, service IA démarré) :
-node scripts/verify-learner-journey.mjs --temporary-user
-node scripts/verify-tutor.mjs --temporary-user
-# Confirmation d’inscription, sans envoi d’e-mail :
-node scripts/verify-signup.mjs --temporary-user
 ```
 
-Les tests HTTP nécessitent le serveur sur le port 3100. Les tests `verify-auth.mjs --temporary-user` et `verify-ownership.mjs --temporary-users` créent des comptes temporaires puis les suppriment ; ils doivent viser un projet de test. La commande de seed publie les deux ateliers alphabet/nombres et dépublie les autres cours connus, sans supprimer les utilisateurs ni leur historique.
+### Connected checks — explicit opt-in
 
-## Ressources et attribution
+Use a test Supabase project. These scripts create temporary accounts and clean them up afterward. Start the web app on **3100** and the AI service on **8100** for the full journey and assistant checks.
 
-Les vidéos des leçons sont intégrées depuis leurs publications d’origine, sans téléchargement ni réhébergement. Les auteurs sont crédités sur chaque leçon : [MAE Langue des Signes](https://www.maelanguedessignes.com/didactique-lsf) et [Dico Plus LSF](https://karinevermot.wixsite.com/website-1/post/lsf-point-par-point-les-nombres). Le catalogue versionné se trouve dans `edusign-next/src/lib/data/lsf-catalog.json`.
+```sh
+# Inside edusign-next/
+node scripts/verify-auth.mjs --temporary-user
+node scripts/verify-ownership.mjs --temporary-users
+node scripts/verify-signup.mjs --temporary-user
+node scripts/verify-learner-journey.mjs --temporary-user
+node scripts/verify-tutor.mjs --temporary-user
+```
 
-Les liens de découverte incluent [Le Dico Elix](https://dico.elix-lsf.fr/) et [LSF DICO — INJS de Metz](https://lsfdico.injs-metz.fr/). EduSign n’est pas affilié à ces organismes.
+The signup test verifies confirmation without sending email. It does not prove SMTP delivery or the complete browser OAuth flow.
 
-Le dépôt cible est [EduSign_codex](https://github.com/amithkm9/EduSign_codex). Les règles du hackathon, l’hébergement et les conditions de diffusion restent à confirmer avant publication.
+An optional real-provider check exercises synthetic French and English conversations and the speech pipeline. It makes billable API calls:
 
-## Développement avec Codex
+```sh
+# Inside ai-service/
+.venv/bin/python tests/verify_live_coach.py --live-api
+```
 
-Les instructions du dépôt sont dans [AGENTS.md](AGENTS.md). Le sélecteur FR / EN mémorise la langue dans un cookie ; les vidéos des leçons restent en LSF. La collection importée de l’assistant est explicitement marquée « Langue non vérifiée ». Les traductions de l’interface sont locales et ne nécessitent aucun appel IA. Ce dépôt démarre un nouvel historique Git à partir du code EduSign existant. Les commits d’import organisent le projet actuel et ne représentent pas les dates de création initiale de chaque fonctionnalité.
+Compilation, HTTP tests, and synthetic speech tests do not replace browser review. Verify real microphone input, camera capture, YouTube playback, mobile layouts, and authentication redirects separately.
 
-## Comptes et nouvelles pages
+### Troubleshooting
 
-[Configurer Google et l’e-mail](docs/AUTH_SETUP.md) : les comptes restent dans Supabase. Le fournisseur Google doit être activé dans le tableau de bord ; un SMTP de production et un test de délivrabilité restent nécessaires pour l’inscription publique par e-mail.
+| Symptom | Check |
+| --- | --- |
+| Assistant reports unavailable | FastAPI is running on `8100`; `AI_SERVICE_URL` is correct; internal tokens match. |
+| Text works but voice fails | Provider key, model access, and quota; microphone permission for dictation; restart after environment changes. |
+| Project-library video will not play | User session, `SUPABASE_SECRET_KEY`, matching catalogue objects, and private-bucket synchronization. |
+| Database or profile error | Pooler URL, `db:setup`, and `db:verify`. Check whether `.env.local` overrides an older `.env`. |
+| Google sign-in unavailable | Enable and configure Google in Supabase, including callback URLs. |
+| Confirmation email missing | SMTP configuration, authorized recipients, and authentication redirect settings. |
 
-`/packages` présente la découverte gratuite, le tutorat personnel et l’abonnement. Les offres Standard et Tuteur personnel sont en préparation. Leurs prix mensuels et le contact écoles sont configurables côté serveur (`EDUSIGN_STANDARD_MONTHLY_EUR`, `EDUSIGN_TUTOR_MONTHLY_EUR`, `EDUSIGN_SCHOOLS_EMAIL`) ; le Tuteur personnel est affiché à 99 €/mois et le contact écoles est amithkm9@gmail.com. Le prix Standard reste à confirmer. Aucun achat ni paiement n’est activé. `/about` présente la mission et l’approche du projet. `/community` propose des activités à partager et un outil de partage de leçons ; ce n’est pas encore un forum de membres. Les aperçus des cours proviennent des vidéos LSF originales sur YouTube et gardent les crédits des créateurs.
+## Learning records and privacy
 
-Tests du coach côté Python : `.venv/bin/python -m unittest discover -s tests`. Vérification réelle facultative et facturée par le fournisseur : `.venv/bin/python tests/verify_live_coach.py --live-api` depuis `ai-service/`. Elle utilise uniquement des exemples synthétiques en français et anglais, vérifie les réponses et suivis, puis synthèse → transcription → réponse → synthèse. Un mode de secours ne compte jamais comme un succès IA.
+EduSign keeps different signals separate so the report is understandable:
 
-## Démonstrations dans l’assistant
+| Record | Meaning |
+| --- | --- |
+| Practice completion | A learner’s declaration that they tried an activity. |
+| Video progress | Estimated active playback, unique coverage, and last position. Pauses, buffering, background time, and large seeks are excluded. |
+| Quiz score | Comprehension answers for a versioned quiz; saved results are recalculated on the server. |
+| Recognition result | Experimental demo feedback, not a certified signing score and not recorded as one. |
 
-Le mode « Trouver un signe » recherche les mots français/anglais dans un index local déterministe, sans appel au modèle de conversation. « hi » ouvre le clip HI de la bibliothèque du projet ; « bonjour » ouvre HELLO. La collection LSF sourcée utilise le clip Bonjour d’Elix. Les phrases inconnues ne produisent pas de traduction gestuelle inventée. La dictée et la lecture vocale nécessitent toujours le fournisseur vocal.
+Anonymous quiz attempts remain on the page. Signed-in results are saved to Supabase. Viewing progress does not establish attention or mastery; the last unsent interval can be lost if the connection closes. One account currently represents a shared notebook, without separate child profiles.
 
-La route authentifiée `/api/signs/[id]/video` délivre un lien Supabase temporaire pour un identifiant du catalogue uniquement. Les clés restent côté serveur. Voir [la bibliothèque et sa synchronisation](docs/SIGN_VIDEO_LIBRARY.md) et [les crédits des clips Elix](edusign-next/public/signs/ATTRIBUTION.md).
+Camera recordings capture no audio. Anonymous practice stays local; authenticated analysis sends up to 30 reduced JPEG frames to the Python service for in-memory processing. The service does not save those frames to disk. Dictation and spoken replies use the configured speech provider. The French/English coach prompt receives selected progress aggregates without the profile’s name or age, alongside conversation text supplied by the user.
+
+Private project clips are served through authenticated catalogue IDs and temporary signed URLs. A copied URL can remain usable until its one-hour expiry. Original local media is preserved in its existing public-assets location; private Storage does not retroactively make those source files private.
+
+## Current scope and next steps
+
+EduSign is a working discovery prototype with deliberately limited teaching scope.
+
+- **Learning content:** two workshops and a small sourced LSF clip collection. Review the pedagogy and demonstrations with qualified LSF contributors before expanding the curriculum.
+- **Gesture analysis:** the legacy model covers A/B/C and 1/2/3. Its class ordering is assumed, confidence is uncalibrated, and accuracy has not been validated for LSF. Feedback can be a match, a different prediction, or uncertain.
+- **Voice and devices:** automated bilingual speech checks exist; physical microphone and mobile-device coverage still need broader verification.
+- **Accounts:** no separate child profiles or persistent assistant history yet.
+- **Plans and community:** paid offers are informational; checkout and booking are not enabled. The community page provides activities and sharing, not a member forum.
+- **Deployment:** complete deployed authentication/email checks, content-rights review, and operational validation before a public launch.
+
+The [product plan](docs/EDUSIGN_PLAN.md) records implementation history and earlier verification snapshots. Later dated entries supersede older descriptions.
+
+## Product film
+
+The repository includes the sources for a **120-second, 1920 × 1080 launch film**: real application screenshots, editorial motion, English AI narration, captions, an original instrumental score, and a separately credited Elix source-video excerpt.
+
+See the [production guide and credits](launch-film/production-guide.html), [edit plan](launch-film/edit-plan.json), and [production record](launch-film/production-report.json).
+
+The MP4, narration, and source captures are local artifacts excluded from Git. When available, the main export is `launch-film/renders/EduSign-launch-120s.mp4`. Re-rendering requires the original capture/audio directories, FFmpeg, Pillow, NumPy, and the fonts documented by the renderer. The film is an animated product walkthrough, not continuous screen recording.
+
+## Documentation
+
+| Guide | Use it for |
+| --- | --- |
+| [Product plan](docs/EDUSIGN_PLAN.md) | Scope, decisions, implementation history, and verification notes |
+| [Authentication setup](docs/AUTH_SETUP.md) | Supabase email, Google OAuth, redirects, and account checks |
+| [Video library](docs/SIGN_VIDEO_LIBRARY.md) | Collections, media preparation, private storage, and bilingual lookup |
+| [Elix attribution](edusign-next/public/signs/ATTRIBUTION.md) | Source files, creators, conversion notes, and licenses |
+| [Web environment example](edusign-next/.env.local.example) | Web application configuration |
+| [AI environment example](ai-service/.env.example) | Provider and internal-service configuration |
+| [Workspace instructions](AGENTS.md) | Contribution rules and required checks |
+
+## Contributing
+
+Read [AGENTS.md](AGENTS.md) and the product plan before making architectural changes.
+
+1. Keep interface changes bilingual. Use the locale provider and add English copy and accessible labels to `edusign-next/src/lib/i18n/en.json`.
+2. Reuse the shared colour tokens in `edusign-next/src/app/globals.css` and `tailwind.config.ts`. Keep success and warning states distinct.
+3. Preserve source media, model weights, learner history, and creator credits. Never label an unverified collection as LSF.
+4. Version changed published quiz questions with a new quiz identifier so historical results retain their meaning.
+5. Run the relevant checks, review changed screens in a real browser, and state any interactions that remain unverified.
+6. Make focused commits with accurate descriptions. Keep credentials and generated media out of Git.
+
+## Sources and licensing
+
+- **Alphabet workshop:** MAE Langue des Signes. **Numbers workshop:** Dico Plus LSF. Lessons embed the original publications and retain creator attribution; their metadata is in the [LSF catalogue](edusign-next/src/lib/data/lsf-catalog.json).
+- **Sourced sign clips:** Elix — Signes de sens, distributed under **CC BY-SA 4.0**, with original URLs, license links, and adaptation notices in the [attribution file](edusign-next/public/signs/ATTRIBUTION.md).
+- **Imported project clips:** retained from the existing project. Their sign language is unverified; translated labels are search aids, not linguistic validation.
+
+EduSign is not affiliated with the referenced creators or dictionaries. Media retains its respective rights and licenses. No standalone project-wide `LICENSE` file is currently included; do not assume the application code or imported media has an open-source redistribution license.
