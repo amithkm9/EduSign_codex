@@ -8,20 +8,17 @@ An **AI-powered platform for learning French Sign Language (LSF)**, designed for
 
 **Ages 3–15 · French & English · Video lessons · AI learning assistant · Parent–child learning**
 
-[Watch the demo](#product-film) · [Explore the product](#the-product) · [Architecture](#architecture) · [Run locally](#run-locally)
+[Watch the demo](#watch-edusign) · [Explore the product](#the-product) · [Architecture](#architecture) · [Run locally](#run-locally)
 
 </div>
 
-<p align="center">
-  <a href="https://raw.githubusercontent.com/amithkm9/EduSign_codex/main/docs/media/EduSign-launch.mp4">
-    <img src="docs/media/EduSign-preview.jpg" alt="Watch the EduSign product film: a real application walkthrough with English narration, captions, and music" width="800">
-  </a>
-</p>
+## Watch EduSign
 
-<p align="center">
-  <a href="https://raw.githubusercontent.com/amithkm9/EduSign_codex/main/docs/media/EduSign-launch.mp4"><strong>▶ Watch the 2-minute EduSign film</strong></a><br>
-  1080p · English narration · Captions · Music
-</p>
+Press **Play** below to watch here in the README. Use the player’s **speaker control** to hear the narration and music.
+
+https://github.com/user-attachments/assets/c3237f88-99ec-4322-b64b-74215bad81e3
+
+*2 minutes · 1080p · English narration · Captions · Music*
 
 ---
 
@@ -448,9 +445,9 @@ The [product plan](docs/EDUSIGN_PLAN.md) records implementation history and earl
 
 ## Product film
 
-**[▶ Watch or download the product film](https://raw.githubusercontent.com/amithkm9/EduSign_codex/main/docs/media/EduSign-launch.mp4)** · [English captions](docs/media/EduSign-launch.en.srt)
+**[▶ Play the film in this README](#watch-edusign)** · [Download the MP4](docs/media/EduSign-launch.mp4) · [English captions](docs/media/EduSign-launch.en.srt)
 
-The **120-second, 1920 × 1080 launch film** combines real application screenshots, editorial motion, English AI narration, captions, an original instrumental score, and a separately credited Elix source-video excerpt. Click the preview at the top of this README to open the full MP4 with its embedded audio track.
+The **120-second, 1920 × 1080 launch film** combines real application screenshots, editorial motion, English AI narration, captions, an original instrumental score, and a separately credited Elix source-video excerpt. The GitHub video attachment above plays directly inside the README with its embedded audio track. It is the original `launch-film/renders/EduSign-launch-120s.mp4` export.
 
 See the [production guide and credits](launch-film/production-guide.html), [edit plan](launch-film/edit-plan.json), and [production record](launch-film/production-report.json).
 
