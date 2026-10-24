@@ -1,0 +1,5 @@
+audio/
+footage/
+renders/
+__pycache__/
+.demo-session.json

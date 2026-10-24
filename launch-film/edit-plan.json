@@ -1,0 +1,367 @@
+{
+  "title": "EduSign — Watch. Try. Connect.",
+  "status": "COMPLETE — animated walkthrough captured from the real application",
+  "duration_seconds": 120,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "fps": 30,
+  "frames": 3600,
+  "voice": "coral",
+  "disclosure": "AI-generated narration",
+  "final_logo_hold": [
+    118,
+    120
+  ],
+  "design": {
+    "graphics": "Warm cream, deep navy, soft green, restrained peach and yellow. Generous whitespace, understated type and soft shadows.",
+    "product": "Preserve the captured application exactly, including its existing blue controls. Do not recolor, rebuild, or generate interface screens.",
+    "motion": "Full interface to focused crop, gentle 1.00–1.06 scale changes, matched cuts, 8–12 frame dissolves. No fabricated cursor interactions.",
+    "captions": "English, burned in with a separate SRT. Word-aligned against actual narration.",
+    "audio": "Original instrumental score synthesized locally; ducked beneath narration. One consistent AI narrator; no speed changes."
+  },
+  "capture_rules": [
+    "Capture 1920×1080 or higher, 30 fps preferred. Browser content only; no desktop, tabs, credentials or notifications.",
+    "Use a clearly named demonstration account with no personal information. Record only activity genuinely performed in that account; do not seed invented metrics.",
+    "Allow 3 seconds before and after each action. Hold each result for at least 5 seconds. Preserve raw recordings.",
+    "Do not record login or credentials. Do not activate the camera unless a consenting participant provides genuine footage.",
+    "Keep creator attributions, collection labels, experimental notices and explanations readable.",
+    "Only use successfully captured video playback, AI responses, audio playback or recognition results. Log failures rather than replacing them with simulations.",
+    "A screenshot-only version must be identified as an animated walkthrough; cursor highlights are editorial emphasis, not evidence of live clicks."
+  ],
+  "scenes": [
+    {
+      "id": "01-opening",
+      "start": 0,
+      "end": 12,
+      "voice_start": 0.5,
+      "narration": "Every conversation starts with connection. Meet EduSign: a welcoming place for students and families to discover French Sign Language, together.",
+      "overlay": "Every conversation starts with connection.",
+      "shots": [
+        {
+          "time": [
+            0,
+            3.7
+          ],
+          "type": "opening",
+          "file": "Editorial graphics",
+          "action": "opening"
+        },
+        {
+          "time": [
+            3.7,
+            6.7
+          ],
+          "type": "logo",
+          "file": "Editorial graphics",
+          "action": "logo"
+        },
+        {
+          "time": [
+            6.7,
+            12
+          ],
+          "type": "screenshot",
+          "file": "03-home-en.png",
+          "action": "A welcoming place to begin."
+        }
+      ]
+    },
+    {
+      "id": "02-discover",
+      "start": 12,
+      "end": 28,
+      "voice_start": 12.5,
+      "narration": "Explore in French or English. The interface adapts to your preferred language, while the lessons stay in French Sign Language. Choose a workshop, and find a welcoming place to begin.",
+      "overlay": "Discover. Practise. Learn together.",
+      "shots": [
+        {
+          "time": [
+            12,
+            16
+          ],
+          "type": "screenshot",
+          "file": "01-home-fr.png",
+          "action": "Discover. Practise. Learn together."
+        },
+        {
+          "time": [
+            16,
+            20
+          ],
+          "type": "screenshot",
+          "file": "03-home-en.png",
+          "action": "Discover. Practise. Learn together."
+        },
+        {
+          "time": [
+            20,
+            24
+          ],
+          "type": "screenshot",
+          "file": "04-catalogue.png",
+          "action": "Two discoveries. One first step."
+        },
+        {
+          "time": [
+            24,
+            28
+          ],
+          "type": "screenshot",
+          "file": "04-catalogue.png",
+          "action": "Choose where to begin."
+        }
+      ]
+    },
+    {
+      "id": "03-workshops",
+      "start": 28,
+      "end": 48,
+      "voice_start": 28.7,
+      "narration": "Start with the alphabet and numbers. Follow video resources from credited creators, explore clear learning goals, and take time to observe. Pause, look again, and approach each activity at your own pace.",
+      "overlay": "Start with the alphabet and numbers.",
+      "shots": [
+        {
+          "time": [
+            28,
+            34
+          ],
+          "type": "screenshot",
+          "file": "05-alphabet.png",
+          "action": "Start with the alphabet and numbers."
+        },
+        {
+          "time": [
+            34,
+            41
+          ],
+          "type": "screenshot",
+          "file": "06-alphabet-player.png",
+          "action": "Observe. Pause. Look again."
+        },
+        {
+          "time": [
+            41,
+            48
+          ],
+          "type": "screenshot",
+          "file": "07-numbers.png",
+          "action": "Make a little room for discovery."
+        }
+      ]
+    },
+    {
+      "id": "04-practice",
+      "start": 48,
+      "end": 65,
+      "voice_start": 48.3,
+      "narration": "Move from watching to trying. Camera practice offers recording and replay. Comprehension quizzes explain each answer. Gesture analysis is experimental, and is not a validated assessment of French Sign Language.",
+      "overlay": "Watch. Try. Reflect.",
+      "persistent_notice": "Experimental gesture analysis",
+      "shots": [
+        {
+          "time": [
+            48,
+            54.4
+          ],
+          "type": "split",
+          "file": "08-camera-ready.png",
+          "action": "Watch. Try. Reflect."
+        },
+        {
+          "time": [
+            54.4,
+            57
+          ],
+          "type": "screenshot",
+          "file": "09-quiz-question.png",
+          "action": "A question to build understanding."
+        },
+        {
+          "time": [
+            57,
+            65
+          ],
+          "type": "screenshot",
+          "file": "10-quiz-explanation.png",
+          "action": "An answer. And an explanation."
+        }
+      ]
+    },
+    {
+      "id": "05-assistant",
+      "start": 65,
+      "end": 89,
+      "voice_start": 65.4,
+      "narration": "Need a little guidance? Find supported words in the video library. Sourced L S F clips are clearly separated from the project collection, whose sign language is unverified. The bilingual coach offers short learning plans, interactive questions, and voice controls for another way to connect.",
+      "overlay": "A little guidance, when you need it.",
+      "shots": [
+        {
+          "time": [
+            65,
+            68
+          ],
+          "type": "screenshot",
+          "file": "13-assistant-query.png",
+          "action": "A little guidance, when you need it."
+        },
+        {
+          "time": [
+            68,
+            70.6
+          ],
+          "type": "split",
+          "file": "24-lsf-demonstration.png",
+          "action": "A supported word. A sourced result."
+        },
+        {
+          "time": [
+            70.6,
+            73.6
+          ],
+          "type": "source",
+          "file": "bonjour.mp4",
+          "action": "Meet the sourced demonstration."
+        },
+        {
+          "time": [
+            73.6,
+            76.4
+          ],
+          "type": "screenshot",
+          "file": "12-assistant-project.png",
+          "action": "Know which collection you’re exploring."
+        },
+        {
+          "time": [
+            76.4,
+            80
+          ],
+          "type": "split",
+          "file": "15-coach-plan.png",
+          "action": "Guidance that gives you a starting point."
+        },
+        {
+          "time": [
+            80,
+            81.8
+          ],
+          "type": "split",
+          "file": "17-coach-question.png",
+          "action": "Make learning a conversation."
+        },
+        {
+          "time": [
+            81.8,
+            83.5
+          ],
+          "type": "split",
+          "file": "18-coach-feedback.png",
+          "action": "Make learning a conversation."
+        },
+        {
+          "time": [
+            83.5,
+            89
+          ],
+          "type": "split",
+          "file": "16-coach-voice.png",
+          "action": "Another way to connect."
+        }
+      ]
+    },
+    {
+      "id": "06-together",
+      "start": 89,
+      "end": 106,
+      "voice_start": 89.3,
+      "narration": "Bring practice, viewing progress, and quiz results together. Parent guidance and lesson sharing support regular steps. Records reflect activity and understanding, not certified signing ability.",
+      "overlay": "Make room for small, regular steps.",
+      "shots": [
+        {
+          "time": [
+            89,
+            91
+          ],
+          "type": "screenshot",
+          "file": "20-demo-report.png",
+          "action": "Make room for small, regular steps."
+        },
+        {
+          "time": [
+            91,
+            93.5
+          ],
+          "type": "screenshot",
+          "file": "21-report-results.png",
+          "action": "Activity and understanding, together."
+        },
+        {
+          "time": [
+            93.5,
+            97
+          ],
+          "type": "screenshot",
+          "file": "22-parent-guide.png",
+          "action": "The best role? Learning by their side."
+        },
+        {
+          "time": [
+            97,
+            100
+          ],
+          "type": "screenshot",
+          "file": "23-lesson-sharing.png",
+          "action": "One discovery, shared."
+        },
+        {
+          "time": [
+            100,
+            106
+          ],
+          "type": "screenshot",
+          "file": "21-report-results.png",
+          "action": "Activity and understanding, together."
+        }
+      ]
+    },
+    {
+      "id": "07-closing",
+      "start": 106,
+      "end": 120,
+      "voice_start": 106.3,
+      "narration": "Built around watching, trying, and learning together. A thoughtful starting point for discovering French Sign Language. EduSign. Watch. Try. Connect.",
+      "overlay": "EduSign / Watch. Try. Connect. / Discover French Sign Language, together.",
+      "shots": [
+        {
+          "time": [
+            106,
+            111
+          ],
+          "type": "screenshot",
+          "file": "03-home-en.png",
+          "action": "Discover French Sign Language, together."
+        },
+        {
+          "time": [
+            111,
+            118
+          ],
+          "type": "closing",
+          "file": "Editorial graphics",
+          "action": "closing"
+        },
+        {
+          "time": [
+            118,
+            120
+          ],
+          "type": "hold",
+          "file": "Editorial graphics",
+          "action": "hold"
+        }
+      ]
+    }
+  ]
+}
