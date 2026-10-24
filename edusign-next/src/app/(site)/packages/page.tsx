@@ -1,0 +1,238 @@
+import Link from "next/link";
+import {
+  ArrowRight,
+  Check,
+  HeartHandshake,
+  Sparkles,
+  Sprout,
+  CircleHelp,
+  BookOpen,
+} from "lucide-react";
+import { T } from "@/components/i18n/locale-provider";
+import { getTranslator } from "@/lib/i18n/server";
+import { getUser } from "@/lib/auth";
+
+export async function generateMetadata() {
+  const t = await getTranslator();
+  return {
+    title: t("Nos formules"),
+    description: t("Trois façons de découvrir la LSF, à votre rythme."),
+  };
+}
+const plans = [
+  {
+    id: "free",
+    name: "Découverte",
+    label: "VERSION GRATUITE",
+    icon: Sprout,
+    tint: "bg-[#d9efdf]",
+    price: "0 €",
+    cadence: "Pour commencer, tout simplement",
+    description:
+      "Vos premiers signes, vos premières découvertes, et le plaisir d’apprendre ensemble.",
+    features: [
+      "Les huit ateliers vidéo LSF",
+      "Activités à essayer en famille",
+      "Un carnet de pratique avec votre compte",
+      "Interface en français et en anglais",
+    ],
+    available: true,
+  },
+  {
+    id: "personal",
+    name: "Tuteur personnel",
+    label: "UN ACCOMPAGNEMENT INDIVIDUEL",
+    icon: HeartHandshake,
+    tint: "bg-[#ffe1ce]",
+    price: "À venir",
+    cadence: "Tarif et modalités à confirmer",
+    description:
+      "Un projet d’accompagnement individuel pour poser vos questions et avancer avec un tuteur.",
+    features: [
+      "Format de tutorat en préparation",
+      "Objectifs adaptés à vos besoins",
+      "Temps d’échange et conseils de pratique",
+      "Réservation disponible au lancement",
+    ],
+    available: false,
+  },
+  {
+    id: "subscription",
+    name: "Abonnement",
+    label: "POUR ALLER PLUS LOIN",
+    icon: Sparkles,
+    tint: "bg-[#dceaff]",
+    price: "À venir",
+    cadence: "Tarif et fréquence à confirmer",
+    description:
+      "Une formule en préparation pour accompagner une pratique régulière, au fil des découvertes.",
+    features: [
+      "Contenu et avantages en cours de définition",
+      "Un parcours pensé pour la régularité",
+      "Modalités présentées avant toute inscription",
+      "Aucun engagement ni paiement aujourd’hui",
+    ],
+    available: false,
+  },
+];
+export default async function Packages() {
+  const user = await getUser();
+  return (
+    <div className="container py-12 sm:py-16">
+      <header className="mx-auto max-w-3xl text-center">
+        <p className="eyebrow">
+          <T text="À CHACUN SA FAÇON D’APPRENDRE" />
+        </p>
+        <h1 className="mt-4 text-4xl font-extrabold leading-tight sm:text-6xl">
+          <T text="Un petit pas aujourd’hui." />
+          <br />
+          <span className="text-primary">
+            <T text="Un chemin à votre mesure." />
+          </span>
+        </h1>
+        <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
+          <T text="Commencez gratuitement. Découvrez aussi les accompagnements que nous préparons pour la suite." />
+        </p>
+      </header>
+      <div className="mt-12 grid items-stretch gap-6 lg:grid-cols-3">
+        {plans.map((plan) => (
+          <article
+            key={plan.id}
+            className={`relative flex flex-col rounded-[1.8rem] border bg-white p-7 sm:p-8 ${plan.available ? "border-primary/45 shadow-[0_12px_40px_-20px_rgba(36,54,107,.25)]" : "border-border"}`}
+          >
+            <div className="flex items-center justify-between gap-3">
+              <span
+                className={`grid size-14 place-items-center rounded-2xl ${plan.tint}`}
+              >
+                <plan.icon
+                  aria-hidden
+                  className="size-7 text-primary"
+                  strokeWidth={1.6}
+                />
+              </span>
+              <span
+                className={`rounded-full px-3 py-1.5 text-[11px] font-bold ${plan.available ? "bg-secondary text-primary" : "bg-background text-muted-foreground"}`}
+              >
+                <T
+                  text={
+                    plan.available ? "Disponible maintenant" : "En préparation"
+                  }
+                />
+              </span>
+            </div>
+            <p className="mt-7 text-[10px] font-bold tracking-widest text-muted-foreground">
+              <T text={plan.label} />
+            </p>
+            <h2 className="mt-2 text-2xl font-extrabold">
+              <T text={plan.name} />
+            </h2>
+            <p className="mt-3 min-h-20 text-sm leading-relaxed text-muted-foreground">
+              <T text={plan.description} />
+            </p>
+            <div className="my-6 border-y border-border py-5">
+              <p className="text-4xl font-extrabold tracking-tight">
+                <T text={plan.price} />
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                <T text={plan.cadence} />
+              </p>
+            </div>
+            <ul className="mb-8 flex-1 space-y-4">
+              {plan.features.map((feature) => (
+                <li
+                  key={feature}
+                  className="flex gap-3 text-sm leading-relaxed"
+                >
+                  <Check
+                    aria-hidden
+                    className="mt-0.5 size-4 shrink-0 text-primary"
+                  />
+                  <T text={feature} />
+                </li>
+              ))}
+            </ul>
+            {plan.available ? (
+              <Link
+                href={user ? "/courses" : "/register?redirectTo=%2Fcourses"}
+                className="flex min-h-12 items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-bold text-white hover:bg-primary/90"
+              >
+                <T
+                  text={user ? "Explorer les leçons" : "Commencer gratuitement"}
+                />
+                <ArrowRight aria-hidden className="size-4" />
+              </Link>
+            ) : (
+              <Link
+                href="#upcoming-plans"
+                className="flex min-h-12 items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-bold text-primary hover:bg-secondary"
+              >
+                <T text="En savoir plus sur le lancement" />
+                <ArrowRight aria-hidden className="size-4" />
+              </Link>
+            )}
+          </article>
+        ))}
+      </div>
+      <section
+        id="upcoming-plans"
+        className="mt-10 scroll-mt-28 rounded-3xl bg-[#fff0b5]/60 p-7 sm:p-9"
+      >
+        <div className="flex max-w-3xl gap-4">
+          <CircleHelp
+            aria-hidden
+            className="mt-1 size-6 shrink-0 text-primary"
+          />
+          <div>
+            <h2 className="text-xl font-bold">
+              <T text="Et les formules à venir ?" />
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              <T text="Le tutorat personnel et l’abonnement ne sont pas encore commercialisés. Leurs tarifs, leurs intervenants et leurs avantages seront précisés avant le lancement. Il n’y a actuellement ni réservation ni paiement à effectuer." />
+            </p>
+          </div>
+        </div>
+      </section>
+      <section className="mx-auto mt-16 max-w-3xl">
+        <p className="eyebrow">
+          <T text="TOUT SIMPLEMENT" />
+        </p>
+        <h2 className="mt-3 text-3xl font-extrabold">
+          <T text="Avant de vous lancer." />
+        </h2>
+        <div className="mt-6 divide-y divide-border">
+          {[
+            [
+              "Faut-il un compte pour regarder les leçons ?",
+              "Non. Les leçons et les activités sont accessibles librement. Un compte gratuit permet de garder une trace de votre pratique.",
+            ],
+            [
+              "Le tuteur personnel est-il l’assistant IA ?",
+              "L’assistant IA déjà présent aide à trouver une ressource ou une idée d’activité. Le projet de tutorat personnel est une offre distincte, dont les modalités restent à préciser.",
+            ],
+            [
+              "Dois-je ajouter une carte bancaire ?",
+              "Non. Aucune carte bancaire n’est demandée pour créer votre compte ou explorer les ateliers actuels.",
+            ],
+          ].map(([question, answer]) => (
+            <details key={question} className="group py-5">
+              <summary className="cursor-pointer py-1 font-semibold marker:text-primary">
+                <T text={question} />
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <T text={answer} />
+              </p>
+            </details>
+          ))}
+        </div>
+        <Link
+          href="/courses"
+          className="mt-7 inline-flex min-h-11 items-center gap-2 text-sm font-bold text-primary"
+        >
+          <BookOpen aria-hidden className="size-4" />
+          <T text="Découvrir les ateliers gratuits" />
+          <ArrowRight aria-hidden className="size-4" />
+        </Link>
+      </section>
+    </div>
+  );
+}
