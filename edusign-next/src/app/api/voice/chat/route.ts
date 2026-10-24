@@ -23,6 +23,8 @@ export async function POST(req: Request) {
     audio: body.audio,
     mime_type: body.mimeType,
     language: body.language,
+    intent: body.intent,
+    collection: body.collection,
     conversation_history: body.conversationHistory,
     voice_enabled: body.voiceEnabled,
     profile,

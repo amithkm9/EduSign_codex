@@ -19,11 +19,14 @@ export async function POST(req: Request) {
       { status: 400 },
     );
   const body = parsed.data;
-  const profile = body.action
-    ? null
-    : await getUserTutorProfile(user.id).catch(() => null);
+  const profile =
+    body.action || body.intent === "sign"
+      ? null
+      : await getUserTutorProfile(user.id).catch(() => null);
   return proxyToAiService("/tutor/chat", {
     message: body.message,
+    intent: body.intent,
+    collection: body.collection,
     language: body.language,
     conversation_history: body.conversationHistory,
     action: body.action,

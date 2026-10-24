@@ -92,10 +92,16 @@ def fallback_reply(message, history, language):
     return {"type": "general_help", "response": text, "resources": resource_items(ids, language), "suggestions": suggestions, "language": language, "mode": "fallback"}
 
 
-def process_french_message(message: str, history=None, profile=None, language='fr', action=None) -> dict:
+def process_french_message(message: str, history=None, profile=None, language='fr', action=None, intent='coach', collection='lsf') -> dict:
     language = "en" if language == "en" else "fr"
     if action:
         return practice_reply(action, language)
+    from .bilingual import reply_language
+    language = reply_language(message, language)
+    from .sign_lookup import sign_reply
+    demonstration = sign_reply(message, language, history, explicit=intent == "sign", collection=collection)
+    if demonstration:
+        return demonstration
     fallback = fallback_reply(message, history, language)
     if fallback.get("type") == "practice":
         return {"response": fallback, "language": language, "text_for_speech": fallback["response"]}

@@ -20,7 +20,8 @@ def speech_to_text(audio_b64: str, language: str = "fr", mime_type: str = "audio
     transcription = get_openai_client().audio.transcriptions.create(
         model=TRANSCRIBE_MODEL,
         file=("recording." + MIME_EXTENSIONS[mime_type], audio_bytes, mime_type),
-        language="en" if language == "en" else "fr",
+        # Let the transcription model detect spoken language; the UI is only
+        # a fallback for ambiguous text, never a forced audio language.
     )
     return (transcription.text or "").strip()[:2000]
 

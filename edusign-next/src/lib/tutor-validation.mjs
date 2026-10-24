@@ -22,6 +22,8 @@ export const actionSchema = z.discriminatedUnion("kind", [
   }),
 ]);
 export const tutorChatSchema = z.object({
+  intent: z.enum(["sign", "coach"]).default("coach"),
+  collection: z.enum(["project", "lsf"]).default("lsf"),
   message: z.string().trim().min(1).max(2000),
   language,
   conversationHistory: history,
@@ -39,6 +41,8 @@ export const transcriptionSchema = z.object({
   language,
 });
 export const voiceChatSchema = transcriptionSchema.extend({
+  intent: z.enum(["sign", "coach"]).default("coach"),
+  collection: z.enum(["project", "lsf"]).default("lsf"),
   conversationHistory: history,
   voiceEnabled: z.boolean().default(true),
 });

@@ -12,7 +12,8 @@ Un espace de découverte de la **langue des signes française (LSF)** pour les �
 - Recherche et filtres par thème, objectifs simples et conseils aux parents.
 - Authentification et données d’apprentissage dans Supabase : e-mail et intégration Google OAuth (activation du fournisseur requise).
 - Aperçus des vidéos dans les cartes de cours, pages Formules, À propos et Communauté avec partage de leçons.
-- Assistant en français ou en anglais, à l’écrit et par la voix lorsque le service IA est disponible.
+- Assistant en français ou en anglais : un mot saisi ou dicté ouvre sa démonstration vidéo ; coach interactif disponible dans un second mode.
+- Bibliothèque du projet : 354 clips dans Supabase privé, recherche bilingue, ralenti et boucle. Collection LSF sourcée distincte de six clips Elix.
 
 Une activité terminée est une **déclaration de pratique**, pas une évaluation des gestes. Le lecteur détecte la fin de la vidéo via l’API IFrame YouTube pour ouvrir le défi caméra. La lecture active dans l’onglet visible est estimée et enregistrée ; les pauses, le buffering, les sauts et le visionnage sur le site YouTube sont exclus. Ce suivi ne mesure pas l’attention. Les scores des quiz portent sur la compréhension et les exercices de lettres/nombres, pas sur la qualité des gestes. Un compte représente un carnet partagé, sans profils enfants séparés.
 
@@ -53,7 +54,7 @@ cp .env.example .env
 
 `OPENAI_API_KEY` reste dans le fichier ignoré `ai-service/.env`. Redémarrez le service après un changement de clé. Les modèles sont configurables via `OPENAI_TUTOR_MODEL` (gpt-4o-mini), `OPENAI_TRANSCRIBE_MODEL` (gpt-transcribe) et `OPENAI_TTS_MODEL` (gpt-4o-mini-tts).
 
-L’assistant propose des programmes courts, des questions interactives corrigées côté serveur et des liens LSF vérifiés. La conversation reste dans la session de la page ; FR / EN conserve les messages et change la langue des nouveaux échanges. Le service reçoit les derniers messages et uniquement des agrégats de progression pour la personnalisation, sans nom ni âge dans le prompt. La connexion fournisseur est vérifiée et mise en cache pendant 60 secondes ; un statut connecté ne garantit pas les quotas de chaque modèle vocal. Les réponses de secours sont explicitement marquées « Réponse guidée ».
+L’assistant propose des programmes courts, des questions interactives corrigées côté serveur et des liens LSF vérifiés. La conversation reste dans la session de la page ; FR / EN conserve les messages et change la langue de l’interface. Les nouveaux échanges suivent la langue détectée du message ; les mots ambigus utilisent la langue de l’interface. Le service reçoit les derniers messages et uniquement des agrégats de progression pour la personnalisation, sans nom ni âge dans le prompt. La connexion fournisseur est vérifiée et mise en cache pendant 60 secondes ; un statut connecté ne garantit pas les quotas de chaque modèle vocal. Les réponses de secours sont explicitement marquées « Réponse guidée ».
 
 La dictée enregistre au maximum 60 secondes, respecte le format réel du navigateur (notamment MP4 sur Safari), puis propose une transcription modifiable avant envoi. Annuler ou masquer l’onglet arrête la capture. Chaque réponse peut être écoutée ; la lecture automatique est facultative. Les exercices guidés ne nécessitent pas de clé OpenAI, mais nécessitent le service Python. Sans service IA, les leçons restent accessibles.
 
@@ -82,7 +83,7 @@ Les tests HTTP nécessitent le serveur sur le port 3100. Les tests `verify-auth.
 
 ## Ressources et attribution
 
-Les vidéos sont intégrées depuis leurs publications d’origine, sans téléchargement ni réhébergement. Les auteurs sont crédités sur chaque leçon : [MAE Langue des Signes](https://www.maelanguedessignes.com/didactique-lsf) et [Dico Plus LSF](https://karinevermot.wixsite.com/website-1/post/lsf-point-par-point-les-nombres). Le catalogue versionné se trouve dans `edusign-next/src/lib/data/lsf-catalog.json`.
+Les vidéos des leçons sont intégrées depuis leurs publications d’origine, sans téléchargement ni réhébergement. Les auteurs sont crédités sur chaque leçon : [MAE Langue des Signes](https://www.maelanguedessignes.com/didactique-lsf) et [Dico Plus LSF](https://karinevermot.wixsite.com/website-1/post/lsf-point-par-point-les-nombres). Le catalogue versionné se trouve dans `edusign-next/src/lib/data/lsf-catalog.json`.
 
 Les liens de découverte incluent [Le Dico Elix](https://dico.elix-lsf.fr/) et [LSF DICO — INJS de Metz](https://lsfdico.injs-metz.fr/). EduSign n’est pas affilié à ces organismes.
 
@@ -90,7 +91,7 @@ Le dépôt cible est [EduSign_codex](https://github.com/amithkm9/EduSign_codex).
 
 ## Développement avec Codex
 
-Les instructions du dépôt sont dans [AGENTS.md](AGENTS.md). Le sélecteur FR / EN mémorise la langue dans un cookie ; les vidéos restent en LSF. Les traductions de l’interface sont locales et ne nécessitent aucun appel IA. Ce dépôt démarre un nouvel historique Git à partir du code EduSign existant. Les commits d’import organisent le projet actuel et ne représentent pas les dates de création initiale de chaque fonctionnalité.
+Les instructions du dépôt sont dans [AGENTS.md](AGENTS.md). Le sélecteur FR / EN mémorise la langue dans un cookie ; les vidéos des leçons restent en LSF. La collection importée de l’assistant est explicitement marquée « Langue non vérifiée ». Les traductions de l’interface sont locales et ne nécessitent aucun appel IA. Ce dépôt démarre un nouvel historique Git à partir du code EduSign existant. Les commits d’import organisent le projet actuel et ne représentent pas les dates de création initiale de chaque fonctionnalité.
 
 ## Comptes et nouvelles pages
 
@@ -99,3 +100,9 @@ Les instructions du dépôt sont dans [AGENTS.md](AGENTS.md). Le sélecteur FR /
 `/packages` présente la découverte gratuite, le tutorat personnel et l’abonnement. Les offres Standard et Tuteur personnel sont en préparation. Leurs prix mensuels et le contact écoles sont configurables côté serveur (`EDUSIGN_STANDARD_MONTHLY_EUR`, `EDUSIGN_TUTOR_MONTHLY_EUR`, `EDUSIGN_SCHOOLS_EMAIL`) ; le Tuteur personnel est affiché à 99 €/mois et le contact écoles est amithkm9@gmail.com. Le prix Standard reste à confirmer. Aucun achat ni paiement n’est activé. `/about` présente la mission et l’approche du projet. `/community` propose des activités à partager et un outil de partage de leçons ; ce n’est pas encore un forum de membres. Les aperçus des cours proviennent des vidéos LSF originales sur YouTube et gardent les crédits des créateurs.
 
 Tests du coach côté Python : `.venv/bin/python -m unittest discover -s tests`. Vérification réelle facultative et facturée par le fournisseur : `.venv/bin/python tests/verify_live_coach.py --live-api` depuis `ai-service/`. Elle utilise uniquement des exemples synthétiques en français et anglais, vérifie les réponses et suivis, puis synthèse → transcription → réponse → synthèse. Un mode de secours ne compte jamais comme un succès IA.
+
+## Démonstrations dans l’assistant
+
+Le mode « Trouver un signe » recherche les mots français/anglais dans un index local déterministe, sans appel au modèle de conversation. « hi » ouvre le clip HI de la bibliothèque du projet ; « bonjour » ouvre HELLO. La collection LSF sourcée utilise le clip Bonjour d’Elix. Les phrases inconnues ne produisent pas de traduction gestuelle inventée. La dictée et la lecture vocale nécessitent toujours le fournisseur vocal.
+
+La route authentifiée `/api/signs/[id]/video` délivre un lien Supabase temporaire pour un identifiant du catalogue uniquement. Les clés restent côté serveur. Voir [la bibliothèque et sa synchronisation](docs/SIGN_VIDEO_LIBRARY.md) et [les crédits des clips Elix](edusign-next/public/signs/ATTRIBUTION.md).

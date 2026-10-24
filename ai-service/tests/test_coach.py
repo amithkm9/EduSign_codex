@@ -54,7 +54,7 @@ class CoachTests(unittest.TestCase):
 
 class VoiceTests(unittest.TestCase):
     @patch('app.voice.get_openai_client')
-    def test_safari_mp4_and_webm_preserve_format_and_language(self, client):
+    def test_safari_mp4_and_webm_preserve_format_and_detect_spoken_language(self, client):
         client.return_value.audio.transcriptions.create.return_value = SimpleNamespace(text=' Bonjour ')
         encoded = base64.b64encode(b'a' * 200).decode()
         for language, mime, extension in [('fr', 'audio/mp4', 'mp4'), ('en', 'audio/webm', 'webm')]:
@@ -62,7 +62,7 @@ class VoiceTests(unittest.TestCase):
             args = client.return_value.audio.transcriptions.create.call_args.kwargs
             self.assertEqual(args['file'][0], 'recording.' + extension)
             self.assertEqual(args['file'][2], mime)
-            self.assertEqual(args['language'], language)
+            self.assertNotIn('language', args)
         for audio in ['not base64!', base64.b64encode(b'a').decode()]:
             with self.assertRaises(ValueError): speech_to_text(audio)
 

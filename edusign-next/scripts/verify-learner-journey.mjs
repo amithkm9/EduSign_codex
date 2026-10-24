@@ -43,7 +43,7 @@ try {
   };
   for (const [path, french, english] of [
     ["/dashboard", "Mon carnet", "My discovery journal"],
-    ["/tutor", "Un peu d’aide.", "A little guidance."],
+    ["/tutor", "Apprenons un signe.", "Let’s learn a sign."],
     ["/report", "Mon bilan", "My discovery report"],
     [
       "/learn/lsf-alphabet",

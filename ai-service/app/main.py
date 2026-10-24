@@ -49,7 +49,7 @@ def tutor_chat(req: ChatRequest):
         result = process_message(
             req.message, req.language, _history(req.conversation_history),
             req.profile.model_dump() if req.profile else None,
-            req.action.model_dump() if req.action else None,
+            req.action.model_dump() if req.action else None, req.intent, req.collection,
         )
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid exercise answer.")
@@ -131,13 +131,14 @@ def voice_chat(req: VoiceChatRequest):
         req.language,
         _history(req.conversation_history),
         req.profile.model_dump() if req.profile else None,
+        intent=req.intent, collection=req.collection,
     )
 
     audio = None
     audio_error = False
     if req.voice_enabled and result["text_for_speech"]:
         try:
-            audio = text_to_speech(clean_for_speech(result["text_for_speech"]), language=hint)
+            audio = text_to_speech(clean_for_speech(result["text_for_speech"]), language=result["language"])
         except Exception:
             audio_error = True
 

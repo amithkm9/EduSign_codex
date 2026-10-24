@@ -1,6 +1,12 @@
 // Integration test: one temporary account; no email; no credentials printed.
 import assert from "node:assert/strict";
-import { randomUUID, randomBytes } from "node:crypto";
+import { readFile } from "node:fs/promises";
+const catalog = JSON.parse(
+  await readFile(
+    new URL("../src/lib/data/project-sign-videos.json", import.meta.url),
+  ),
+);
+import { createHash, randomUUID, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { supabaseConfig, safeError } from "./env.mjs";
@@ -41,8 +47,8 @@ try {
     "Content-Type": "application/json",
   };
   for (const [language, heading] of [
-    ["fr", "Un peu d’aide."],
-    ["en", "A little guidance."],
+    ["fr", "Apprenons un signe."],
+    ["en", "Let’s learn a sign."],
   ]) {
     const page = await fetch(base + "/tutor", {
       headers: {
@@ -101,6 +107,93 @@ try {
       language,
     );
   }
+  for (const [language, message, expected] of [
+    ["en", "How do I teach my child to sign hi?", "project-hi"],
+    ["fr", "Montre-moi bonjour", "project-hello"],
+    ["en", "bonjour", "project-hello"],
+    ["fr", "hello", "project-hello"],
+  ]) {
+    const res = await fetch(base + "/api/tutor/chat", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        message,
+        language,
+        intent: "sign",
+        collection: "project",
+      }),
+    });
+    assert.equal(res.status, 200);
+    const reply = (await res.json()).response;
+    assert.equal(reply.mode, "library");
+    assert.deepEqual(reply.sign_ids, [expected]);
+    const expectedLanguage =
+      message === "bonjour" ? "fr" : message === "hello" ? "en" : language;
+    assert.equal(reply.language, expectedLanguage);
+    assert.ok(
+      reply.response.startsWith(
+        expectedLanguage === "fr" ? "Voici" : "Here is",
+      ),
+    );
+    const video = await fetch(base + "/api/signs/" + expected + "/video", {
+      headers,
+      redirect: "manual",
+    });
+    assert.equal(video.status, 307);
+    assert.equal(video.headers.get("cache-control"), "private, no-store");
+    const signed = video.headers.get("location");
+    const media = await fetch(signed);
+    assert.equal(media.status, 200);
+    assert.ok(media.headers.get("content-type").includes("video/mp4"));
+    const bytes = Buffer.from(await media.arrayBuffer());
+    const item = catalog.find((x) => x.id === expected);
+    assert.equal(
+      createHash("sha256").update(bytes).digest("hex"),
+      item.mp4sha256,
+    );
+    const range = await fetch(signed, { headers: { range: "bytes=0-99" } });
+    assert.equal(range.status, 206);
+    assert.equal((await range.arrayBuffer()).byteLength, 100);
+    const publicMedia = await fetch(
+      url +
+        "/storage/v1/object/public/" +
+        item.storage.bucket +
+        "/" +
+        item.storage.path,
+    );
+    assert.notEqual(publicMedia.status, 200);
+    console.log(
+      "PASS word-to-video, private storage, SHA-256 and seeking",
+      language,
+    );
+  }
+  for (const [collection, message, expected] of [
+    ["lsf", "hi", "bonjour"],
+    ["project", "unknownunavailableword", null],
+  ]) {
+    const res = await fetch(base + "/api/tutor/chat", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        message,
+        language: "en",
+        intent: "sign",
+        collection,
+      }),
+    });
+    assert.equal(res.status, 200);
+    const reply = (await res.json()).response;
+    if (expected) assert.ok(reply.sign_ids.includes(expected));
+    else assert.deepEqual(reply.sign_ids, []);
+  }
+  assert.equal((await fetch(base + "/api/signs/project-hi/video")).status, 401);
+  assert.equal(
+    (await fetch(base + "/api/signs/not-in-catalog/video", { headers })).status,
+    404,
+  );
+  console.log(
+    "PASS video authentication, unknown words and separate LSF collection",
+  );
   const status = await fetch(base + "/api/tutor/status", { headers });
   assert.equal(status.status, 200);
   assert.ok(

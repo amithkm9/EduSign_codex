@@ -35,6 +35,8 @@ class TutorProfile(BaseModel):
 
 
 class ChatRequest(BaseModel):
+    intent: Literal["sign", "coach"] = "coach"
+    collection: Literal["project", "lsf"] = "lsf"
     message: str = Field(min_length=1, max_length=2000)
     language: Literal["fr", "en"] = "fr"
     conversation_history: list[ChatMessage] = Field(default_factory=list, max_length=20)
@@ -49,6 +51,8 @@ class TranscribeRequest(BaseModel):
 
 
 class VoiceChatRequest(TranscribeRequest):
+    intent: Literal["sign", "coach"] = "coach"
+    collection: Literal["project", "lsf"] = "lsf"
     conversation_history: list[ChatMessage] = Field(default_factory=list, max_length=20)
     voice_enabled: bool = True
     profile: Optional[TutorProfile] = None

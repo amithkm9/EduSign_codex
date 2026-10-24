@@ -1,0 +1,187 @@
+[
+  {
+    "id": "bonjour",
+    "label": {
+      "fr": "Bonjour",
+      "en": "Hello"
+    },
+    "aliases": [
+      "bonjour",
+      "hi",
+      "hello",
+      "hey",
+      "salut",
+      "coucou",
+      "good morning",
+      "good afternoon"
+    ],
+    "language": "LSF",
+    "src": "/signs/bonjour.mp4",
+    "originalSrc": "/signs/bonjour.webm",
+    "creator": "Elix — Signes de sens",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bonjour_Nm_1_1_1_-_Elix.webm",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Bonjour_Nm_1_1_1_-_Elix.webm",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "checkedAt": "2026-10-24",
+    "changes": {
+      "fr": "Conversion MP4 ; geste inchangé.",
+      "en": "Converted to MP4; signing unchanged."
+    },
+    "parentTip": {
+      "fr": "Saluez votre enfant, puis échangez les rôles.",
+      "en": "Greet your child, then swap roles."
+    }
+  },
+  {
+    "id": "chapeau",
+    "label": {
+      "fr": "Chapeau",
+      "en": "Hat"
+    },
+    "aliases": [
+      "chapeau",
+      "chapeaux",
+      "hat",
+      "hats"
+    ],
+    "language": "LSF",
+    "src": "/signs/chapeau.mp4",
+    "originalSrc": "/signs/chapeau.webm",
+    "creator": "Elix — Signes de sens",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chapeau_Nm_2_1_1_-_Elix.webm",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/44/Chapeau_Nm_2_1_1_-_Elix.webm",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "checkedAt": "2026-10-24",
+    "changes": {
+      "fr": "Conversion MP4 ; geste inchangé.",
+      "en": "Converted to MP4; signing unchanged."
+    },
+    "parentTip": {
+      "fr": "Montrez un chapeau, regardez le signe et essayez chacun votre tour.",
+      "en": "Point to a hat, watch the sign and take turns trying it."
+    }
+  },
+  {
+    "id": "chaussure",
+    "label": {
+      "fr": "Chaussure",
+      "en": "Shoe"
+    },
+    "aliases": [
+      "chaussure",
+      "chaussures",
+      "shoe",
+      "shoes"
+    ],
+    "language": "LSF",
+    "src": "/signs/chaussure.mp4",
+    "originalSrc": "/signs/chaussure.webm",
+    "creator": "Elix — Signes de sens",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chaussure_Nf_1_1_1_-_Elix.webm",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bf/Chaussure_Nf_1_1_1_-_Elix.webm",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "checkedAt": "2026-10-24",
+    "changes": {
+      "fr": "Conversion MP4 ; geste inchangé.",
+      "en": "Converted to MP4; signing unchanged."
+    },
+    "parentTip": {
+      "fr": "Choisissez une chaussure et cherchez ensemble le signe dans la vidéo.",
+      "en": "Choose a shoe and watch its sign together."
+    }
+  },
+  {
+    "id": "citron",
+    "label": {
+      "fr": "Citron",
+      "en": "Lemon"
+    },
+    "aliases": [
+      "citron",
+      "citrons",
+      "lemon",
+      "lemons"
+    ],
+    "language": "LSF",
+    "src": "/signs/citron.mp4",
+    "originalSrc": "/signs/citron.webm",
+    "creator": "Elix — Signes de sens",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Citron_Nm_1_1_1_-_Elix.webm",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/65/Citron_Nm_1_1_1_-_Elix.webm",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "checkedAt": "2026-10-24",
+    "changes": {
+      "fr": "Conversion MP4 ; geste inchangé.",
+      "en": "Converted to MP4; signing unchanged."
+    },
+    "parentTip": {
+      "fr": "Trouvez un citron ou son image, puis regardez et essayez ensemble.",
+      "en": "Find a lemon or a picture of one, then watch and try together."
+    }
+  },
+  {
+    "id": "cochon",
+    "label": {
+      "fr": "Cochon",
+      "en": "Pig"
+    },
+    "aliases": [
+      "cochon",
+      "cochons",
+      "pig",
+      "pigs",
+      "piggy"
+    ],
+    "language": "LSF",
+    "src": "/signs/cochon.mp4",
+    "originalSrc": "/signs/cochon.webm",
+    "creator": "Elix — Signes de sens",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cochon_Nm_1_1_1_-_Elix.webm",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/4f/Cochon_Nm_1_1_1_-_Elix.webm",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "checkedAt": "2026-10-24",
+    "changes": {
+      "fr": "Conversion MP4 ; geste inchangé.",
+      "en": "Converted to MP4; signing unchanged."
+    },
+    "parentTip": {
+      "fr": "Retrouvez un cochon dans un livre et essayez le signe chacun votre tour.",
+      "en": "Find a pig in a book and take turns trying the sign."
+    }
+  },
+  {
+    "id": "champignon",
+    "label": {
+      "fr": "Champignon",
+      "en": "Mushroom"
+    },
+    "aliases": [
+      "champignon",
+      "champignons",
+      "mushroom",
+      "mushrooms"
+    ],
+    "language": "LSF",
+    "src": "/signs/champignon.mp4",
+    "originalSrc": "/signs/champignon.webm",
+    "creator": "Elix — Signes de sens",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Champignon_Nm_1_1_1_-_Elix.webm",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/1/1f/Champignon_Nm_1_1_1_-_Elix.webm",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "checkedAt": "2026-10-24",
+    "changes": {
+      "fr": "Conversion MP4 ; geste inchangé.",
+      "en": "Converted to MP4; signing unchanged."
+    },
+    "parentTip": {
+      "fr": "Montrez une image de champignon, puis comparez votre essai à la vidéo.",
+      "en": "Point to a picture of a mushroom, then compare your attempt with the video."
+    }
+  }
+]

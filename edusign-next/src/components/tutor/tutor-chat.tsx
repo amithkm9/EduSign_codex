@@ -12,14 +12,20 @@ import {
   Loader2,
   Mic,
   Plus,
+  Play,
+  MessageCircle,
   Sparkles,
   Square,
   X,
 } from "lucide-react";
 import { useLocale } from "@/components/i18n/locale-provider";
-import type { Locale } from "@/lib/i18n/translate";
+import { translate, type Locale } from "@/lib/i18n/translate";
 import { safeTutorResource } from "@/lib/tutor-resources.mjs";
 import { useTutorVoice } from "./use-tutor-voice";
+import { SignVideoCard } from "./sign-video-card";
+import signCatalog from "@/lib/data/sign-videos.json";
+import projectCatalog from "@/lib/data/project-sign-videos.json";
+import { SignLibrary } from "./sign-library";
 
 type Action =
   | { kind: "practice"; exercise_id?: string }
@@ -32,6 +38,8 @@ type Message = {
   resources?: { title: string; url: string }[];
   suggestions?: string[];
   mode?: string;
+  sign_ids?: string[];
+  collection?: "project" | "lsf";
   exercise?: { id: string; question: string; choices: string[] };
   exercise_result?: { correct: boolean };
   answered?: boolean;
@@ -66,6 +74,19 @@ const starters = [
 
 export function TutorChat() {
   const { t, locale } = useLocale();
+  const [intent, setIntent] = useState<"sign" | "coach">("sign");
+  const [collection, setCollection] = useState<"project" | "lsf">("project");
+  const featured =
+    collection === "lsf"
+      ? signCatalog
+      : [
+          "project-hi",
+          "project-hello",
+          "project-bye",
+          "project-mother",
+          "project-water",
+          "project-apple",
+        ].map((id) => projectCatalog.find((item) => item.id === id)!);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -74,7 +95,9 @@ export function TutorChat() {
   const [automaticAudio, setAutomaticAudio] = useState(false);
   const request = useRef<AbortController | null>(null);
   const busy = useRef(false);
-  const end = useRef<HTMLDivElement>(null);
+  const [selectedSign, setSelectedSign] = useState<string | null>(null);
+  const messageLog = useRef<HTMLDivElement>(null);
+  const latestReply = useRef<HTMLElement>(null);
   const composer = useRef<HTMLTextAreaElement>(null);
   const voice = useTutorVoice(locale, (text) => {
     setInput((previous) =>
@@ -99,11 +122,23 @@ export function TutorChat() {
     };
   }, []);
   useEffect(() => {
-    if (messages.length || loading)
-      end.current?.scrollIntoView({ block: "nearest" });
+    if (!messageLog.current) return;
+    if (
+      !loading &&
+      messages.at(-1)?.role === "assistant" &&
+      latestReply.current
+    ) {
+      messageLog.current.scrollTop = latestReply.current.offsetTop;
+    } else messageLog.current.scrollTop = messageLog.current.scrollHeight;
   }, [messages, loading]);
   const capturing = voice.phase !== "idle";
-  async function send(text: string, action?: Action, exerciseMessage?: string) {
+  async function send(
+    text: string,
+    action?: Action,
+    exerciseMessage?: string,
+    requestedIntent?: "sign" | "coach",
+    requestedLanguage: Locale = locale,
+  ) {
     const value = text.trim();
     if (!value || busy.current || capturing) return;
     busy.current = true;
@@ -115,15 +150,13 @@ export function TutorChat() {
     request.current = controller;
     const timeout = setTimeout(() => controller.abort(), 65000);
     const userId = crypto.randomUUID();
-    const history = messages
-      .slice(-12)
-      .map((m) => ({
-        role: m.role,
-        content: [m.text, m.exercise?.question, m.exercise?.choices.join("; ")]
-          .filter(Boolean)
-          .join("\n")
-          .slice(0, 4000),
-      }));
+    const history = messages.slice(-12).map((m) => ({
+      role: m.role,
+      content: [m.text, m.exercise?.question, m.exercise?.choices.join("; ")]
+        .filter(Boolean)
+        .join("\n")
+        .slice(0, 4000),
+    }));
     setMessages((previous) => [
       ...previous,
       { id: userId, role: "user", text: value, language: locale },
@@ -135,9 +168,11 @@ export function TutorChat() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: value,
-          language: locale,
+          language: requestedLanguage,
           conversationHistory: history,
           action,
+          intent: action ? "coach" : (requestedIntent ?? intent),
+          collection,
         }),
         signal: controller.signal,
       });
@@ -148,7 +183,10 @@ export function TutorChat() {
         id: crypto.randomUUID(),
         role: "assistant",
         text: data.response.response,
-        language: locale,
+        language:
+          data.language === "fr" || data.language === "en"
+            ? data.language
+            : locale,
       };
       setMessages((previous) => [
         ...previous.map((m) =>
@@ -156,13 +194,15 @@ export function TutorChat() {
         ),
         reply,
       ]);
+      if (reply.sign_ids) setSelectedSign(reply.sign_ids[0] ?? null);
+      if (reply.collection) setCollection(reply.collection);
       if (reply.mode === "fallback") setConnection("unavailable");
       if (reply.mode === "ai") setConnection("ready");
       if (automaticAudio)
         void voice.speak(
           reply.id,
           reply.text + (reply.exercise ? " " + reply.exercise.question : ""),
-          locale,
+          reply.language,
         );
     } catch {
       setMessages((previous) => previous.filter((m) => m.id !== userId));
@@ -183,392 +223,578 @@ export function TutorChat() {
     voice.stopSpeech();
     voice.setError("");
     setMessages([]);
+    setSelectedSign(null);
     setInput("");
     setError("");
     composer.current?.focus();
   }
   const latest = messages.at(-1);
+  const catalog = [...projectCatalog, ...signCatalog];
+  const selectedLanguage =
+    messages.findLast((m) => m.sign_ids?.includes(selectedSign ?? ""))
+      ?.language ?? locale;
+  const recentSigns = [
+    ...new Set(messages.flatMap((m) => m.sign_ids || [])),
+  ].slice(-8);
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_260px]">
-      <section
-        aria-label={t("Conversation avec l’assistant")}
-        className="min-w-0 overflow-hidden rounded-[28px] border bg-white shadow-sm"
-      >
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-4 sm:px-7">
-          <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary text-white">
-              <Sparkles size={21} aria-hidden="true" />
-            </span>
-            <div>
-              <h2 className="font-bold">{t("Votre coach EduSign")}</h2>
-              <p className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <span
-                  className={`h-1.5 w-1.5 rounded-full ${connection === "ready" ? "bg-emerald-600" : "bg-amber-600"}`}
-                />
-                {t(
-                  connection === "checking"
-                    ? "Connexion en cours…"
-                    : connection === "ready"
-                      ? "Assistant IA · connecté"
-                      : "Mode guidé · IA indisponible",
-                )}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={reset}
-            disabled={loading || messages.length === 0}
-            className="flex min-h-10 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold hover:bg-muted disabled:opacity-40"
-          >
-            <Plus size={15} />
-            {t("Nouvelle conversation")}
-          </button>
-        </div>
+    <div className="overflow-hidden rounded-3xl border border-[#dce3de] bg-white shadow-[0_16px_60px_-30px_rgba(25,55,44,0.22)]">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e7ece8] px-5 py-3 sm:px-7">
         <div
-          className="max-h-[580px] min-h-[360px] overflow-y-auto overscroll-contain px-5 py-7 sm:px-7"
-          role="log"
-          aria-label={t("Messages")}
-          aria-live="polite"
-          aria-relevant="additions text"
+          role="group"
+          aria-label={t("Que souhaitez-vous faire ?")}
+          className="flex gap-1 rounded-full bg-[#f1f4f1] p-1"
         >
-          {messages.length === 0 ? (
-            <div className="py-3">
-              <p className="text-xs font-bold uppercase tracking-[0.14em] text-primary">
-                {t("APPRENDRE, UN ÉCHANGE À LA FOIS")}
-              </p>
-              <h3 className="mt-3 max-w-md text-3xl font-bold leading-tight tracking-tight">
-                {t("Qu’aimeriez-vous apprendre aujourd’hui ?")}
-              </h3>
-              <p className="mt-3 max-w-lg text-sm leading-6 text-muted-foreground">
-                {t(
-                  "Une question, un petit programme ou une activité : trouvons votre prochain pas en langue des signes française.",
-                )}
-              </p>
-              <div className="mt-7 grid gap-3 sm:grid-cols-2">
-                {starters.map(
-                  ({ icon: Icon, title, detail, prompt, action }) => (
-                    <button
-                      key={title}
-                      onClick={() => void send(t(prompt), action)}
-                      disabled={capturing}
-                      className="group rounded-2xl border bg-[#fafbf8] p-4 text-left transition hover:border-primary/40 hover:bg-primary/5 disabled:opacity-50"
-                    >
-                      <div className="mb-3 flex items-center justify-between">
-                        <Icon size={20} className="text-primary" />
-                        <ArrowUpRight
-                          size={16}
-                          className="text-muted-foreground group-hover:text-primary"
-                        />
-                      </div>
-                      <span className="block text-sm font-bold">
-                        {t(title)}
-                      </span>
-                      <span className="mt-1 block text-xs leading-5 text-muted-foreground">
-                        {t(detail)}
-                      </span>
-                    </button>
-                  ),
-                )}
-              </div>
-            </div>
+          {(["sign", "coach"] as const).map((mode) => (
+            <button
+              key={mode}
+              aria-pressed={intent === mode}
+              disabled={loading || capturing}
+              onClick={() => {
+                setIntent(mode);
+                voice.stopSpeech();
+              }}
+              className={`flex min-h-10 items-center gap-2 rounded-full px-4 text-xs font-semibold transition disabled:opacity-50 ${intent === mode ? "bg-[#244b40] text-white shadow-sm" : "text-slate-600 hover:bg-white"}`}
+            >
+              {mode === "sign" ? (
+                <Hand size={16} />
+              ) : (
+                <MessageCircle size={16} />
+              )}
+              {t(mode === "sign" ? "Trouver un signe" : "Demander au coach")}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={reset}
+          disabled={loading || capturing || !messages.length}
+          className="flex min-h-10 items-center gap-2 rounded-full px-3 text-xs font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-35"
+        >
+          <Plus size={16} />
+          {t("Nouvelle conversation")}
+        </button>
+      </div>
+
+      <div className="grid lg:grid-cols-[1.1fr_1fr]">
+        <section
+          aria-label={t("Espace de démonstration")}
+          className="min-w-0 bg-[#f5f7f3] p-4 sm:p-6 lg:border-r lg:border-[#e7ece8]"
+        >
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#496253]">
+              {t("Regarder & essayer")}
+            </span>
+            <label className="max-w-full">
+              <span className="sr-only">{t("Collection vidéo")}</span>
+              <select
+                value={collection}
+                disabled={loading || capturing}
+                onChange={(event) =>
+                  setCollection(event.target.value as "project" | "lsf")
+                }
+                className="min-h-10 max-w-full cursor-pointer rounded-full border border-[#dbe2da] bg-transparent px-3 text-xs text-[#415347] focus:ring-2 focus:ring-[#244b40]"
+              >
+                <option value="project">
+                  {t("Bibliothèque · 354 vidéos")}
+                </option>
+                <option value="lsf">{t("LSF · 6 vidéos sourcées")}</option>
+              </select>
+            </label>
+          </div>
+          {selectedSign ? (
+            <SignVideoCard
+              key={selectedSign}
+              id={selectedSign}
+              language={selectedLanguage}
+              active={!loading && !capturing && !voice.speaking}
+            />
           ) : (
-            <div className="space-y-6">
-              {messages.map((message) => (
-                <article
-                  key={message.id}
-                  className={
-                    message.role === "user"
-                      ? "ml-auto max-w-[90%] rounded-2xl rounded-br-sm bg-primary px-5 py-4 text-white sm:max-w-[80%]"
-                      : "max-w-full"
-                  }
-                >
-                  <p
-                    className={`mb-2 text-[11px] font-bold uppercase tracking-wider ${message.role === "user" ? "text-white/75" : "text-muted-foreground"}`}
-                  >
-                    {message.role === "user" ? t("Vous") : "EduSign"}
-                    {message.mode === "fallback" && (
-                      <span className="ml-2 font-normal normal-case tracking-normal">
-                        · {t("Réponse guidée")}
-                      </span>
-                    )}
-                  </p>
-                  {message.exercise_result && (
-                    <div
-                      className={`mb-3 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold ${message.exercise_result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`}
-                    >
-                      {message.exercise_result.correct ? (
-                        <Check size={16} />
-                      ) : (
-                        <BookOpen size={16} />
-                      )}
-                      {t(
-                        message.exercise_result.correct
-                          ? "Bien joué, c’est la bonne réponse !"
-                          : "Une occasion d’apprendre",
-                      )}
-                    </div>
-                  )}
-                  <p className="whitespace-pre-wrap break-words text-sm leading-7">
-                    {message.text
-                      .split(/(\*\*[^*\n]+\*\*)/g)
-                      .map((part, index) =>
-                        part.startsWith("**") && part.endsWith("**") ? (
-                          <strong key={index}>{part.slice(2, -2)}</strong>
-                        ) : (
-                          part
-                        ),
-                      )}
-                  </p>
-                  {message.resources
-                    ?.filter((resource) => safeTutorResource(resource.url))
-                    .map((resource) => (
-                      <Link
-                        key={resource.url}
-                        href={resource.url}
-                        target={
-                          resource.url.startsWith("https:")
-                            ? "_blank"
-                            : undefined
-                        }
-                        rel={
-                          resource.url.startsWith("https:")
-                            ? "noopener noreferrer"
-                            : undefined
-                        }
-                        className="mt-3 flex items-center justify-between gap-3 rounded-xl border bg-muted/30 px-4 py-3 text-sm font-semibold hover:border-primary/40"
-                      >
-                        <span className="flex items-center gap-2">
-                          <BookOpen
-                            size={16}
-                            className="shrink-0 text-primary"
-                          />
-                          {resource.title}
-                        </span>
-                        <ArrowUpRight size={16} className="shrink-0" />
-                        <span className="sr-only">
-                          {resource.url.startsWith("https:")
-                            ? t("Ouvre un nouvel onglet")
-                            : ""}
-                        </span>
-                      </Link>
-                    ))}
-                  {message.exercise && (
-                    <fieldset
-                      disabled={loading || capturing || message.answered}
-                      className="mt-4 rounded-2xl border bg-primary/[0.03] p-4"
-                    >
-                      <legend className="px-1 text-xs font-bold text-primary">
-                        {t("À vous de jouer")}
-                      </legend>
-                      <p className="mb-3 text-sm font-semibold">
-                        {message.exercise.question}
-                      </p>
-                      <div className="space-y-2">
-                        {message.exercise.choices.map((choice, index) => (
-                          <button
-                            key={choice}
-                            onClick={() =>
-                              void send(
-                                choice,
-                                {
-                                  kind: "answer",
-                                  exercise_id: message.exercise!.id,
-                                  choice: index,
-                                },
-                                message.id,
-                              )
-                            }
-                            className="flex w-full items-center gap-3 rounded-xl border bg-white px-3 py-3 text-left text-sm hover:border-primary disabled:opacity-50"
-                          >
-                            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold">
-                              {String.fromCharCode(65 + index)}
-                            </span>
-                            {choice}
-                          </button>
-                        ))}
-                      </div>
-                      {message.answered && (
-                        <p className="mt-2 text-xs text-muted-foreground">
-                          {t("Réponse envoyée")}
-                        </p>
-                      )}
-                    </fieldset>
-                  )}
-                  {message.role === "assistant" && (
+            <div className="relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-2xl bg-[#193e34] p-7 text-white sm:min-h-[350px] sm:p-8">
+              <div className="flex items-center justify-between">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20">
+                  <Hand size={23} />
+                </span>
+                <span className="text-[11px] tracking-widest text-[#c1d4b8]">
+                  EDUSIGN STUDIO
+                </span>
+              </div>
+              <div className="relative z-10 my-7 max-w-xs">
+                <p className="text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
+                  {t("Un petit signe. Un grand lien.")}
+                </p>
+                <p className="mt-4 max-w-[260px] text-sm leading-6 text-[#c9d8ce]">
+                  {t("Choisissez un mot. Regardez le geste. Essayez ensemble.")}
+                </p>
+              </div>
+              <button
+                disabled={loading || capturing}
+                onClick={() =>
+                  void send(
+                    locale === "fr" ? "bonjour" : "hello",
+                    undefined,
+                    undefined,
+                    "sign",
+                  )
+                }
+                className="relative z-10 flex min-h-11 w-fit items-center gap-3 rounded-full bg-[#dcebbd] py-2 pl-4 pr-5 text-sm font-semibold text-[#193e34] hover:bg-white disabled:opacity-50"
+              >
+                <Play size={15} fill="currentColor" />
+                {t("Commencer par bonjour")}
+              </button>
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full border-[40px] border-white/[0.04]"
+              />
+            </div>
+          )}
+          <div className="mt-5">
+            <p className="mb-2.5 text-xs font-medium text-[#58675d]">
+              {t(
+                recentSigns.length
+                  ? "Vos signes explorés"
+                  : "À découvrir ensemble",
+              )}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {recentSigns.length
+                ? recentSigns.map((id) => {
+                    const item = catalog.find((x) => x.id === id);
+                    return (
+                      item && (
+                        <button
+                          key={id}
+                          onClick={() => setSelectedSign(id)}
+                          aria-pressed={selectedSign === id}
+                          className={`min-h-10 rounded-full border px-3.5 text-xs transition ${selectedSign === id ? "border-[#244b40] bg-[#244b40] text-white" : "border-[#dbe2da] bg-white text-[#415347] hover:border-[#244b40]"}`}
+                        >
+                          {item.label[locale]}
+                        </button>
+                      )
+                    );
+                  })
+                : featured.map((item) => (
                     <button
-                      disabled={capturing}
+                      key={item.id}
+                      disabled={loading || capturing}
                       onClick={() =>
-                        void voice.speak(
-                          message.id,
-                          message.text +
-                            (message.exercise
-                              ? " " +
-                                message.exercise.question +
-                                " " +
-                                message.exercise.choices.join(". ")
-                              : ""),
-                          message.language,
+                        void send(
+                          item.label[locale],
+                          undefined,
+                          undefined,
+                          "sign",
                         )
                       }
-                      className="mt-3 flex min-h-9 items-center gap-2 rounded-lg px-2 text-xs font-semibold text-muted-foreground hover:bg-muted disabled:opacity-50"
+                      className="min-h-10 rounded-full border border-[#dbe2da] bg-white px-3.5 text-xs text-[#415347] hover:border-[#244b40] disabled:opacity-40"
                     >
-                      {voice.speaking === message.id ? (
-                        voice.preparing ? (
-                          <Loader2 size={14} className="animate-spin" />
-                        ) : (
-                          <Square size={14} />
-                        )
-                      ) : (
-                        <Headphones size={14} />
-                      )}
-                      {t(
-                        voice.speaking === message.id
-                          ? "Arrêter la lecture"
-                          : "Écouter",
-                      )}
+                      {item.label[locale]}
                     </button>
+                  ))}
+            </div>
+          </div>
+        </section>
+
+        <section
+          aria-label={t("Conversation avec l’assistant")}
+          className="flex min-w-0 flex-col"
+        >
+          <div className="flex items-center justify-between gap-3 px-5 pt-5 sm:px-6">
+            <div className="flex items-center gap-2">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#edf2e7] text-[#244b40]">
+                <Sparkles size={15} />
+              </span>
+              <h2 className="text-sm font-semibold">{t("Votre guide")}</h2>
+            </div>
+            <span className="text-[11px] text-slate-500">
+              {intent === "sign"
+                ? t("Français & anglais")
+                : t(
+                    connection === "ready"
+                      ? "Assistant IA · connecté"
+                      : connection === "checking"
+                        ? "Connexion en cours…"
+                        : "Mode guidé · IA indisponible",
                   )}
-                </article>
-              ))}
-            </div>
-          )}
-          {loading && (
-            <div className="mt-5 flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 size={16} className="animate-spin" />
-              {t("Votre coach prépare une réponse…")}
-              <button
-                onClick={() => request.current?.abort()}
-                className="ml-auto rounded-lg px-3 py-2 font-semibold hover:bg-muted"
-              >
-                {t("Annuler")}
-              </button>
-            </div>
-          )}
-          <div ref={end} />
-        </div>
-        <div className="border-t bg-[#fafbf8] p-4 sm:px-6">
-          {!loading &&
-            latest?.role === "assistant" &&
-            !!latest.suggestions?.length && (
-              <div className="mb-4 flex flex-wrap gap-2">
-                {latest.suggestions.slice(0, 3).map((suggestion) => (
-                  <button
-                    key={suggestion}
-                    disabled={capturing}
-                    onClick={() => void send(suggestion)}
-                    className="rounded-full border bg-white px-3 py-2 text-left text-xs font-medium hover:border-primary disabled:opacity-50"
-                  >
-                    {suggestion}
-                  </button>
-                ))}
+            </span>
+          </div>
+          <div
+            ref={messageLog}
+            role="log"
+            aria-label={t("Messages")}
+            aria-live="polite"
+            aria-relevant="additions text"
+            className="relative h-[300px] space-y-5 overflow-y-auto overscroll-contain px-5 py-6 sm:px-6 lg:h-[360px]"
+          >
+            {!messages.length && (
+              <div className="pt-4">
+                <h3 className="max-w-xs text-2xl font-medium leading-snug tracking-tight">
+                  {t(
+                    intent === "sign"
+                      ? "Quel mot aimeriez-vous apprendre ?"
+                      : "Avançons à votre rythme.",
+                  )}
+                </h3>
+                <p className="mt-3 max-w-sm text-sm leading-6 text-slate-500">
+                  {t(
+                    intent === "sign"
+                      ? "Dites-moi un mot, en français ou en anglais. Je trouverai la vidéo pour vous et votre enfant."
+                      : "Une idée d’activité, une question ou un peu de pratique ? Je suis là pour vous accompagner.",
+                  )}
+                </p>
+                <div className="mt-6 space-y-2">
+                  {(intent === "sign"
+                    ? [
+                        {
+                          title: "Comment signer bonjour ?",
+                          prompt: locale === "fr" ? "bonjour" : "hello",
+                        },
+                        {
+                          title:
+                            collection === "lsf"
+                              ? "Montre-moi le signe pour chapeau"
+                              : "Montre-moi le signe pour maman",
+                          prompt:
+                            collection === "lsf"
+                              ? locale === "fr"
+                                ? "chapeau"
+                                : "hat"
+                              : locale === "fr"
+                                ? "maman"
+                                : "mother",
+                        },
+                      ]
+                    : starters.slice(0, 3)
+                  ).map((item) => (
+                    <button
+                      key={item.title}
+                      disabled={capturing}
+                      onClick={() =>
+                        void send(
+                          t(item.prompt),
+                          "action" in item
+                            ? (item.action as Action)
+                            : undefined,
+                        )
+                      }
+                      className="flex min-h-11 w-full items-center justify-between gap-3 border-b border-[#edf0ed] py-3 text-left text-xs text-[#466252] hover:text-[#163e30] disabled:opacity-50"
+                    >
+                      {t(item.title)}
+                      <ArrowUpRight size={15} />
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
-          {(error || voice.error) && (
-            <p
-              role="alert"
-              className="mb-3 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900"
-            >
-              {t(error || voice.error)}
-            </p>
-          )}
-          {capturing && (
-            <div
-              role="status"
-              className="mb-3 flex flex-wrap items-center gap-3 rounded-xl bg-primary/5 p-3 text-sm"
-            >
-              <span className="flex flex-1 items-center gap-2">
-                {voice.phase === "recording" ? (
-                  <Mic size={16} className="text-red-600" />
-                ) : (
-                  <Loader2 size={16} className="animate-spin" />
-                )}
-                {voice.phase === "recording"
-                  ? `${t("Enregistrement")} · ${voice.seconds}s / 60s`
-                  : t(
-                      voice.phase === "requesting"
-                        ? "Autorisez le microphone dans le navigateur…"
-                        : "Transcription en cours…",
-                    )}
-              </span>
-              {voice.phase === "recording" && (
-                <button
-                  onClick={voice.stop}
-                  className="rounded-lg bg-primary px-3 py-2 font-semibold text-white"
-                >
-                  {t("Terminer")}
-                </button>
-              )}
-              <button
-                onClick={voice.cancel}
-                className="rounded-lg p-2 hover:bg-muted"
-                aria-label={t("Annuler l’enregistrement")}
-              >
-                <X size={18} />
-              </button>
-            </div>
-          )}
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              void send(input);
-            }}
-            className="rounded-2xl border bg-white p-3 shadow-sm focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10"
-          >
-            <label htmlFor="tutor-question" className="sr-only">
-              {t("Votre question")}
-            </label>
-            <textarea
-              ref={composer}
-              id="tutor-question"
-              rows={2}
-              maxLength={2000}
-              value={input}
-              disabled={loading || capturing}
-              onChange={(event) => setInput(event.target.value)}
-              onKeyDown={(event) => {
-                if (
-                  event.key === "Enter" &&
-                  !event.shiftKey &&
-                  !event.nativeEvent.isComposing
-                ) {
-                  event.preventDefault();
-                  void send(input);
+            {messages.map((message) => (
+              <article
+                key={message.id}
+                lang={message.language}
+                ref={
+                  message.role === "assistant" && message.id === latest?.id
+                    ? latestReply
+                    : undefined
                 }
-              }}
-              placeholder={t(
-                "Posez votre question, ou utilisez le microphone…",
-              )}
-              className="w-full resize-none border-0 bg-transparent px-1 text-sm leading-6 outline-none disabled:opacity-60"
-            />
-            <div className="mt-1 flex items-center justify-between gap-2">
-              <button
-                type="button"
-                disabled={loading || capturing}
-                onClick={() => void voice.start()}
-                aria-label={t("Dicter une question")}
-                className="flex min-h-10 items-center gap-2 rounded-xl px-3 text-xs font-semibold hover:bg-muted disabled:opacity-40"
+                className={
+                  message.role === "user"
+                    ? "ml-auto w-fit max-w-[90%] rounded-2xl rounded-br-md bg-[#edf2e7] px-4 py-2.5"
+                    : "max-w-full"
+                }
               >
-                <Mic size={17} />
-                {t("Dicter")}
-              </button>
-              <div className="flex items-center gap-3">
-                <span className="text-[10px] text-muted-foreground">
-                  {input.length} / 2000
+                <span className="sr-only">
+                  {message.role === "user" ? t("Vous") : "EduSign"}
                 </span>
+                {message.mode === "fallback" && (
+                  <p className="mb-2 text-[11px] text-amber-800">
+                    {t("Réponse guidée")}
+                  </p>
+                )}
+                {message.exercise_result && (
+                  <p
+                    className={`mb-2 flex items-center gap-2 rounded-lg p-3 text-xs font-medium ${message.exercise_result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`}
+                  >
+                    <Check size={15} />
+                    {t(
+                      message.exercise_result.correct
+                        ? "Bien joué, c’est la bonne réponse !"
+                        : "Une occasion d’apprendre",
+                    )}
+                  </p>
+                )}
+                <p className="whitespace-pre-wrap break-words text-sm leading-6">
+                  {message.text
+                    .split(/(\*\*[^*\n]+\*\*)/g)
+                    .map((part, index) =>
+                      part.startsWith("**") && part.endsWith("**") ? (
+                        <strong key={index}>{part.slice(2, -2)}</strong>
+                      ) : (
+                        part
+                      ),
+                    )}
+                </p>
+                {!!message.sign_ids?.length && (
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {message.sign_ids.slice(0, 3).map((id) => {
+                      const item = catalog.find((x) => x.id === id);
+                      return (
+                        item && (
+                          <button
+                            key={id}
+                            onClick={() => setSelectedSign(id)}
+                            aria-pressed={selectedSign === id}
+                            className="flex min-h-10 items-center gap-2 rounded-full border border-[#dbe2da] px-3 text-xs font-semibold text-[#244b40] hover:bg-[#f1f5ed]"
+                          >
+                            <Play size={13} />
+                            {item.label[message.language]}
+                          </button>
+                        )
+                      );
+                    })}
+                  </div>
+                )}
+                {message.resources
+                  ?.filter((resource) => safeTutorResource(resource.url))
+                  .map((resource) => (
+                    <Link
+                      key={resource.url}
+                      href={resource.url}
+                      target={
+                        resource.url.startsWith("https:") ? "_blank" : undefined
+                      }
+                      rel={
+                        resource.url.startsWith("https:")
+                          ? "noopener noreferrer"
+                          : undefined
+                      }
+                      className="mt-3 flex min-h-10 items-center gap-2 text-xs font-semibold text-[#244b40] underline underline-offset-4"
+                    >
+                      {resource.title}
+                      <ArrowUpRight size={13} />
+                      {resource.url.startsWith("https:") && (
+                        <span className="sr-only">
+                          {t("Ouvre un nouvel onglet")}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                {message.exercise && (
+                  <fieldset
+                    disabled={loading || capturing || message.answered}
+                    className="mt-4 rounded-xl bg-[#f5f7f3] p-3"
+                  >
+                    <legend className="text-xs font-semibold">
+                      {t("À vous de jouer")}
+                    </legend>
+                    <p className="mb-3 text-sm">{message.exercise.question}</p>
+                    <div className="space-y-2">
+                      {message.exercise.choices.map((choice, index) => (
+                        <button
+                          key={choice}
+                          onClick={() =>
+                            void send(
+                              choice,
+                              {
+                                kind: "answer",
+                                exercise_id: message.exercise!.id,
+                                choice: index,
+                              },
+                              message.id,
+                              undefined,
+                              message.language,
+                            )
+                          }
+                          className="w-full rounded-lg border bg-white p-3 text-left text-xs hover:border-[#244b40] disabled:opacity-50"
+                        >
+                          {choice}
+                        </button>
+                      ))}
+                    </div>
+                    {message.answered && (
+                      <p className="mt-2 text-xs text-slate-500">
+                        {t("Réponse envoyée")}
+                      </p>
+                    )}
+                  </fieldset>
+                )}
+                {message.role === "assistant" && (
+                  <button
+                    disabled={capturing}
+                    onClick={() =>
+                      void voice.speak(
+                        message.id,
+                        message.text +
+                          (message.exercise
+                            ? " " +
+                              message.exercise.question +
+                              " " +
+                              message.exercise.choices.join(". ")
+                            : ""),
+                        message.language,
+                      )
+                    }
+                    className="mt-2 flex min-h-9 items-center gap-1.5 text-[11px] text-slate-500 hover:text-[#244b40] disabled:opacity-50"
+                  >
+                    {voice.speaking === message.id ? (
+                      voice.preparing ? (
+                        <Loader2 size={13} className="animate-spin" />
+                      ) : (
+                        <Square size={13} />
+                      )
+                    ) : (
+                      <Headphones size={13} />
+                    )}{" "}
+                    {translate(
+                      voice.speaking === message.id
+                        ? "Arrêter la lecture"
+                        : "Écouter",
+                      message.language,
+                    )}
+                  </button>
+                )}
+              </article>
+            ))}
+            {loading && (
+              <div
+                role="status"
+                className="flex items-center gap-2 text-xs text-slate-500"
+              >
+                <Loader2 size={15} className="animate-spin" />
+                {t(
+                  intent === "sign"
+                    ? "Recherche de votre démonstration…"
+                    : "Votre coach prépare une réponse…",
+                )}
                 <button
-                  type="submit"
-                  disabled={!input.trim() || loading || capturing}
-                  aria-label={t("Envoyer la question")}
-                  className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white transition hover:bg-primary/90 disabled:opacity-30"
+                  onClick={() => request.current?.abort()}
+                  className="ml-auto min-h-10 px-2 underline"
                 >
-                  <ArrowUp size={19} />
+                  {t("Annuler")}
                 </button>
               </div>
-            </div>
-          </form>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] text-muted-foreground">
-            <span>{t("Relisez votre transcription avant de l’envoyer.")}</span>
-            <label className="flex min-h-8 cursor-pointer items-center gap-2">
+            )}
+          </div>
+          <div className="mt-auto px-4 pb-4 sm:px-5">
+            {!loading &&
+              latest?.role === "assistant" &&
+              !!latest.suggestions?.length && (
+                <div className="mb-3 flex flex-wrap gap-1.5">
+                  {latest.suggestions.slice(0, 3).map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      disabled={capturing}
+                      onClick={() => void send(suggestion)}
+                      className="min-h-9 rounded-full bg-[#f4f6f3] px-3 text-[11px] text-[#496253] hover:bg-[#e8eee3] disabled:opacity-50"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
+            {(error || voice.error) && (
+              <p
+                role="alert"
+                className="mb-3 rounded-lg bg-amber-50 p-3 text-xs text-amber-900"
+              >
+                {t(error || voice.error)}
+              </p>
+            )}
+            {capturing && (
+              <div
+                role="status"
+                className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-[#f1f5ed] p-3 text-xs"
+              >
+                <span className="flex flex-1 items-center gap-2">
+                  {voice.phase === "recording" ? (
+                    <Mic size={15} className="text-red-600" />
+                  ) : (
+                    <Loader2 size={15} className="animate-spin" />
+                  )}
+                  {voice.phase === "recording"
+                    ? `${t("Enregistrement")} · ${voice.seconds}s / 60s`
+                    : t(
+                        voice.phase === "requesting"
+                          ? "Autorisez le microphone dans le navigateur…"
+                          : "Transcription en cours…",
+                      )}
+                </span>
+                {voice.phase === "recording" && (
+                  <button
+                    onClick={voice.stop}
+                    className="min-h-10 rounded-full bg-[#244b40] px-3 text-white"
+                  >
+                    {t("Terminer")}
+                  </button>
+                )}
+                <button
+                  onClick={voice.cancel}
+                  aria-label={t("Annuler l’enregistrement")}
+                  className="p-2"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            )}
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+                void send(input);
+              }}
+              className="rounded-2xl border border-[#dce3de] bg-[#fafbf9] p-3 focus-within:border-[#52745e] focus-within:ring-2 focus-within:ring-[#52745e]/10"
+            >
+              <label htmlFor="tutor-question" className="sr-only">
+                {t("Votre question")}
+              </label>
+              <textarea
+                ref={composer}
+                id="tutor-question"
+                rows={2}
+                maxLength={2000}
+                value={input}
+                disabled={loading || capturing}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={(event) => {
+                  if (
+                    event.key === "Enter" &&
+                    !event.shiftKey &&
+                    !event.nativeEvent.isComposing
+                  ) {
+                    event.preventDefault();
+                    void send(input);
+                  }
+                }}
+                placeholder={t(
+                  intent === "sign"
+                    ? "Un mot, une envie d’apprendre…"
+                    : "Posez votre question…",
+                )}
+                className="w-full resize-none bg-transparent px-1 text-sm leading-6 outline-none disabled:opacity-50"
+              />
+              <div className="flex items-center justify-between gap-2">
+                <button
+                  type="button"
+                  disabled={loading || capturing}
+                  onClick={() => void voice.start()}
+                  aria-label={t("Dicter une question")}
+                  className="flex min-h-10 items-center gap-2 rounded-full px-2.5 text-xs text-slate-500 hover:bg-[#edf2e7] disabled:opacity-40"
+                >
+                  <Mic size={17} />
+                  {t("Dicter")}
+                </button>
+                <div className="flex items-center gap-2">
+                  {input.length > 1800 && (
+                    <span className="text-[10px] text-slate-500">
+                      {input.length}/2000
+                    </span>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={!input.trim() || loading || capturing}
+                    aria-label={t("Envoyer la question")}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#244b40] text-white hover:bg-[#173b30] disabled:opacity-30"
+                  >
+                    <ArrowUp size={19} />
+                  </button>
+                </div>
+              </div>
+            </form>
+            <label className="mt-2 flex min-h-9 w-fit cursor-pointer items-center gap-2 text-[10px] text-slate-500">
               <input
                 type="checkbox"
                 checked={automaticAudio}
@@ -576,71 +802,42 @@ export function TutorChat() {
                   setAutomaticAudio(event.target.checked);
                   if (!event.target.checked) voice.stopSpeech();
                 }}
-                className="accent-primary"
+                className="accent-[#244b40]"
               />
               {t("Lire les réponses à voix haute")}
             </label>
           </div>
-        </div>
-      </section>
-      <aside className="space-y-4">
-        <div className="rounded-2xl bg-[#eaf0e6] p-5">
-          <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-white/80 text-[#3b5439]">
-            <Hand size={22} />
-          </span>
-          <h2 className="font-bold">{t("De la conversation à la pratique")}</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">
+        </section>
+      </div>
+      <div className="border-t border-[#e7ece8] px-5 py-3 sm:px-7">
+        <SignLibrary
+          collection={collection}
+          disabled={loading || capturing}
+          onSelect={(word) => {
+            setIntent("sign");
+            void send(word, undefined, undefined, "sign");
+          }}
+        />
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-[#e7ece8] bg-[#fafbf9] px-5 py-3 text-[10px] leading-5 text-slate-500 sm:px-7">
+        <span>
+          {t(
+            collection === "project"
+              ? "Clips du projet · langue des signes non vérifiée"
+              : "Collection LSF · Elix / Signes de sens",
+          )}
+        </span>
+        <details className="max-w-xl">
+          <summary className="cursor-pointer">
+            {t("À propos de votre échange")}
+          </summary>
+          <p className="mt-2">
             {t(
-              "Les signes se découvrent en vidéo. Votre coach vous aide à trouver quoi regarder et comment pratiquer.",
+              "Les échanges restent dans cette page. La dictée envoie votre audio au service de transcription ; relisez le texte avant de l’envoyer. Les réponses du coach et la voix utilisent l’IA.",
             )}
           </p>
-          <Link
-            href="/learn/lsf-alphabet"
-            className="mt-4 flex items-center justify-between rounded-xl bg-white px-3 py-3 text-sm font-bold"
-          >
-            {t("L’alphabet en LSF")}
-            <ArrowUpRight size={16} />
-          </Link>
-          <Link
-            href="/learn/lsf-nombres"
-            className="mt-2 flex items-center justify-between rounded-xl bg-white px-3 py-3 text-sm font-bold"
-          >
-            {t("Les nombres en LSF")}
-            <ArrowUpRight size={16} />
-          </Link>
-        </div>
-        <div className="rounded-2xl border p-5">
-          <p className="text-xs font-bold uppercase tracking-wider">
-            {t("À votre façon")}
-          </p>
-          <p className="mt-3 text-sm leading-6">
-            {t(
-              "Écrivez, dictez ou écoutez. Le bouton FR / EN change la langue de l’échange ; les signes enseignés restent en LSF.",
-            )}
-          </p>
-          <div className="my-4 h-px bg-border" />
-          <p className="text-xs leading-5 text-muted-foreground">
-            {t(
-              "Assistant et voix générés par IA. Vérifiez les signes dans les vidéos de référence. Cette conversation n’est pas enregistrée dans votre historique EduSign.",
-            )}
-          </p>
-          <p className="mt-3 text-xs leading-5 text-muted-foreground">
-            {t(
-              "En terminant un message vocal, vous envoyez l’audio au service de transcription. Vous pouvez annuler avant l’envoi.",
-            )}
-          </p>
-        </div>
-        {connection !== "checking" && connection !== "ready" && (
-          <p
-            role="status"
-            className="rounded-xl bg-amber-50 p-4 text-xs leading-5 text-amber-900"
-          >
-            {t(
-              "La connexion IA est indisponible. Les activités guidées restent disponibles ; les réponses libres et la voix peuvent être limitées.",
-            )}
-          </p>
-        )}
-      </aside>
+        </details>
+      </div>
     </div>
   );
 }

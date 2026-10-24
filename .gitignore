@@ -33,3 +33,6 @@ edusign-next/public/assets/videos/
 
 # Local archive of the previous repository; never publish it
 .git-history-backups/
+
+# Reproducible sign-video derivatives for Supabase upload
+edusign-next/.sign-media-cache/

@@ -6,22 +6,26 @@ export async function generateMetadata() {
   return {
     title: t("Mon assistant"),
     description: t(
-      "Votre coach en langue des signes française, à l’écrit et à l’oral.",
+      "Trouvez une démonstration vidéo et prenez le temps de la découvrir ensemble.",
     ),
   };
 }
 export default function Tutor() {
   return (
-    <div className="container max-w-6xl py-8 sm:py-12">
-      <p className="eyebrow">
-        <T text="VOTRE COMPAGNON D’APPRENTISSAGE" />
-      </p>
-      <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
-        <T text="Un peu d’aide. Beaucoup de progrès." />
-      </h1>
-      <p className="mb-8 mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
-        <T text="Votre coach en langue des signes française, à l’écrit et à l’oral." />
-      </p>
+    <div className="container max-w-6xl py-6 sm:py-8">
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#52745e]">
+            EDUSIGN STUDIO
+          </p>
+          <h1 className="mt-2 text-3xl font-medium tracking-tight sm:text-4xl">
+            <T text="Apprenons un signe." />
+          </h1>
+        </div>
+        <p className="max-w-xs text-sm leading-6 text-muted-foreground">
+          <T text="Un espace pour regarder, comprendre et essayer ensemble." />
+        </p>
+      </div>
       <TutorChat />
     </div>
   );
