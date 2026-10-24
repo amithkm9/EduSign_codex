@@ -1,7 +1,16 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Camera, Square, RotateCcw, ArrowRight } from "lucide-react";
+import {
+  Camera,
+  Square,
+  RotateCcw,
+  ArrowRight,
+  CircleCheck,
+  CircleHelp,
+  CircleAlert,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/i18n/locale-provider";
 
@@ -265,7 +274,13 @@ export function CameraPractice({
           {index + 1} / {targets.length}
         </span>
       </div>
-      <div className="relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-[#182342]">
+      <div
+        className={`relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-[#182342] ${
+          state === "captured" && result?.verdict === "match"
+            ? "ring-4 ring-emerald-500"
+            : ""
+        }`}
+      >
         <video
           ref={preview}
           autoPlay
@@ -296,6 +311,86 @@ export function CameraPractice({
             {t("Capture")} · {remaining} s
           </p>
         )}
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="pointer-events-none absolute inset-x-3 bottom-16 sm:inset-x-4"
+        >
+          {state === "captured" && (analysing || result) && (
+            <div
+              key={analysing ? "analysing" : result?.verdict}
+              className={`flex items-start gap-3 rounded-xl border-2 p-3 shadow-lg animate-in fade-in zoom-in-95 duration-300 motion-reduce:animate-none sm:p-4 ${
+                analysing
+                  ? "border-white bg-white text-slate-800"
+                  : result?.verdict === "match"
+                    ? "border-emerald-500 bg-emerald-50 text-emerald-950"
+                    : result?.verdict === "different"
+                      ? "border-amber-400 bg-amber-50 text-amber-950"
+                      : "border-slate-300 bg-slate-50 text-slate-800"
+              }`}
+            >
+              {analysing ? (
+                <Loader2
+                  aria-hidden
+                  className="mt-0.5 size-6 shrink-0 animate-spin motion-reduce:animate-none"
+                />
+              ) : result?.verdict === "match" ? (
+                <CircleCheck
+                  aria-hidden
+                  className="mt-0.5 size-7 shrink-0 text-emerald-700"
+                />
+              ) : result?.verdict === "different" ? (
+                <CircleAlert
+                  aria-hidden
+                  className="mt-0.5 size-7 shrink-0 text-amber-700"
+                />
+              ) : (
+                <CircleHelp aria-hidden className="mt-0.5 size-7 shrink-0" />
+              )}
+              <div>
+                <p className="text-base font-bold sm:text-lg">
+                  {t(
+                    analysing
+                      ? "Analyse de votre signe…"
+                      : result?.verdict === "match"
+                        ? "Bravo ! Le signe correspond."
+                        : result?.verdict === "different"
+                          ? "Un autre signe a été détecté — réessayez"
+                          : "Résultat incertain — montrez bien votre main",
+                  )}
+                </p>
+                {!analysing && result && (
+                  <>
+                    {result.verdict === "match" && (
+                      <p className="mt-1 text-sm">
+                        {t("Correspondance détectée — démo")} · {targets[index]}
+                      </p>
+                    )}
+                    {result.detected_sign !== "unknown" && (
+                      <p className="mt-1 text-xs leading-relaxed">
+                        {t("Prédiction du modèle :")}{" "}
+                        {(
+                          {
+                            one: "1",
+                            two: "2",
+                            three: "3",
+                            a: "A",
+                            b: "B",
+                            c: "C",
+                          } as Record<string, string>
+                        )[result.detected_sign] ?? "—"}
+                        {" · "}
+                        {Math.round(result.confidence * 100)}%{" "}
+                        {t("de confiance du modèle (non calibrée)")}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
         {t(
@@ -348,53 +443,18 @@ export function CameraPractice({
           {t("Revoir le modèle LSF")}
         </Button>
       </div>
-      {state === "captured" && (
+      {state === "captured" && !track && (
         <div
           role="status"
           aria-live="polite"
           className="mt-5 rounded-2xl bg-white p-4 text-sm"
         >
-          {analysing && <p>{t("Analyse de votre signe…")}</p>}
-          {result && (
-            <>
-              <p className="font-bold text-primary">
-                {t(
-                  result.verdict === "match"
-                    ? "Correspondance détectée — démo"
-                    : result.verdict === "different"
-                      ? "Un autre signe a été détecté — réessayez"
-                      : "Résultat incertain — montrez bien votre main",
-                )}
-              </p>
-              {result.detected_sign !== "unknown" && (
-                <p className="mt-2">
-                  {t("Prédiction du modèle :")}{" "}
-                  {(
-                    {
-                      one: "1",
-                      two: "2",
-                      three: "3",
-                      a: "A",
-                      b: "B",
-                      c: "C",
-                    } as Record<string, string>
-                  )[result.detected_sign] ?? "—"}{" "}
-                  · {Math.round(result.confidence * 100)}%{" "}
-                  {t("de confiance du modèle (non calibrée)")}
-                </p>
-              )}
-            </>
-          )}
-          {!track && (
-            <Link
-              href={`/login?redirectTo=/learn/${courseId}`}
-              className="font-semibold text-primary underline"
-            >
-              {t(
-                "Connectez-vous pour analyser vos signes avec le modèle démo.",
-              )}
-            </Link>
-          )}
+          <Link
+            href={`/login?redirectTo=/learn/${courseId}`}
+            className="font-semibold text-primary underline"
+          >
+            {t("Connectez-vous pour analyser vos signes avec le modèle démo.")}
+          </Link>
         </div>
       )}
       {error && (
