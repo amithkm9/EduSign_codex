@@ -8,9 +8,8 @@ import { useLocale } from "@/components/i18n/locale-provider";
 import { getLsfLesson } from "@/lib/data/lsf";
 
 const previews = [
-  { id: "lsf-bonjour", label: "Saluer" },
-  { id: "lsf-nombres", label: "Compter" },
   { id: "lsf-alphabet", label: "L’alphabet" },
+  { id: "lsf-nombres", label: "Compter" },
 ];
 export function LessonPreview() {
   const { t } = useLocale();
@@ -36,7 +35,7 @@ export function LessonPreview() {
           <div
             role="group"
             aria-label={t("Choisissez un aperçu de leçon")}
-            className="mb-4 grid grid-cols-3 gap-1 rounded-xl bg-[#f2f4f8] p-1"
+            className="mb-4 grid grid-cols-2 gap-1 rounded-xl bg-[#f2f4f8] p-1"
           >
             {previews.map((item) => (
               <button

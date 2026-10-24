@@ -7,13 +7,7 @@ import { useState } from "react";
 import { Search, X } from "lucide-react";
 import { type LsfLesson } from "@/lib/data/lsf";
 import { CourseCard } from "./course-card";
-const topics = [
-  "Tout découvrir",
-  "Les premiers mots",
-  "En famille",
-  "À l’école",
-  "Le quotidien",
-];
+const topics = ["Tout découvrir", "L’alphabet", "Les nombres"];
 export function LessonCatalog({
   lessons,
   progress = {},
@@ -97,7 +91,7 @@ export function LessonCatalog({
           }
         />
       </p>
-      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-2">
         {filtered.map((l) => (
           <CourseCard
             key={l.id}

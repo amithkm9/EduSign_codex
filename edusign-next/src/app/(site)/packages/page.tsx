@@ -31,7 +31,7 @@ const plans = [
     description:
       "Vos premiers signes, vos premières découvertes, et le plaisir d’apprendre ensemble.",
     features: [
-      "Les huit ateliers vidéo LSF",
+      "Deux ateliers vidéo LSF avec quiz",
       "Activités à essayer en famille",
       "Un carnet de pratique avec votre compte",
       "Interface en français et en anglais",

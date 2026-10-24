@@ -8,7 +8,7 @@ import { CourseCover } from "@/components/courses/course-cover";
 
 export function ShareLesson() {
   const { t } = useLocale();
-  const [id, setId] = useState("lsf-couleurs");
+  const [id, setId] = useState("lsf-alphabet");
   const [status, setStatus] = useState("");
   const [manualLink, setManualLink] = useState("");
   const [busy, setBusy] = useState(false);

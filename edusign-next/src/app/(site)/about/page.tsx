@@ -58,7 +58,7 @@ export default function About() {
             className="group relative block aspect-video overflow-hidden rounded-2xl border-4 border-white shadow-lg"
           >
             <CourseCover
-              lesson={LSF_LESSONS[4]}
+              lesson={LSF_LESSONS.find((lesson) => lesson.id === "lsf-nombres")!}
               sizes="(max-width: 1024px) 90vw, 45vw"
               priority
             />

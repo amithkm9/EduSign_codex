@@ -1,3 +1,4 @@
+import { getLsfLesson } from "./lsf";
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { profiles, quizAttempts, userProgress, courses } from "@/lib/db/schema";
@@ -57,6 +58,7 @@ export async function gatherReportData(userId: string) {
     weeklyActivity: summary.weeklyActivity,
     quizTrend: quizzes.reverse().map((q, i) => ({
       attempt: i + 1,
+      title: getLsfLesson(q.courseId)?.title ?? q.courseId,
       score: q.score ?? 0,
     })),
     courseProgress: progress.map((p) => ({

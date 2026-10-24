@@ -1,4 +1,5 @@
 // Integration test: one temporary account; no email; no credentials printed.
+import { readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import { randomUUID, randomBytes } from "node:crypto";
 import { createClient } from "@supabase/supabase-js";
@@ -45,7 +46,7 @@ try {
     ["/tutor", "Une question ?", "Have a question?"],
     ["/report", "Mon bilan", "My discovery report"],
     [
-      "/learn/lsf-bonjour",
+      "/learn/lsf-alphabet",
       "J’ai pratiqué cette activité",
       "I practised this activity",
     ],
@@ -75,7 +76,7 @@ try {
     method: "POST",
     headers,
     body: JSON.stringify({
-      courseId: "lsf-bonjour",
+      courseId: "lsf-alphabet",
       type: "end",
       activeMs: 0,
       progressPercentage: 100,
@@ -86,7 +87,7 @@ try {
     .from("user_progress")
     .select("status,progress_percentage")
     .eq("user_id", id)
-    .eq("course_id", "lsf-bonjour")
+    .eq("course_id", "lsf-alphabet")
     .single();
   if (saved.error) throw saved.error;
   assert.equal(saved.data.status, "completed");
@@ -103,6 +104,99 @@ try {
   });
   assert.equal(r.status, 400);
   console.log("PASS legacy lesson rejected by new activity flow");
+  const quizzes = JSON.parse(
+    await readFile(
+      new URL("../src/lib/quiz/quizzes.json", import.meta.url),
+      "utf8",
+    ),
+  );
+  const postQuiz = (payload) =>
+    fetch(base + "/api/quiz/submit", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    });
+  // Prime a report before the quiz to verify that new scores bypass stale cached data.
+  const before = await fetch(base + "/api/report?language=fr", { headers });
+  assert.equal(before.status, 200);
+  assert.equal((await before.json()).report.quizTrend.length, 0);
+  for (const quiz of quizzes) {
+    const answers = quiz.questions.map((q) => ({
+      questionId: q.id,
+      choice: q.correctOption,
+    }));
+    answers[0].choice = quiz.questions[0].options.find(
+      (o) => o.id !== quiz.questions[0].correctOption,
+    ).id;
+    const payload = {
+      courseId: quiz.courseId,
+      quizId: quiz.id,
+      attemptId: randomUUID(),
+      timeMs: 12000,
+      answers,
+      score: 100,
+      correct: 3,
+      userId: randomUUID(),
+    };
+    const result = await postQuiz(payload);
+    assert.equal(result.status, 200);
+    assert.equal((await result.json()).score, 67);
+    // Concurrent retries must not insert additional attempts.
+    const retries = await Promise.all([postQuiz(payload), postQuiz(payload)]);
+    for (const retry of retries) assert.equal(retry.status, 200);
+    const saved = await client
+      .from("quiz_attempts")
+      .select("user_id,score,correct,passed,answers,attempt_no")
+      .eq("course_id", quiz.courseId);
+    if (saved.error) throw saved.error;
+    assert.equal(saved.data.length, 1);
+    assert.equal(saved.data[0].user_id, id);
+    assert.equal(saved.data[0].score, 67);
+    assert.equal(saved.data[0].correct, 2);
+    assert.equal(saved.data[0].passed, false);
+    assert.equal(saved.data[0].answers[0].correct, false);
+    assert.equal(saved.data[0].attempt_no, 1);
+    const corrected = quiz.questions.map((q) => ({
+      questionId: q.id,
+      choice: q.correctOption,
+    }));
+    assert.equal(
+      (await postQuiz({ ...payload, answers: corrected })).status,
+      409,
+    );
+    assert.equal(
+      (
+        await postQuiz({
+          ...payload,
+          answers: corrected,
+          attemptId: randomUUID(),
+        })
+      ).status,
+      200,
+    );
+    for (const invalid of [
+      null,
+      { ...payload, answers: answers.slice(1) },
+      { ...payload, courseId: "lsf-bonjour" },
+      { ...payload, quizId: "unknown" },
+      { ...payload, timeMs: -1 },
+      { ...payload, answers: [answers[0], answers[0], answers[2]] },
+    ])
+      assert.equal((await postQuiz(invalid)).status, 400);
+    console.log(
+      "PASS quiz scoring, ownership, retry deduplication and validation",
+      quiz.courseId,
+    );
+  }
+  const after = await fetch(base + "/api/report?language=fr", { headers });
+  assert.equal(after.status, 200);
+  const fresh = (await after.json()).report;
+  assert.equal(fresh.quizTrend.length, 4);
+  assert.equal(fresh.statistics.quizAttempts, 4);
+  assert.ok(fresh.quizTrend.some((q) => q.score === 100));
+  console.log(
+    "PASS new quiz results appear in report despite previously cached data",
+  );
   for (const [language, message] of [
     ["fr", "Où apprendre l’alphabet en LSF ?"],
     ["en", "Where can I learn the alphabet in LSF?"],

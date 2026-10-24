@@ -31,7 +31,18 @@ export default async function Lesson({
   const { id } = await params;
   const lesson = getLsfLesson(id);
   if (!lesson) {
-    if (/^00[1-8]$/.test(id)) redirect("/courses");
+    if (
+      /^00[1-8]$/.test(id) ||
+      [
+        "lsf-bonjour",
+        "lsf-couleurs",
+        "lsf-famille",
+        "lsf-ecole",
+        "lsf-emotions",
+        "lsf-dialogue",
+      ].includes(id)
+    )
+      redirect("/courses");
     notFound();
   }
   const user = await getUser();
@@ -65,6 +76,7 @@ export default async function Lesson({
       </div>
       <div className="grid gap-7 lg:grid-cols-[1fr_20rem]">
         <LessonPlayer
+          key={lesson.id}
           lesson={lesson}
           track={!!user}
           initialProgress={progress[id]?.progressPercentage}

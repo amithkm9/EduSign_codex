@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 const base = process.env.BASE || "http://localhost:3100";
 for (const [path, fr, en] of [
   ["/", "Apprenez la LSF.", "Learn LSF."],
-  ["/courses", "Un monde en couleurs", "A world of colours"],
+  ["/courses", "Les lettres prennent vie", "Letters come to life"],
   ["/parents", "Apprendre à ses côtés.", "Learning by their side."],
-  ["/quiz", "On essaie, à deux ?", "Shall we try together?"],
+  ["/quiz", "Regardez. Jouez. Apprenez.", "Watch. Play. Learn."],
   ["/login", "Heureux de vous revoir.", "Welcome back."],
   ["/register", "Faisons connaissance.", "Let’s get to know you."],
   ["/learn/lsf-alphabet", "Les lettres prennent vie", "Letters come to life"],

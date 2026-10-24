@@ -27,7 +27,7 @@ type Report = {
   };
   statistics: Record<string, number>;
   weeklyActivity: number[];
-  quizTrend: { attempt: number; score: number }[];
+  quizTrend: { attempt: number; score: number; title: string }[];
   courseProgress: {
     title: string;
     progressPercentage: number;
@@ -174,7 +174,7 @@ export function ReportView() {
       <p className="text-sm text-muted-foreground">
         <T
           text={
-            "Ce bilan présente les activités déclarées sur ce compte. Il ne mesure pas la maîtrise des signes. Les vidéos externes ne permettent pas de mesurer le temps de visionnage."
+            "Ce bilan présente vos activités et vos quiz de compréhension. Il ne mesure pas la maîtrise des signes. Le temps de visionnage n’est pas enregistré."
           }
         />{" "}
       </p>
@@ -236,15 +236,35 @@ export function ReportView() {
         <Card>
           <CardHeader>
             <CardTitle>
-              <T text={"Historique des exercices"} />
+              <T text={"Mes résultats aux quiz"} />
             </CardTitle>
           </CardHeader>
           <CardContent>
             {report.quizTrend.length ? (
-              <QuizTrendChart data={report.quizTrend} />
+              <div>
+                <QuizTrendChart data={report.quizTrend} />
+                <ol className="mt-4 space-y-2 text-sm">
+                  {report.quizTrend.map((entry) => (
+                    <li
+                      key={entry.attempt}
+                      className="flex items-center justify-between gap-3 rounded-xl bg-secondary/50 p-3"
+                    >
+                      <span>
+                        <T text={entry.title} /> · <T text="Essai" />{" "}
+                        {entry.attempt}
+                      </span>
+                      <span className="font-bold text-primary">
+                        {entry.score}%
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             ) : (
               <p className="py-16 text-center text-sm text-muted-foreground">
-                <T text={"Pas encore d’exercice évalué enregistré."} />{" "}
+                <T
+                  text={"Votre premier résultat apparaîtra ici après un quiz."}
+                />{" "}
               </p>
             )}
           </CardContent>

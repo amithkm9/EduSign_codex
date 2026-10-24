@@ -6,15 +6,15 @@ Mis à jour le 24 octobre 2026. Public confirmé : élèves et parents qui les a
 
 - Supabase : connexion au pooler, schéma, profils automatiques, politiques de propriété et données initiales. Authentification testée avec comptes temporaires ; isolation entre deux comptes et répétabilité du setup vérifiées.
 - Refonte visuelle : bleu, crème, pêche, jaune et vert doux ; cartes thématiques, navigation responsive et actions lisibles.
-- Parcours bilingue français / anglais : accueil, catalogue avec recherche/filtres, leçons, coin parents, ressources, atelier libre, assistant, carnet et bilan.
-- Huit ateliers LSF publiés par MAE Langue des Signes et Dico Plus LSF, avec liens YouTube directs et crédits. Disponibilité vérifiée via les métadonnées YouTube. Le visionnage complet et la qualité pédagogique nécessitent une revue par une personne compétente en LSF.
+- Parcours bilingue français / anglais : accueil, catalogue avec recherche/filtres, leçons, coin parents, ressources, vidéo et quiz, assistant, carnet et bilan.
+- Deux ateliers LSF (alphabet et nombres) publiés par MAE Langue des Signes et Dico Plus LSF, avec liens YouTube directs et crédits. Disponibilité vérifiée via les métadonnées YouTube. Le visionnage complet et la qualité pédagogique nécessitent une revue par une personne compétente en LSF.
 - L’ancien catalogue est dépublié sans suppression de l’historique. Les identifiants LSF sont distincts afin de ne pas transférer une progression historique vers une nouvelle leçon.
 - L’assistant français / anglais renvoie vers des ressources LSF sélectionnées ; il ne présente pas la bibliothèque historique comme LSF. La transcription reçoit le code de langue choisi, `fr` ou `en`.
 - Nettoyage des composants non référencés, de l’ancien import Mongo et des captures obsolètes. Le dossier actif est `edusign-next` ; les instructions Markdown correspondent à ce nom.
 
 ## Sens des données
 
-« J’ai pratiqué cette activité » enregistre une déclaration. Ce n’est pas une évaluation du geste. Le lecteur YouTube externe ne fournit pas de mesure de temps dans cette version. L’atelier libre garde son pense-bête uniquement sur la page. Le compte est partagé par son utilisateur ; il n’existe pas encore de profils enfants indépendants.
+« J’ai pratiqué cette activité » enregistre une déclaration. Ce n’est pas une évaluation du geste. Le lecteur YouTube externe ne fournit pas de mesure de temps dans cette version. Chaque vidéo mène à un quiz de compréhension de trois questions. Les résultats des utilisateurs connectés sont calculés côté serveur et enregistrés dans Supabase ; les essais anonymes restent sur la page. Les reprises d’enregistrement utilisent un identifiant stable pour éviter les doublons. Le compte est partagé par son utilisateur ; il n’existe pas encore de profils enfants indépendants.
 
 Les vidéos historiques et les poids du modèle sont conservés mais retirés du parcours pédagogique LSF. Leur langue et leurs performances doivent être évaluées avant une éventuelle réutilisation.
 
@@ -64,3 +64,15 @@ Vérification de ces ajouts : compilation de production, TypeScript, lint et 22 
 L’accueil adopte une typographie plus sobre, une hiérarchie claire et un aperçu interactif de trois leçons LSF. Les sections expliquent le parcours, les ressources, l’accompagnement des parents et le rôle de l’assistant. Une FAQ et des appels à l’action distincts permettent d’explorer sans compte ou de créer un carnet. L’en-tête, les contrôles mobiles et le pied de page sont harmonisés dans les deux langues. Les valeurs affichées proviennent du catalogue, sans témoignages ou compteurs inventés.
 
 Compilation, TypeScript, lint, 22 tests Node et contrôles HTTP français/anglais réussis. La revue visuelle desktop/mobile et les interactions du sélecteur d’aperçu restent à vérifier dans un navigateur autorisé.
+
+## Alphabet, nombres et quiz — 24 octobre 2026
+
+Le parcours public se concentre désormais sur deux vidéos : l’alphabet manuel de MAE et les nombres de Dico Plus LSF. Les autres ateliers sont dépubliés dans Supabase et leurs URL renvoient au catalogue ; les données historiques restent conservées. Accueil, cartes, communauté, formules et suggestions du tuteur suivent ce périmètre.
+
+Chaque vidéo ouvre automatiquement un mini-quiz via l’événement de fin de l’[API YouTube IFrame](https://developers.google.com/youtube/iframe_api_reference). Le lecteur reste chargé au clic uniquement. Le bouton « Passer au quiz » permet de continuer après un visionnage externe ou en cas de lecteur bloqué. Ouvrir le quiz met le lecteur en pause ; revoir la vidéo n’efface pas les réponses.
+
+Trois questions par atelier, choix au clavier, correction après chaque réponse, explications consultables après le résultat et nouvel essai. Les questions portent sur la compréhension, l’ordre des lettres et les quantités, sans prétendre reconnaître ou évaluer les gestes. Sources : [dactylologie MAE](https://www.maelanguedessignes.com/didactique-lsf) et [nombres Dico Plus](https://karinevermot.wixsite.com/website-1/post/lsf-point-par-point-les-nombres). Les contenus restent à relire avec une personne compétente en LSF.
+
+Les résultats connectés utilisent `quiz_attempts`. Le serveur recalcule les scores à partir des choix, refuse les réponses invalides et déduplique les reprises grâce à l’identifiant d’essai. Les scores envoyés par le navigateur ne sont pas utilisés. Modifier les questions d’un quiz publié nécessite un nouvel identifiant de version dans `src/lib/quiz/quizzes.json`. Aucune migration de schéma. Le bilan affiche les résultats par leçon et son cache vérifie que les données n’ont pas changé.
+
+Vérification : compilation, TypeScript, lint, 26 tests Node et 6 tests Python réussis. Métadonnées des deux vidéos accessibles ; contrôles HTTP français/anglais, redirections et protections réussis. Un compte temporaire a vérifié les scores recalculés malgré un score client falsifié, les reprises concurrentes sans doublon, les nouveaux essais, les données invalides et le bilan actualisé ; ce compte et ses données ont été supprimés. Le catalogue Supabase est synchronisé. La lecture réelle de YouTube, l’événement de fin et la revue visuelle restent à vérifier dans un navigateur autorisé ; les tests HTTP ne les couvrent pas.

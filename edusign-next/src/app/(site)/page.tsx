@@ -28,7 +28,7 @@ export async function generateMetadata() {
     ),
   };
 }
-const featured = ["lsf-bonjour", "lsf-couleurs", "lsf-alphabet"].map((id) =>
+const featured = ["lsf-alphabet", "lsf-nombres"].map((id) =>
   getLsfLesson(id)!,
 );
 const questions = [
@@ -38,7 +38,7 @@ const questions = [
   ],
   [
     "Les leçons sont-elles gratuites ?",
-    "Oui. Les huit ateliers actuels sont accessibles librement. Vous pouvez créer un compte gratuit pour garder une trace de votre pratique, sans carte bancaire.",
+    "Oui. Les deux ateliers et leurs quiz sont accessibles librement. Créez un compte gratuit pour enregistrer vos résultats, sans carte bancaire.",
   ],
   [
     "La langue des signes change-t-elle avec le bouton FR / EN ?",
@@ -165,7 +165,7 @@ export default async function HomePage() {
               <T text="Une nouvelle façon d’échanger." />
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-              <T text="Des sujets du quotidien, une démonstration en LSF et une activité concrète pour essayer." />
+              <T text="Deux essentiels pour commencer : l’alphabet et les nombres. Chaque vidéo se termine par un mini-quiz." />
             </p>
           </div>
           <Link
@@ -176,7 +176,7 @@ export default async function HomePage() {
             <ArrowUpRight aria-hidden className="size-4" />
           </Link>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           {featured.map((lesson) => (
             <CourseCard key={lesson.id} lesson={lesson} />
           ))}
@@ -244,7 +244,7 @@ export default async function HomePage() {
                 number: "01",
                 Icon: Play,
                 title: "Choisissez votre découverte",
-                text: "Une salutation, une couleur, les lettres d’un prénom. Commencez par ce qui vous parle.",
+                text: "L’alphabet ou les nombres : choisissez votre premier atelier LSF.",
               },
               {
                 number: "02",
@@ -255,8 +255,8 @@ export default async function HomePage() {
               {
                 number: "03",
                 Icon: Sprout,
-                title: "Gardez une trace du chemin",
-                text: "Avec un compte gratuit, notez les activités que vous avez pratiquées et retrouvez-les dans votre carnet.",
+                title: "Testez vos découvertes",
+                text: "Après la vidéo, répondez au mini-quiz. Un compte gratuit permet de conserver vos résultats dans votre bilan.",
               },
             ].map(({ number, Icon, title, text }) => (
               <article key={number} className="border-t border-border pt-6">
@@ -310,7 +310,7 @@ export default async function HomePage() {
                 <T text="UNE IDÉE POUR CE SOIR" />
               </p>
               <p className="mt-2 text-sm leading-relaxed text-foreground">
-                <T text="Choisissez trois objets colorés, regardez la leçon sur les couleurs, puis cherchez leurs signes ensemble." />
+                <T text="Comptez trois objets, regardez la leçon sur les nombres, puis cherchez ce nombre dans la vidéo." />
               </p>
             </div>
             <Link

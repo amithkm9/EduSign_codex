@@ -23,7 +23,7 @@ export function CourseCard({
           className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10"
         />
         <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1.5 text-[10px] font-bold tracking-wide text-primary">
-          <T text="LSF · DÉCOUVERTE" />
+          <T text="LSF · VIDÉO + QUIZ" />
         </span>
         <span
           aria-hidden

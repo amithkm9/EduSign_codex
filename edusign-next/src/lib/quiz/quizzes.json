@@ -1,0 +1,134 @@
+[
+  {
+    "id": "alphabet-v1",
+    "courseId": "lsf-alphabet",
+    "questions": [
+      {
+        "id": "alphabet-purpose",
+        "prompt": "À quoi sert l’alphabet manuel ?",
+        "options": [
+          {
+            "id": "words",
+            "text": "À épeler des mots, lettre par lettre."
+          },
+          {
+            "id": "numbers",
+            "text": "À compter des objets."
+          },
+          {
+            "id": "everything",
+            "text": "À remplacer tous les signes de la LSF."
+          }
+        ],
+        "correctOption": "words",
+        "explanation": "La dactylologie permet d’épeler des lettres, par exemple celles d’un prénom. La LSF possède aussi ses propres signes."
+      },
+      {
+        "id": "alphabet-name",
+        "prompt": "Vous voulez épeler LÉO avec l’alphabet manuel. Dans quel ordre chercher les lettres de base ?",
+        "options": [
+          {
+            "id": "reverse",
+            "text": "O → E → L"
+          },
+          {
+            "id": "name",
+            "text": "L → E → O"
+          },
+          {
+            "id": "sorted",
+            "text": "E → L → O"
+          }
+        ],
+        "correctOption": "name",
+        "explanation": "Gardez l’ordre du prénom : L, puis E, puis O. Retrouvez chaque lettre dans la vidéo et faites pause pour essayer."
+      },
+      {
+        "id": "alphabet-use",
+        "prompt": "Quelle activité permet de pratiquer l’alphabet de cette vidéo ?",
+        "options": [
+          {
+            "id": "speed",
+            "text": "Faire toutes les lettres le plus vite possible."
+          },
+          {
+            "id": "guess",
+            "text": "Inventer une forme de main pour chaque lettre."
+          },
+          {
+            "id": "observe",
+            "text": "Observer les lettres de mon prénom, puis les essayer une à une."
+          }
+        ],
+        "correctOption": "observe",
+        "explanation": "Prenez votre temps : observez la forme et l’orientation de la main dans la démonstration, puis essayez chaque lettre."
+      }
+    ]
+  },
+  {
+    "id": "numbers-v1",
+    "courseId": "lsf-nombres",
+    "questions": [
+      {
+        "id": "numbers-use",
+        "prompt": "Pour quelle information les nombres en LSF sont-ils utiles ?",
+        "options": [
+          {
+            "id": "age",
+            "text": "Pour indiquer mon âge."
+          },
+          {
+            "id": "name",
+            "text": "Pour épeler mon prénom."
+          },
+          {
+            "id": "colour",
+            "text": "Pour nommer une couleur."
+          }
+        ],
+        "correctOption": "age",
+        "explanation": "Les nombres permettent notamment d’indiquer un âge ou une quantité. L’alphabet manuel sert à épeler un prénom."
+      },
+      {
+        "id": "numbers-count",
+        "prompt": "● ● ● — Combien d’objets voyez-vous ? Retrouvez ensuite ce nombre dans la vidéo.",
+        "options": [
+          {
+            "id": "2",
+            "text": "2"
+          },
+          {
+            "id": "4",
+            "text": "4"
+          },
+          {
+            "id": "3",
+            "text": "3"
+          }
+        ],
+        "correctOption": "3",
+        "explanation": "Il y a trois objets. Revenez à la démonstration pour observer comment signer ce nombre en LSF."
+      },
+      {
+        "id": "numbers-add",
+        "prompt": "Vous avez 2 crayons et vous en ajoutez 3. Quel nombre allez-vous chercher dans la vidéo ?",
+        "options": [
+          {
+            "id": "23",
+            "text": "23"
+          },
+          {
+            "id": "5",
+            "text": "5"
+          },
+          {
+            "id": "1",
+            "text": "1"
+          }
+        ],
+        "correctOption": "5",
+        "explanation": "Deux crayons et trois crayons font cinq crayons. Cherchez le nombre 5 dans la démonstration et essayez à votre rythme."
+      }
+    ]
+  }
+]

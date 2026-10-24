@@ -18,7 +18,7 @@ const decode = (s) =>
 for (const locale of ["fr", "en"]) {
   const headers = { cookie: `edusign_locale=${locale}` };
   for (const path of ["/login", "/register"]) {
-    const url = base + path + "?redirectTo=%2Flearn%2Flsf-couleurs";
+    const url = base + path + "?redirectTo=%2Flearn%2Flsf-alphabet";
     const response = await fetch(url, { headers });
     assert.equal(response.status, 200);
     const html = await response.text();
@@ -37,11 +37,11 @@ for (const locale of ["fr", "en"]) {
       ),
       path + " email form",
     );
-    assert.ok(google.includes('value="/learn/lsf-couleurs"'));
+    assert.ok(google.includes('value="/learn/lsf-alphabet"'));
     assert.ok(
       forms
         .find((f) => f.includes('name="email"'))
-        .includes('value="/learn/lsf-couleurs"'),
+        .includes('value="/learn/lsf-alphabet"'),
     );
     // The server action either starts OAuth or explains its disabled-provider state.
     const body = new FormData();

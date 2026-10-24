@@ -6,7 +6,9 @@ Consulter le [README principal](../README.md) pour l’installation et les véri
 
 - `src/app` : pages et API authentifiées.
 - `src/components` : navigation, catalogue, lecteur YouTube LSF, atelier, assistant et bilan.
-- `src/lib/data/lsf-catalog.json` : huit ateliers, leurs sources et leurs activités originales.
+- `src/lib/data/lsf-catalog.json` : deux ateliers (alphabet et nombres), leurs sources et leurs activités originales.
+- `src/lib/quiz/quizzes.json` : questions versionnées, options et corrections. `grade.mjs` vérifie les réponses côté serveur.
+- Le lecteur ouvre le quiz à la fin de la vidéo avec l’API YouTube IFrame ; le bouton « Passer au quiz » reste disponible. Les résultats connectés utilisent `quiz_attempts`, sans migration de schéma.
 - `drizzle` : migrations SQL et politiques Supabase.
 - `scripts` : configuration, base de données et vérifications.
 - `tests` : tests des contrats d’authentification et du catalogue.

@@ -5,13 +5,14 @@ Un espace de découverte de la **langue des signes française (LSF)** pour les �
 ## Le produit
 
 - Interface en français et en anglais : accueil, leçons, activités, assistant, carnet et bilan.
-- Huit ateliers avec vidéos YouTube LSF, crédits et liens directs vers les créateurs.
+- Deux ateliers — alphabet et nombres — avec vidéos YouTube LSF, crédits et liens directs vers les créateurs.
+- Un mini-quiz de trois questions après chaque vidéo : correction expliquée, nouvel essai et résultats enregistrés dans Supabase pour les comptes connectés.
 - Recherche et filtres par thème, objectifs simples et conseils aux parents.
 - Authentification et données d’apprentissage dans Supabase : e-mail et intégration Google OAuth (activation du fournisseur requise).
 - Aperçus des vidéos dans les cartes de cours, pages Formules, À propos et Communauté avec partage de leçons.
 - Assistant en français ou en anglais, à l’écrit et par la voix lorsque le service IA est disponible.
 
-Une activité terminée est une **déclaration de pratique**, pas une évaluation des gestes. Le temps passé sur YouTube n’est pas mesuré. Un compte représente un carnet partagé, sans profils enfants séparés.
+Une activité terminée est une **déclaration de pratique**, pas une évaluation des gestes. Le lecteur détecte la fin de la vidéo via l’API IFrame YouTube pour ouvrir le quiz ; un bouton permet aussi de l’ouvrir après un visionnage externe. Le temps passé sur YouTube n’est pas mesuré. Les scores des quiz portent sur la compréhension et les exercices de lettres/nombres, pas sur la qualité des gestes. Un compte représente un carnet partagé, sans profils enfants séparés.
 
 ## Architecture
 
@@ -70,7 +71,7 @@ node scripts/verify-learner-journey.mjs --temporary-user
 node scripts/verify-signup.mjs --temporary-user
 ```
 
-Les tests HTTP nécessitent le serveur sur le port 3100. Les tests `verify-auth.mjs --temporary-user` et `verify-ownership.mjs --temporary-users` créent des comptes temporaires puis les suppriment ; ils doivent viser un projet de test. La commande de seed met à jour les huit ateliers LSF, dépublie les huit anciens cours et conserve les utilisateurs et leurs activités.
+Les tests HTTP nécessitent le serveur sur le port 3100. Les tests `verify-auth.mjs --temporary-user` et `verify-ownership.mjs --temporary-users` créent des comptes temporaires puis les suppriment ; ils doivent viser un projet de test. La commande de seed publie les deux ateliers alphabet/nombres et dépublie les autres cours connus, sans supprimer les utilisateurs ni leur historique.
 
 ## Ressources et attribution
 

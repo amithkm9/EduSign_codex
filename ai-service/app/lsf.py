@@ -5,14 +5,8 @@ from .config import has_openai
 from .llm import get_openai_client
 
 TOPICS = [
-    ('bonjour', ['bonjour', 'merci', 'saluer', 'politesse', 'hello', 'greeting', 'thank'], 'Bonjour, le monde !'),
     ('alphabet', ['alphabet', 'lettre', 'prénom', 'prenom', 'dactylologie', 'name', 'letter'], 'Les lettres prennent vie'),
-    ('couleurs', ['couleur', 'rouge', 'bleu', 'vert', 'colour', 'color'], 'Un monde en couleurs'),
-    ('famille', ['famille', 'maman', 'papa', 'parent', 'family', 'mother', 'father'], 'Les personnes qui comptent'),
     ('nombres', ['nombre', 'chiffre', 'compter', 'number', 'count'], 'À vous de compter'),
-    ('ecole', ['école', 'ecole', 'classe', 'cahier', 'school', 'classroom'], 'Une journée à l’école'),
-    ('emotions', ['émotion', 'emotion', 'triste', 'content', 'colère', 'feeling', 'emotion', 'happy', 'sad'], 'Comment tu te sens ?'),
-    ('dialogue', ['dialogue', 'rencontre', 'présenter', 'repeter', 'conversation', 'introduce'], 'On fait connaissance ?'),
 ]
 
 def process_french_message(message: str, history=None, profile=None, language='fr') -> dict:
@@ -22,11 +16,11 @@ def process_french_message(message: str, history=None, profile=None, language='f
     resources = [{'title': title, 'url': '/learn/lsf-' + slug} for slug, title in matched[:3]]
     if not resources:
         resources = [{'title': 'Le Dico Elix — rechercher un signe en LSF', 'url': 'https://dico.elix-lsf.fr/'}]
-    text = ('Ouvrez la ressource ci-dessous pour observer la démonstration en LSF. Regardez les mains, le visage et le mouvement, puis faites pause pour essayer à votre rythme. Vous pouvez pratiquer à deux et revenir au modèle aussi souvent que nécessaire.' if matched else 'Pour commencer, choisissez une seule découverte : les salutations, les couleurs ou les lettres de votre prénom. Le Dico Elix permet aussi de rechercher un mot en LSF. Je peux vous orienter vers les leçons EduSign ; les gestes précis doivent être vérifiés dans une démonstration LSF.')
+    text = ('Ouvrez la ressource ci-dessous pour observer la démonstration en LSF. Regardez les mains, le visage et le mouvement, puis faites pause pour essayer à votre rythme. Vous pouvez pratiquer à deux et revenir au modèle aussi souvent que nécessaire.' if matched else 'Pour commencer, choisissez une seule découverte : les nombres ou les lettres de votre prénom. Le Dico Elix permet aussi de rechercher un mot en LSF. Je peux vous orienter vers les leçons EduSign ; les gestes précis doivent être vérifiés dans une démonstration LSF.')
     if english:
         titles = {'bonjour':'Hello, world!', 'alphabet':'Letters come to life', 'couleurs':'A world of colours', 'famille':'The people who matter', 'nombres':'Let’s count', 'ecole':'A day at school', 'emotions':'How are you feeling?', 'dialogue':'Shall we get acquainted?'}
         resources = [{'title':titles[slug], 'url':'/learn/lsf-'+slug} for slug, _ in matched[:3]] or [{'title':'Le Dico Elix — look up a sign in LSF','url':'https://dico.elix-lsf.fr/'}]
-        text = ('Open the lesson below to watch its French Sign Language demonstration. Watch the hands, face and movement, then pause and try at your own pace. You can practise together and return to the example whenever you need.' if matched else 'Start with one discovery: greetings, colours or the letters in your name. Le Dico Elix also lets you look up words in French Sign Language. I can guide you to EduSign lessons; always check the exact signs in an LSF demonstration. English explanations do not change the sign language to ASL.')
+        text = ('Open the lesson below to watch its French Sign Language demonstration. Watch the hands, face and movement, then pause and try at your own pace. You can practise together and return to the example whenever you need.' if matched else 'Start with one discovery: numbers or the letters in your name. Le Dico Elix also lets you look up words in French Sign Language. I can guide you to EduSign lessons; always check the exact signs in an LSF demonstration. English explanations do not change the sign language to ASL.')
     if has_openai():
         try:
             reply = get_openai_client().chat.completions.create(

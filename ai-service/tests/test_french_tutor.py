@@ -7,20 +7,22 @@ from app.report import _fallback
 class FrenchTutorTests(unittest.TestCase):
     @patch('app.lsf.has_openai', return_value=False)
     def test_french_sign_request_never_uses_legacy_video(self, _):
-        result = process_message('Comment signer bonjour ?', 'fr')
+        result = process_message('Comment signer les nombres ?', 'fr')
         self.assertEqual(result['language'], 'fr')
         reply = result['response']
         self.assertNotIn('videoSequence', reply)
         self.assertNotIn('responseSigns', reply)
-        self.assertEqual(reply['resources'][0]['url'], '/learn/lsf-bonjour')
+        self.assertEqual(reply['resources'][0]['url'], '/learn/lsf-nombres')
 
     @patch('app.lsf.has_openai', return_value=False)
     def test_accents_and_unknown_queries_use_curated_sources(self, _):
-        known = process_message('Les émotions', 'fr')['response']
-        self.assertEqual(known['resources'][0]['url'], '/learn/lsf-emotions')
+        known = process_message('Les lettres de mon prénom', 'fr')['response']
+        self.assertEqual(known['resources'][0]['url'], '/learn/lsf-alphabet')
         unknown = process_message('Un signe qui n’existe pas ici', 'fr')['response']
         self.assertEqual(unknown['resources'][0]['url'], 'https://dico.elix-lsf.fr/')
         self.assertNotIn('videoSequence', unknown)
+        retired = process_message('Les couleurs et les émotions', 'fr')['response']
+        self.assertEqual(retired['resources'][0]['url'], 'https://dico.elix-lsf.fr/')
 
     @patch('app.lsf.has_openai', return_value=False)
     def test_english_still_teaches_lsf(self, _):

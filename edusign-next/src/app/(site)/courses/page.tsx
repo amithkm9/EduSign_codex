@@ -38,7 +38,7 @@ export default async function CoursesPage() {
           <p className="mt-5 max-w-xl leading-relaxed text-muted-foreground">
             <T
               text={
-                "Des vidéos en langue des signes française et des activités pour les élèves et leurs parents. Choisissez votre point de départ."
+                "Commencez par l’alphabet ou les nombres en LSF. Regardez la vidéo, puis jouez au mini-quiz avec votre enfant."
               }
             />{" "}
           </p>

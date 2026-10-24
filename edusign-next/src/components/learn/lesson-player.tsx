@@ -3,7 +3,9 @@ import { useLocale as useInterfaceLocale } from "@/components/i18n/locale-provid
 
 import { T } from "@/components/i18n/locale-provider";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { YouTubePlayer, type YouTubeControls } from "./youtube-player";
+import { LessonQuiz } from "@/components/quiz/lesson-quiz";
 import Link from "next/link";
 import {
   Play,
@@ -24,8 +26,36 @@ export function LessonPlayer({
   track: boolean;
   initialProgress?: number;
 }) {
-  const { t: _t, locale } = useInterfaceLocale();
+  const { t: _t } = useInterfaceLocale();
 
+  const [quizOpen, setQuizOpen] = useState(false);
+  const controls = useRef<YouTubeControls | null>(null);
+  const quizRegion = useRef<HTMLDivElement>(null);
+  const videoRegion = useRef<HTMLDivElement>(null);
+  function openQuiz() {
+    if (controls.current) controls.current.pause();
+    else setLoaded(false);
+    setQuizOpen(true);
+    requestAnimationFrame(() => {
+      quizRegion.current?.scrollIntoView({
+        behavior: "instant",
+        block: "start",
+      });
+      quizRegion.current?.focus({ preventScroll: true });
+    });
+  }
+  function replay() {
+    setLoaded(false);
+    requestAnimationFrame(() => {
+      videoRegion.current?.scrollIntoView({
+        behavior: "instant",
+        block: "start",
+      });
+      videoRegion.current
+        ?.querySelector("button")
+        ?.focus({ preventScroll: true });
+    });
+  }
   const [loaded, setLoaded] = useState(false);
   const [done, setDone] = useState(initialProgress >= 100);
   const [saving, setSaving] = useState(false);
@@ -57,15 +87,15 @@ export function LessonPlayer({
   }
   return (
     <div className="overflow-hidden rounded-[1.6rem] border border-border bg-white shadow-sm">
-      <div className="aspect-video bg-[#24366b]">
+      <div
+        ref={videoRegion}
+        className="aspect-video min-h-[200px] scroll-mt-28 bg-[#24366b]"
+      >
         {loaded ? (
-          <iframe
-            className="h-full w-full"
-            src={`https://www.youtube-nocookie.com/embed/${lesson.youtubeId}?rel=0&hl=${locale}`}
-            title={`${lesson.sourceTitle} — ${lesson.creator} — LSF`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            referrerPolicy="strict-origin-when-cross-origin"
+          <YouTubePlayer
+            lesson={lesson}
+            onEnded={openQuiz}
+            controls={controls}
           />
         ) : (
           <div className="relative isolate flex h-full flex-col items-center justify-center gap-3 overflow-hidden p-6 text-center text-white">
@@ -130,6 +160,36 @@ export function LessonPlayer({
             </span>
           </a>
         </div>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-primary/15 bg-[#f4f7ff] p-5">
+          <div>
+            <p className="font-bold">
+              <T text="Une vidéo, puis un mini-quiz" />
+            </p>
+            <p className="mt-1 max-w-md text-sm text-muted-foreground">
+              <T text="Le quiz s’ouvre à la fin de la vidéo. Déjà regardée sur YouTube ? Vous pouvez commencer ici." />
+            </p>
+          </div>
+          <Button
+            onClick={openQuiz}
+            className="rounded-full"
+            aria-expanded={quizOpen}
+            aria-controls="lesson-quiz"
+          >
+            <T text="Passer au quiz" />
+          </Button>
+        </div>
+        <div
+          id="lesson-quiz"
+          ref={quizRegion}
+          tabIndex={-1}
+          role="region"
+          aria-label={_t("Mini-quiz de la leçon")}
+          className="mt-6 scroll-mt-28 rounded-3xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+        >
+          {quizOpen && (
+            <LessonQuiz courseId={lesson.id} track={track} onReplay={replay} />
+          )}
+        </div>
         <div className="mt-6 rounded-2xl bg-secondary p-5">
           <h2 className="font-bold">
             <T text={"À vous de jouer"} />
@@ -166,7 +226,7 @@ export function LessonPlayer({
             )}
             {loaded && (
               <button
-                onClick={() => setLoaded(false)}
+                onClick={replay}
                 className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary"
               >
                 <RotateCcw className="size-4" />{" "}
