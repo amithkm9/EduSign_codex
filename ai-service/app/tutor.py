@@ -149,11 +149,11 @@ def translate_and_extract(response_text: str, language: str, original_query: str
         return extract_english_words_from_response(response_text, language)
 
 
-def process_message(message: str, language: str = "en", history=None, profile=None) -> dict:
+def process_message(message: str, language: str = "en", history=None, profile=None, action=None) -> dict:
     """Core tutor handler. Returns {response, language, text_for_speech}."""
     if language in ("fr", "en"):
         from .lsf import process_french_message
-        return process_french_message(message, history, profile, language)
+        return process_french_message(message, history, profile, language, action)
     history = history or []
     detected = detect_language(message)
     valid = (

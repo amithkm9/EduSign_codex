@@ -51,7 +51,11 @@ cp .env.example .env
 .venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8100
 ```
 
-`OPENAI_API_KEY` reste côté serveur. Les fonctions vocales utilisent actuellement les adaptateurs existants ; leur migration vers les nouveaux modèles est un chantier séparé. Sans service IA, les leçons et activités restent accessibles.
+`OPENAI_API_KEY` reste dans le fichier ignoré `ai-service/.env`. Redémarrez le service après un changement de clé. Les modèles sont configurables via `OPENAI_TUTOR_MODEL` (gpt-4o-mini), `OPENAI_TRANSCRIBE_MODEL` (gpt-transcribe) et `OPENAI_TTS_MODEL` (gpt-4o-mini-tts).
+
+L’assistant propose des programmes courts, des questions interactives corrigées côté serveur et des liens LSF vérifiés. La conversation reste dans la session de la page ; FR / EN conserve les messages et change la langue des nouveaux échanges. Le service reçoit les derniers messages et uniquement des agrégats de progression pour la personnalisation, sans nom ni âge dans le prompt. La connexion fournisseur est vérifiée et mise en cache pendant 60 secondes ; un statut connecté ne garantit pas les quotas de chaque modèle vocal. Les réponses de secours sont explicitement marquées « Réponse guidée ».
+
+La dictée enregistre au maximum 60 secondes, respecte le format réel du navigateur (notamment MP4 sur Safari), puis propose une transcription modifiable avant envoi. Annuler ou masquer l’onglet arrête la capture. Chaque réponse peut être écoutée ; la lecture automatique est facultative. Les exercices guidés ne nécessitent pas de clé OpenAI, mais nécessitent le service Python. Sans service IA, les leçons restent accessibles.
 
 ## Vérifier
 
@@ -69,6 +73,7 @@ node scripts/smoke-product-pages.mjs
 node scripts/verify-lsf-links.mjs
 # Test connecté (compte temporaire, service IA démarré) :
 node scripts/verify-learner-journey.mjs --temporary-user
+node scripts/verify-tutor.mjs --temporary-user
 # Confirmation d’inscription, sans envoi d’e-mail :
 node scripts/verify-signup.mjs --temporary-user
 ```
@@ -92,3 +97,5 @@ Les instructions du dépôt sont dans [AGENTS.md](AGENTS.md). Le sélecteur FR /
 [Configurer Google et l’e-mail](docs/AUTH_SETUP.md) : les comptes restent dans Supabase. Le fournisseur Google doit être activé dans le tableau de bord ; un SMTP de production et un test de délivrabilité restent nécessaires pour l’inscription publique par e-mail.
 
 `/packages` présente la découverte gratuite, le tutorat personnel et l’abonnement. Les offres Standard et Tuteur personnel sont en préparation. Leurs prix mensuels et le contact écoles sont configurables côté serveur (`EDUSIGN_STANDARD_MONTHLY_EUR`, `EDUSIGN_TUTOR_MONTHLY_EUR`, `EDUSIGN_SCHOOLS_EMAIL`) ; le Tuteur personnel est affiché à 99 €/mois et le contact écoles est amithkm9@gmail.com. Le prix Standard reste à confirmer. Aucun achat ni paiement n’est activé. `/about` présente la mission et l’approche du projet. `/community` propose des activités à partager et un outil de partage de leçons ; ce n’est pas encore un forum de membres. Les aperçus des cours proviennent des vidéos LSF originales sur YouTube et gardent les crédits des créateurs.
+
+Tests du coach côté Python : `.venv/bin/python -m unittest discover -s tests`. Vérification réelle facultative et facturée par le fournisseur : `.venv/bin/python tests/verify_live_coach.py --live-api` depuis `ai-service/`. Elle utilise uniquement des exemples synthétiques en français et anglais, vérifie les réponses et suivis, puis synthèse → transcription → réponse → synthèse. Un mode de secours ne compte jamais comme un succès IA.

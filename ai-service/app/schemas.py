@@ -4,8 +4,14 @@ from pydantic import BaseModel, Field, StringConstraints
 
 
 class ChatMessage(BaseModel):
-    role: str
-    content: str
+    role: Literal["user", "assistant"]
+    content: str = Field(max_length=4000)
+
+
+class TutorAction(BaseModel):
+    kind: Literal["practice", "answer"]
+    exercise_id: Literal["name", "count", "language"] = "name"
+    choice: Optional[int] = Field(default=None, ge=0, le=2, strict=True)
 
 
 class TutorProfile(BaseModel):
@@ -29,23 +35,29 @@ class TutorProfile(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    message: str
-    language: str = "fr"
-    conversation_history: list[ChatMessage] = []
+    message: str = Field(min_length=1, max_length=2000)
+    language: Literal["fr", "en"] = "fr"
+    conversation_history: list[ChatMessage] = Field(default_factory=list, max_length=20)
     profile: Optional[TutorProfile] = None
+    action: Optional[TutorAction] = None
 
 
-class VoiceChatRequest(BaseModel):
-    audio: str  # base64-encoded webm
-    language: str = "fr"
-    conversation_history: list[ChatMessage] = []
+class TranscribeRequest(BaseModel):
+    audio: str = Field(min_length=1, max_length=10000000)
+    mime_type: Literal["audio/webm", "audio/mp4", "audio/ogg", "audio/wav", "audio/mpeg"] = "audio/webm"
+    language: Literal["fr", "en"] = "fr"
+
+
+class VoiceChatRequest(TranscribeRequest):
+    conversation_history: list[ChatMessage] = Field(default_factory=list, max_length=20)
     voice_enabled: bool = True
     profile: Optional[TutorProfile] = None
 
 
 class TtsRequest(BaseModel):
-    text: str
-    voice: str = "nova"
+    text: str = Field(min_length=1, max_length=5000)
+    voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer", "coral", "sage", "ash", "ballad", "verse", "marin", "cedar"] = "coral"
+    language: Literal["fr", "en"] = "fr"
 
 
 class RecognizeRequest(BaseModel):
@@ -75,3 +87,4 @@ class VoiceChatResponse(BaseModel):
     response: dict[str, Any]
     audio: Optional[str] = None
     language: str
+    audio_error: bool = False

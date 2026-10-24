@@ -10,6 +10,7 @@ from .schemas import (
     RecognizeRequest,
     ReportInsightsRequest,
     TtsRequest,
+    TranscribeRequest,
     VoiceChatRequest,
     VoiceChatResponse,
 )
@@ -44,13 +45,34 @@ def health():
 
 @app.post("/tutor/chat", response_model=ChatResponse, dependencies=[Depends(require_internal_token)])
 def tutor_chat(req: ChatRequest):
-    result = process_message(
-        req.message,
-        req.language,
-        _history(req.conversation_history),
-        req.profile.model_dump() if req.profile else None,
-    )
+    try:
+        result = process_message(
+            req.message, req.language, _history(req.conversation_history),
+            req.profile.model_dump() if req.profile else None,
+            req.action.model_dump() if req.action else None,
+        )
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid exercise answer.")
     return {"success": True, "response": result["response"], "language": result["language"]}
+
+
+@app.get("/tutor/status", dependencies=[Depends(require_internal_token)])
+def assistant_status():
+    from .tutor_status import tutor_status
+    return tutor_status()
+
+
+@app.post("/voice/transcribe", dependencies=[Depends(require_internal_token)])
+def voice_transcribe(req: TranscribeRequest):
+    if not has_openai():
+        raise HTTPException(status_code=503, detail="Voice is temporarily unavailable.")
+    try:
+        message = speech_to_text(req.audio, req.language, req.mime_type)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid audio recording.")
+    except Exception:
+        raise HTTPException(status_code=503, detail="Voice is temporarily unavailable.")
+    return {"success": True, "transcription": message, "language": req.language}
 
 
 @app.post("/report/insights", dependencies=[Depends(require_internal_token)])
@@ -80,17 +102,21 @@ def recognize_status_endpoint():
 @app.post("/voice/tts", dependencies=[Depends(require_internal_token)])
 def voice_tts(req: TtsRequest):
     if not has_openai():
-        raise HTTPException(status_code=503, detail="Voice features need OPENAI_API_KEY")
-    return {"success": True, "audio": text_to_speech(req.text, req.voice), "format": "mp3"}
+        raise HTTPException(status_code=503, detail="Voice is temporarily unavailable.")
+    try:
+        audio = text_to_speech(req.text, req.voice, req.language)
+    except Exception:
+        raise HTTPException(status_code=503, detail="Speech is temporarily unavailable.")
+    return {"success": True, "audio": audio, "format": "mp3"}
 
 
 @app.post("/voice/chat", response_model=VoiceChatResponse, dependencies=[Depends(require_internal_token)])
 def voice_chat(req: VoiceChatRequest):
     if not has_openai():
-        raise HTTPException(status_code=503, detail="Voice features need OPENAI_API_KEY")
+        raise HTTPException(status_code=503, detail="Voice is temporarily unavailable.")
 
     hint = req.language if req.language in SUPPORTED_LANGUAGES else "fr"
-    message = speech_to_text(req.audio, hint)
+    message = voice_transcribe(req)["transcription"]
     if not message:
         return {
             "success": True,
@@ -108,11 +134,12 @@ def voice_chat(req: VoiceChatRequest):
     )
 
     audio = None
+    audio_error = False
     if req.voice_enabled and result["text_for_speech"]:
         try:
-            audio = text_to_speech(clean_for_speech(result["text_for_speech"]))
+            audio = text_to_speech(clean_for_speech(result["text_for_speech"]), language=hint)
         except Exception:
-            audio = None
+            audio_error = True
 
     return {
         "success": True,
@@ -120,6 +147,7 @@ def voice_chat(req: VoiceChatRequest):
         "response": result["response"],
         "audio": audio,
         "language": result["language"],
+        "audio_error": audio_error,
     }
 
 

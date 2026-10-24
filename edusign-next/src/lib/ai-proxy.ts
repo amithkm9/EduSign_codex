@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL ?? "http://localhost:8100";
 
 // Cap how long a gateway route will wait on the Python service so a hung
-// upstream can't pin a Next request indefinitely. Whisper+TTS round-trips are
+// upstream can't pin a Next request indefinitely. Transcription + coaching + speech round-trips are
 // the slowest path, hence 60s.
 const UPSTREAM_TIMEOUT_MS = 60_000;
 
@@ -13,10 +13,15 @@ const UPSTREAM_TIMEOUT_MS = 60_000;
  * fetch + 502 handling lives in one place. Times out, and degrades non-JSON
  * upstream responses (e.g. an HTML 500 page) into a clean 502.
  */
-export async function proxyToAiService(path: string, body: unknown) {
+export async function proxyToAiService(
+  path: string,
+  body?: unknown,
+  method = "POST",
+) {
   try {
     const upstream = await fetch(`${AI_SERVICE_URL}${path}`, {
-      method: "POST",
+      method,
+      cache: "no-store",
       headers: {
         "Content-Type": "application/json",
         // Shared secret so only this gateway can reach the public AI service.
@@ -45,7 +50,6 @@ export async function proxyToAiService(path: string, body: unknown) {
     return NextResponse.json(
       {
         error: timedOut ? "AI service timed out" : "AI service unavailable",
-        hint: `Is the AI service running at ${AI_SERVICE_URL}?`,
       },
       { status: timedOut ? 504 : 502 },
     );

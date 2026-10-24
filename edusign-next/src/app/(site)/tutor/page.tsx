@@ -1,6 +1,4 @@
 import { getTranslator } from "@/lib/i18n/server";
-import { getLocale } from "@/lib/i18n/server";
-
 import { T } from "@/components/i18n/locale-provider";
 import { TutorChat } from "@/components/tutor/tutor-chat";
 export async function generateMetadata() {
@@ -8,28 +6,23 @@ export async function generateMetadata() {
   return {
     title: t("Mon assistant"),
     description: t(
-      "Un assistant en français pour accompagner vos découvertes en LSF.",
+      "Votre coach en langue des signes française, à l’écrit et à l’oral.",
     ),
   };
 }
-export default async function Tutor() {
-  const locale = await getLocale();
+export default function Tutor() {
   return (
-    <div className="container max-w-5xl py-10">
+    <div className="container max-w-6xl py-8 sm:py-12">
       <p className="eyebrow">
-        <T text={"UN COUP DE POUCE POUR APPRENDRE"} />
+        <T text="VOTRE COMPAGNON D’APPRENTISSAGE" />
       </p>
-      <h1 className="mt-3 text-3xl font-extrabold sm:text-4xl">
-        <T text={"Une question ? On en parle."} />{" "}
+      <h1 className="mt-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
+        <T text="Un peu d’aide. Beaucoup de progrès." />
       </h1>
-      <p className="mb-7 mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-        <T
-          text={
-            "Des idées pour pratiquer, des ressources LSF et des explications en français. L’assistant est une IA ; vérifiez toujours un signe dans sa source vidéo."
-          }
-        />{" "}
+      <p className="mb-8 mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+        <T text="Votre coach en langue des signes française, à l’écrit et à l’oral." />
       </p>
-      <TutorChat key={locale} />
+      <TutorChat />
     </div>
   );
 }

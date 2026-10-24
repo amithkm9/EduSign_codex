@@ -12,7 +12,7 @@ def get_openai_client():
     if _client is None and has_openai():
         from openai import OpenAI
 
-        _client = OpenAI(api_key=OPENAI_API_KEY)
+        _client = OpenAI(api_key=OPENAI_API_KEY, timeout=20, max_retries=0)
     return _client
 
 
