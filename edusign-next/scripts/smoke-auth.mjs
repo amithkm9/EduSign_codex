@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 const base = process.env.BASE || "http://localhost:3100";
 for (const [path, text] of [
-  ["/", "De petites mains."],
+  ["/", "Apprenez la LSF."],
   ["/login", "Heureux de vous revoir."],
   ["/register", "Faisons connaissance."],
   ["/forgot-password", "Ça arrive à tout le monde."],

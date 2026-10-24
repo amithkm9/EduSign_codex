@@ -2,7 +2,7 @@
 const base = process.env.BASE ?? "http://localhost:3100";
 
 const checks = [
-  { path: "/", marker: "De petites mains." },
+  { path: "/", marker: "Apprenez la LSF." },
   { path: "/courses", marker: "sa petite découverte." },
   { path: "/courses/5-10", marker: "Les petits explorateurs" },
   { path: "/learn/lsf-bonjour", marker: "Voir sur YouTube" },

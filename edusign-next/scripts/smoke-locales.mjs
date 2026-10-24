@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 const base = process.env.BASE || "http://localhost:3100";
 for (const [path, fr, en] of [
-  ["/", "De petites mains.", "Little hands."],
+  ["/", "Apprenez la LSF.", "Learn LSF."],
   ["/courses", "Un monde en couleurs", "A world of colours"],
   ["/parents", "Apprendre à ses côtés.", "Learning by their side."],
   ["/quiz", "On essaie, à deux ?", "Shall we try together?"],
