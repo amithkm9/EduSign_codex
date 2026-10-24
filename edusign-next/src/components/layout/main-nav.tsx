@@ -16,6 +16,7 @@ export function MainNav({ isAuthed }: { isAuthed: boolean }) {
   const root = useRef<HTMLDivElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const links = [
+    { href: "/", label: "Accueil" },
     { href: "/courses", label: "Apprendre" },
     { href: "/tutor", label: "Mon assistant" },
     { href: "/packages", label: "Formules" },

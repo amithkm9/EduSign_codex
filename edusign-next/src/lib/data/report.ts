@@ -1,3 +1,4 @@
+import { getVideoProgress } from "@/lib/video/data";
 import { getLsfLesson } from "./lsf";
 import { desc, eq } from "drizzle-orm";
 import { db } from "@/lib/db";
@@ -6,31 +7,33 @@ import { getDashboardSummary } from "./analytics";
 
 /** Gathers all parent-report DATA (no AI) — the Python service adds the narrative. */
 export async function gatherReportData(userId: string) {
-  const [summary, profileRow, quizzes, progress] = await Promise.all([
-    getDashboardSummary(userId),
-    db.select().from(profiles).where(eq(profiles.id, userId)).limit(1),
-    db
-      .select({
-        score: quizAttempts.score,
-        submittedAt: quizAttempts.submittedAt,
-        courseId: quizAttempts.courseId,
-      })
-      .from(quizAttempts)
-      .where(eq(quizAttempts.userId, userId))
-      .orderBy(desc(quizAttempts.submittedAt))
-      .limit(20),
-    db
-      .select({
-        courseId: userProgress.courseId,
-        progressPercentage: userProgress.progressPercentage,
-        status: userProgress.status,
-        title: courses.title,
-      })
-      .from(userProgress)
-      .leftJoin(courses, eq(userProgress.courseId, courses.id))
-      .where(eq(userProgress.userId, userId))
-      .orderBy(desc(userProgress.lastAccessedAt)),
-  ]);
+  const [summary, profileRow, quizzes, progress, videoProgress] =
+    await Promise.all([
+      getDashboardSummary(userId),
+      db.select().from(profiles).where(eq(profiles.id, userId)).limit(1),
+      db
+        .select({
+          score: quizAttempts.score,
+          submittedAt: quizAttempts.submittedAt,
+          courseId: quizAttempts.courseId,
+        })
+        .from(quizAttempts)
+        .where(eq(quizAttempts.userId, userId))
+        .orderBy(desc(quizAttempts.submittedAt))
+        .limit(20),
+      db
+        .select({
+          courseId: userProgress.courseId,
+          progressPercentage: userProgress.progressPercentage,
+          status: userProgress.status,
+          title: courses.title,
+        })
+        .from(userProgress)
+        .leftJoin(courses, eq(userProgress.courseId, courses.id))
+        .where(eq(userProgress.userId, userId))
+        .orderBy(desc(userProgress.lastAccessedAt)),
+      getVideoProgress(userId),
+    ]);
 
   const profile = profileRow[0];
 
@@ -55,6 +58,7 @@ export async function gatherReportData(userId: string) {
       estimatedSignsLearned: summary.estimatedSignsLearned,
       totalDaysActive: summary.totalDaysActive,
     },
+    videoProgress,
     weeklyActivity: summary.weeklyActivity,
     quizTrend: quizzes.reverse().map((q, i) => ({
       attempt: i + 1,

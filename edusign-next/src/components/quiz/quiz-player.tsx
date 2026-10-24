@@ -1,10 +1,17 @@
 "use client";
+import { type VideoSummary } from "@/lib/video/progress.mjs";
 import { useState } from "react";
 import { useLocale } from "@/components/i18n/locale-provider";
 import { LSF_LESSONS } from "@/lib/data/lsf";
 import { LessonPlayer } from "@/components/learn/lesson-player";
 
-export function QuizPlayer({ track }: { track: boolean }) {
+export function QuizPlayer({
+  track,
+  videoProgress,
+}: {
+  track: boolean;
+  videoProgress: (VideoSummary & { courseId: string })[];
+}) {
   const { t } = useLocale();
   const [index, setIndex] = useState(0);
   const lesson = LSF_LESSONS[index];
@@ -16,7 +23,7 @@ export function QuizPlayer({ track }: { track: boolean }) {
       </h1>
       <p className="mt-5 max-w-2xl leading-relaxed text-muted-foreground">
         {t(
-          "L’alphabet et les nombres en LSF : une vidéo, trois questions et des explications pour progresser ensemble.",
+          "L’alphabet et les nombres en LSF : regardez, capturez votre essai et comparez-le au modèle. Le quiz de compréhension reste disponible.",
         )}
       </p>
       <div
@@ -36,7 +43,12 @@ export function QuizPlayer({ track }: { track: boolean }) {
         ))}
       </div>
       <h2 className="mb-5 text-2xl font-bold">{t(lesson.title)}</h2>
-      <LessonPlayer key={lesson.id} lesson={lesson} track={track} />
+      <LessonPlayer
+        key={lesson.id}
+        lesson={lesson}
+        track={track}
+        initialVideo={videoProgress.find((v) => v.courseId === lesson.id)}
+      />
     </div>
   );
 }

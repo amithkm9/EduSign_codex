@@ -100,8 +100,19 @@ try {
       ["quiz_attempts", { quiz_id: "rls-check" }],
     ]) {
       const payload = { user_id: owner.id, course_id: "001", ...fields };
+      if (table === "learning_events") {
+        const direct = await owner.client.from(table).insert(payload);
+        assert.equal(
+          direct.error?.code,
+          "42501",
+          "playback events require the server API",
+        );
+      }
       const rows = checked(
-        await owner.client.from(table).insert(payload).select("id"),
+        await (table === "learning_events" ? admin : owner.client)
+          .from(table)
+          .insert(payload)
+          .select("id"),
       );
       assert.equal(rows.length, 1);
       const foreignRead = checked(

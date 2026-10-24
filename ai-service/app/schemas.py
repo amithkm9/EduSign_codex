@@ -59,6 +59,7 @@ class ReportInsightsRequest(BaseModel):
     weeklyActivity: list[int] = []
     quizTrend: list[dict[str, Any]] = []
     courseProgress: list[dict[str, Any]] = []
+    videoProgress: list[dict[str, Any]] = []
 
 
 class ChatResponse(BaseModel):

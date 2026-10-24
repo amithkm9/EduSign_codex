@@ -104,6 +104,77 @@ try {
   });
   assert.equal(r.status, 400);
   console.log("PASS legacy lesson rejected by new activity flow");
+  const videoEvent = {
+    id: randomUUID(),
+    courseId: "lsf-alphabet",
+    sessionId: randomUUID(),
+    type: "heartbeat",
+    activeMs: 15000,
+    durationMs: 120000,
+    positionMs: 15000,
+    ranges: [[0, 15000]],
+    at: new Date().toISOString(),
+  };
+  const postVideo = (payload) =>
+    fetch(base + "/api/learning/video", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(payload),
+    });
+  assert.equal((await postVideo(videoEvent)).status, 200);
+  const retries = await Promise.all([
+    postVideo(videoEvent),
+    postVideo(videoEvent),
+  ]);
+  for (const retry of retries) assert.equal(retry.status, 200);
+  assert.equal(
+    (
+      await postVideo({
+        ...videoEvent,
+        id: randomUUID(),
+        at: new Date().toISOString(),
+      })
+    ).status,
+    200,
+  );
+  for (const invalid of [
+    null,
+    { ...videoEvent, activeMs: 60001 },
+    { ...videoEvent, ranges: [[0, 120000]] },
+    { ...videoEvent, courseId: "lsf-bonjour" },
+    { ...videoEvent, positionMs: 200000 },
+  ])
+    assert.equal((await postVideo(invalid)).status, 400);
+  const videos = await (
+    await fetch(base + "/api/learning/video", { headers })
+  ).json();
+  const watched = videos.videos.find((v) => v.courseId === "lsf-alphabet");
+  assert.equal(watched.activeMs, 30000);
+  assert.equal(watched.watchedMs, 15000);
+  assert.equal(watched.coverage, 12);
+  assert.equal(watched.positionMs, 15000);
+  const direct = await client
+    .from("learning_events")
+    .insert({
+      user_id: id,
+      course_id: "lsf-alphabet",
+      type: "heartbeat",
+      active_ms: 999999,
+      source: "youtube",
+    });
+  assert.equal(direct.error?.code, "42501");
+  const capability = await (await fetch(base + "/api/ml/recognize")).json();
+  assert.equal(capability.ready, false);
+  const unvalidated = await fetch(base + "/api/ml/recognize", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ frames: [] }),
+  });
+  assert.equal(unvalidated.status, 503);
+  assert.equal((await unvalidated.json()).correct, null);
+  console.log(
+    "PASS playback persistence, retries, unique coverage, invalid telemetry and unvalidated recognition guard",
+  );
   const quizzes = JSON.parse(
     await readFile(
       new URL("../src/lib/quiz/quizzes.json", import.meta.url),
@@ -193,6 +264,10 @@ try {
   const fresh = (await after.json()).report;
   assert.equal(fresh.quizTrend.length, 4);
   assert.equal(fresh.statistics.quizAttempts, 4);
+  assert.equal(
+    fresh.videoProgress.find((v) => v.courseId === "lsf-alphabet").activeMs,
+    30000,
+  );
   assert.ok(fresh.quizTrend.some((q) => q.score === 100));
   console.log(
     "PASS new quiz results appear in report despite previously cached data",

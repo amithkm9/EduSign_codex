@@ -32,8 +32,6 @@ export type DashboardSummary = {
   }[];
 };
 
-const SIGNS_PER_COURSE = 15; // estimate, matches legacy
-
 export async function getDashboardSummary(
   userId: string,
 ): Promise<DashboardSummary> {
@@ -142,7 +140,7 @@ export async function getDashboardSummary(
     completionPct: totalStarted
       ? Math.round((totalCompleted / totalStarted) * 100)
       : 0,
-    estimatedSignsLearned: totalCompleted * SIGNS_PER_COURSE,
+    estimatedSignsLearned: 0, // Watching or declaring an activity does not establish signing proficiency.
     avgQuiz: q?.avg_score ?? 0,
     quizAttempts: q?.attempts ?? 0,
     quizPassRate: q?.attempts ? Math.round((q.passed / q.attempts) * 100) : 0,

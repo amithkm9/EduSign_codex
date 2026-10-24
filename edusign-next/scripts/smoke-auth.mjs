@@ -31,6 +31,7 @@ for (const path of [
   "/api/voice/chat",
   "/api/quiz/submit",
   "/api/learning/events",
+  "/api/learning/video",
   "/api/ml/recognize",
 ]) {
   const response = await fetch(base + path, {

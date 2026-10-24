@@ -4,8 +4,11 @@ import { useEffect, useRef, useState, type RefObject } from "react";
 import { useLocale } from "@/components/i18n/locale-provider";
 import type { LsfLesson } from "@/lib/data/lsf";
 
+import { trackPlayback, type TrackedPlayer } from "@/lib/video/tracker";
+import { type VideoSummary } from "@/lib/video/progress.mjs";
+
 export type YouTubeControls = { pause(): void };
-type Player = { destroy(): void; pauseVideo(): void };
+type Player = TrackedPlayer & { destroy(): void; pauseVideo(): void };
 type YouTubeApi = {
   Player: new (
     iframe: HTMLIFrameElement,
@@ -59,10 +62,16 @@ export function YouTubePlayer({
   lesson,
   onEnded,
   controls,
+  track,
+  onProgress,
+  onSaveState,
 }: {
   lesson: LsfLesson;
   onEnded(): void;
   controls: RefObject<YouTubeControls | null>;
+  track: boolean;
+  onProgress(value: VideoSummary): void;
+  onSaveState(value: "saving" | "saved" | "error"): void;
 }) {
   const { t, locale } = useLocale();
   const container = useRef<HTMLDivElement>(null);
@@ -74,6 +83,7 @@ export function YouTubePlayer({
   useEffect(() => {
     let cancelled = false;
     let player: Player | undefined;
+    let tracker: ReturnType<typeof trackPlayback> | undefined;
     const host = container.current!;
     setFailed(false);
     loadApi()
@@ -91,10 +101,19 @@ export function YouTubePlayer({
         player = new api.Player(iframe, {
           events: {
             onReady: ({ target }) => {
-              if (!cancelled)
+              if (!cancelled) {
                 controls.current = { pause: () => target.pauseVideo() };
+                tracker = trackPlayback(
+                  target,
+                  lesson.id,
+                  track,
+                  onProgress,
+                  onSaveState,
+                );
+              }
             },
             onStateChange: ({ data }) => {
+              tracker?.change(data);
               if (!cancelled && data === 0) ended.current();
             },
             onError: () => {
@@ -109,10 +128,21 @@ export function YouTubePlayer({
     return () => {
       cancelled = true;
       controls.current = null;
+      tracker?.stop();
       player?.destroy();
       host.replaceChildren();
     };
-  }, [lesson.youtubeId, lesson.sourceTitle, lesson.creator, locale, controls]);
+  }, [
+    lesson.youtubeId,
+    lesson.sourceTitle,
+    lesson.creator,
+    lesson.id,
+    locale,
+    controls,
+    track,
+    onProgress,
+    onSaveState,
+  ]);
   return (
     <div className="relative h-full w-full">
       <div ref={container} className="h-full w-full" />

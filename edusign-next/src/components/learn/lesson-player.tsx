@@ -5,6 +5,8 @@ import { T } from "@/components/i18n/locale-provider";
 
 import { useRef, useState } from "react";
 import { YouTubePlayer, type YouTubeControls } from "./youtube-player";
+import { summarizeVideo, type VideoSummary } from "@/lib/video/progress.mjs";
+import { CameraPractice } from "@/components/quiz/camera-practice";
 import { LessonQuiz } from "@/components/quiz/lesson-quiz";
 import Link from "next/link";
 import {
@@ -21,13 +23,21 @@ export function LessonPlayer({
   lesson,
   track,
   initialProgress = 0,
+  initialVideo,
 }: {
   lesson: LsfLesson;
   track: boolean;
   initialProgress?: number;
+  initialVideo?: VideoSummary;
 }) {
   const { t: _t } = useInterfaceLocale();
 
+  const [videoProgress, setVideoProgress] = useState(
+    () => initialVideo ?? summarizeVideo([]),
+  );
+  const [videoSaveState, setVideoSaveState] = useState<
+    "saving" | "saved" | "error"
+  >("saved");
   const [quizOpen, setQuizOpen] = useState(false);
   const controls = useRef<YouTubeControls | null>(null);
   const quizRegion = useRef<HTMLDivElement>(null);
@@ -96,6 +106,9 @@ export function LessonPlayer({
             lesson={lesson}
             onEnded={openQuiz}
             controls={controls}
+            track={track}
+            onProgress={setVideoProgress}
+            onSaveState={setVideoSaveState}
           />
         ) : (
           <div className="relative isolate flex h-full flex-col items-center justify-center gap-3 overflow-hidden p-6 text-center text-white">
@@ -160,13 +173,50 @@ export function LessonPlayer({
             </span>
           </a>
         </div>
+        <section
+          aria-label={_t("Votre progression vidéo")}
+          className="mt-5 rounded-2xl border border-border p-4"
+        >
+          <div className="flex flex-wrap justify-between gap-3 text-sm font-semibold">
+            <span>
+              {_t("Temps de lecture actif")} ·{" "}
+              {Math.floor(videoProgress.activeMs / 60000)} min{" "}
+              {Math.floor(videoProgress.activeMs / 1000) % 60} s
+            </span>
+            <span>
+              {videoProgress.coverage}% {_t("de la vidéo regardée")}
+            </span>
+          </div>
+          <progress
+            value={videoProgress.coverage}
+            max={100}
+            aria-label={_t("Partie de la vidéo regardée")}
+            className="mt-3 h-2 w-full accent-primary"
+          />
+          <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+            {_t(
+              "Seule la lecture active dans cet onglet visible est comptée. Les pauses, les sauts et le visionnage sur YouTube sont exclus.",
+            )}
+          </p>
+          <p role="status" className="mt-2 text-xs text-primary">
+            {_t(
+              !track
+                ? "Connectez-vous pour retrouver ce suivi dans votre bilan."
+                : videoSaveState === "saving"
+                  ? "Enregistrement du suivi…"
+                  : videoSaveState === "error"
+                    ? "Suivi non synchronisé. Gardez cette page ouverte pour réessayer."
+                    : "Le suivi est enregistré automatiquement pendant la lecture.",
+            )}
+          </p>
+        </section>
         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-primary/15 bg-[#f4f7ff] p-5">
           <div>
             <p className="font-bold">
-              <T text="Une vidéo, puis un mini-quiz" />
+              <T text="Une vidéo, puis un défi signé" />
             </p>
             <p className="mt-1 max-w-md text-sm text-muted-foreground">
-              <T text="Le quiz s’ouvre à la fin de la vidéo. Déjà regardée sur YouTube ? Vous pouvez commencer ici." />
+              <T text="Le défi caméra s’ouvre à la fin de la vidéo. Un quiz de compréhension est aussi disponible." />
             </p>
           </div>
           <Button
@@ -175,7 +225,7 @@ export function LessonPlayer({
             aria-expanded={quizOpen}
             aria-controls="lesson-quiz"
           >
-            <T text="Passer au quiz" />
+            <T text="Commencer le défi caméra" />
           </Button>
         </div>
         <div
@@ -187,7 +237,21 @@ export function LessonPlayer({
           className="mt-6 scroll-mt-28 rounded-3xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
         >
           {quizOpen && (
-            <LessonQuiz courseId={lesson.id} track={track} onReplay={replay} />
+            <div className="space-y-5">
+              <CameraPractice courseId={lesson.id} onReplay={replay} />
+              <details className="rounded-2xl border border-border p-4">
+                <summary className="cursor-pointer font-semibold text-primary">
+                  {_t("Quiz de compréhension (facultatif)")}
+                </summary>
+                <div className="mt-4">
+                  <LessonQuiz
+                    courseId={lesson.id}
+                    track={track}
+                    onReplay={replay}
+                  />
+                </div>
+              </details>
+            </div>
           )}
         </div>
         <div className="mt-6 rounded-2xl bg-secondary p-5">

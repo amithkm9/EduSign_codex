@@ -1,3 +1,4 @@
+import { getVideoProgress } from "@/lib/video/data";
 import { getTranslator } from "@/lib/i18n/server";
 
 import { T } from "@/components/i18n/locale-provider";
@@ -47,6 +48,7 @@ export default async function Lesson({
   }
   const user = await getUser();
   const progress = user ? await getUserProgressForCourses(user.id, [id]) : {};
+  const video = user ? (await getVideoProgress(user.id)).find((v) => v.courseId === id) : undefined;
   const next =
     LSF_LESSONS[(LSF_LESSONS.indexOf(lesson) + 1) % LSF_LESSONS.length];
   return (
@@ -80,6 +82,7 @@ export default async function Lesson({
           lesson={lesson}
           track={!!user}
           initialProgress={progress[id]?.progressPercentage}
+          initialVideo={video}
         />
         <aside className="space-y-5">
           <div className="rounded-3xl border border-border bg-white p-6">

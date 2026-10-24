@@ -16,3 +16,11 @@ Consulter le [README principal](../README.md) pour l’installation et les véri
 `npm run db:seed` synchronise les ateliers LSF sans supprimer les données des apprenants. Les anciens cours restent en base mais sont dépubliés. Les anciennes URL de leçons redirigent vers le nouveau catalogue.
 
 Le lecteur ne charge YouTube qu’après un clic. Un lien direct vers YouTube reste visible si l’intégration est indisponible. La progression est déclarative, sans mesure automatique du visionnage ni score de maîtrise.
+
+## Lecture, caméra et tarifs
+
+`src/lib/video` mesure la lecture active visible à partir des événements et positions YouTube, fusionne les intervalles regardés et synchronise des événements identifiés (reprises sans doublon). La migration additive `drizzle/manual/0005_video_progress.sql` est appliquée par `npm run db:setup`. Les anciens événements sont conservés. Les clients Supabase lisent uniquement leurs propres événements ; les écritures passent par les API authentifiées. Le bilan sépare couverture unique et temps total, relectures comprises. Une panne réseau peut empêcher la livraison de la dernière tranche ; l’interface affiche les erreurs de synchronisation.
+
+Le défi caméra demande une lettre ou un nombre, capture trois secondes localement sans audio et permet de revoir l’essai. Aucun média n’est envoyé ou stocké sur le serveur. Le point d’entrée public de reconnaissance refuse l’évaluation tant qu’un modèle LSF vérifié n’est pas disponible. Les poids historiques sont conservés, sans verdict de correction LSF.
+
+Les montants mensuels et l’adresse écoles sont lus depuis les variables serveur documentées dans `.env.local.example`. Les valeurs absentes restent explicitement à confirmer ; aucun checkout n’est activé.

@@ -17,6 +17,7 @@ try {
     "0002_courses_packages_rls.sql",
     "0003_progress_rls.sql",
     "0004_oauth_profile.sql",
+    "0005_video_progress.sql",
   ]) {
     const source = await readFile(
       join(appRoot, "drizzle/manual", file),

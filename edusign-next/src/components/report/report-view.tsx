@@ -27,6 +27,16 @@ type Report = {
   };
   statistics: Record<string, number>;
   weeklyActivity: number[];
+  videoProgress: {
+    courseId: string;
+    title: string;
+    activeMs: number;
+    durationMs: number;
+    watchedMs: number;
+    coverage: number;
+    positionMs: number;
+    lastWatchedAt: string | null;
+  }[];
   quizTrend: { attempt: number; score: number; title: string }[];
   courseProgress: {
     title: string;
@@ -45,7 +55,7 @@ function fmtMinutes(m: number) {
 }
 
 export function ReportView() {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -174,7 +184,7 @@ export function ReportView() {
       <p className="text-sm text-muted-foreground">
         <T
           text={
-            "Ce bilan présente vos activités et vos quiz de compréhension. Il ne mesure pas la maîtrise des signes. Le temps de visionnage n’est pas enregistré."
+            "Ce bilan réunit vos activités, votre suivi vidéo et vos quiz de compréhension. Il ne mesure pas la maîtrise des signes."
           }
         />{" "}
       </p>
@@ -213,6 +223,68 @@ export function ReportView() {
         ))}
       </div>
 
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <T text="Le parcours vidéo" />
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <p className="text-sm text-muted-foreground">
+            <T text="Le temps inclut les relectures. Le pourcentage compte chaque partie une seule fois. Ce suivi de lecture visible ne mesure pas l’attention de l’élève." />
+          </p>
+          {report.videoProgress.map((video) => (
+            <div
+              key={video.courseId}
+              className="rounded-2xl border border-border p-4"
+            >
+              <div className="flex flex-wrap justify-between gap-3">
+                <h3 className="font-semibold">
+                  <T text={video.title} />
+                </h3>
+                <strong className="text-primary">{video.coverage}%</strong>
+              </div>
+              <progress
+                value={video.coverage}
+                max={100}
+                aria-label={t(video.title)}
+                className="my-3 h-2 w-full accent-primary"
+              />
+              <div className="grid gap-3 text-sm sm:grid-cols-3">
+                <p>
+                  <T text="Temps de lecture actif" />
+                  <strong className="mt-1 block">
+                    {Math.floor(video.activeMs / 60000)} min{" "}
+                    {Math.floor(video.activeMs / 1000) % 60} s
+                  </strong>
+                </p>
+                <p>
+                  <T text="Durée de la vidéo" />
+                  <strong className="mt-1 block">
+                    {video.durationMs
+                      ? `${Math.floor(video.durationMs / 60000)} min ${Math.floor(video.durationMs / 1000) % 60} s`
+                      : "—"}
+                  </strong>
+                </p>
+                <p>
+                  <T text="Dernière position" />
+                  <strong className="mt-1 block">
+                    {Math.floor(video.positionMs / 60000)} min{" "}
+                    {Math.floor(video.positionMs / 1000) % 60} s
+                  </strong>
+                </p>
+              </div>
+              {video.lastWatchedAt && (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  {new Date(video.lastWatchedAt).toLocaleString(
+                    locale === "fr" ? "fr-FR" : "en-GB",
+                  )}
+                </p>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>

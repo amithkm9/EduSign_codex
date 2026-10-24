@@ -6,7 +6,7 @@ const checks = [
   { path: "/courses", marker: "sa petite découverte." },
   { path: "/courses/5-10", marker: "Les petits explorateurs" },
   { path: "/learn/lsf-alphabet", marker: "Voir sur YouTube" },
-  { path: "/learn/lsf-nombres", marker: "Passer au quiz" },
+  { path: "/learn/lsf-nombres", marker: "Commencer le défi caméra" },
   { path: "/learn/lsf-bonjour", expectRedirect: "/courses" },
   { path: "/learn/003", expectRedirect: "/courses" },
   { path: "/learn/inconnu", expectStatus: 404 },

@@ -6,13 +6,15 @@ Un espace de découverte de la **langue des signes française (LSF)** pour les �
 
 - Interface en français et en anglais : accueil, leçons, activités, assistant, carnet et bilan.
 - Deux ateliers — alphabet et nombres — avec vidéos YouTube LSF, crédits et liens directs vers les créateurs.
-- Un mini-quiz de trois questions après chaque vidéo : correction expliquée, nouvel essai et résultats enregistrés dans Supabase pour les comptes connectés.
+- Un défi caméra après chaque vidéo : capture locale et comparaison au modèle. Correction automatique LSF en attente d’un modèle validé.
+- Quiz de compréhension facultatif : correction expliquée, nouvel essai et résultats Supabase.
+- Suivi vidéo : temps de lecture visible, couverture unique et dernière position, inclus dans le bilan connecté.
 - Recherche et filtres par thème, objectifs simples et conseils aux parents.
 - Authentification et données d’apprentissage dans Supabase : e-mail et intégration Google OAuth (activation du fournisseur requise).
 - Aperçus des vidéos dans les cartes de cours, pages Formules, À propos et Communauté avec partage de leçons.
 - Assistant en français ou en anglais, à l’écrit et par la voix lorsque le service IA est disponible.
 
-Une activité terminée est une **déclaration de pratique**, pas une évaluation des gestes. Le lecteur détecte la fin de la vidéo via l’API IFrame YouTube pour ouvrir le quiz ; un bouton permet aussi de l’ouvrir après un visionnage externe. Le temps passé sur YouTube n’est pas mesuré. Les scores des quiz portent sur la compréhension et les exercices de lettres/nombres, pas sur la qualité des gestes. Un compte représente un carnet partagé, sans profils enfants séparés.
+Une activité terminée est une **déclaration de pratique**, pas une évaluation des gestes. Le lecteur détecte la fin de la vidéo via l’API IFrame YouTube pour ouvrir le défi caméra. La lecture active dans l’onglet visible est estimée et enregistrée ; les pauses, le buffering, les sauts et le visionnage sur le site YouTube sont exclus. Ce suivi ne mesure pas l’attention. Les scores des quiz portent sur la compréhension et les exercices de lettres/nombres, pas sur la qualité des gestes. Un compte représente un carnet partagé, sans profils enfants séparés.
 
 ## Architecture
 
@@ -89,4 +91,4 @@ Les instructions du dépôt sont dans [AGENTS.md](AGENTS.md). Le sélecteur FR /
 
 [Configurer Google et l’e-mail](docs/AUTH_SETUP.md) : les comptes restent dans Supabase. Le fournisseur Google doit être activé dans le tableau de bord ; un SMTP de production et un test de délivrabilité restent nécessaires pour l’inscription publique par e-mail.
 
-`/packages` présente la découverte gratuite, le tutorat personnel et l’abonnement. Les deux dernières offres sont en préparation, sans prix inventé, réservation ou paiement. `/about` présente la mission et l’approche du projet. `/community` propose des activités à partager et un outil de partage de leçons ; ce n’est pas encore un forum de membres. Les aperçus des cours proviennent des vidéos LSF originales sur YouTube et gardent les crédits des créateurs.
+`/packages` présente la découverte gratuite, le tutorat personnel et l’abonnement. Les offres Standard et Tuteur personnel sont en préparation. Leurs prix mensuels et le contact écoles sont configurables côté serveur (`EDUSIGN_STANDARD_MONTHLY_EUR`, `EDUSIGN_TUTOR_MONTHLY_EUR`, `EDUSIGN_SCHOOLS_EMAIL`) et restent à confirmer ; aucun achat ni paiement n’est activé. `/about` présente la mission et l’approche du projet. `/community` propose des activités à partager et un outil de partage de leçons ; ce n’est pas encore un forum de membres. Les aperçus des cours proviennent des vidéos LSF originales sur YouTube et gardent les crédits des créateurs.

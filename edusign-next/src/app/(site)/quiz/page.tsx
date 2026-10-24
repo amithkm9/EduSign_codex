@@ -1,3 +1,4 @@
+import { getVideoProgress } from "@/lib/video/data";
 import { getUser } from "@/lib/auth";
 import { getTranslator } from "@/lib/i18n/server";
 import { QuizPlayer } from "@/components/quiz/quiz-player";
@@ -12,9 +13,10 @@ export async function generateMetadata() {
 }
 export default async function Practice() {
   const user = await getUser();
+  const videoProgress = user ? await getVideoProgress(user.id) : [];
   return (
     <div className="container py-12">
-      <QuizPlayer track={!!user} />
+      <QuizPlayer track={!!user} videoProgress={videoProgress} />
     </div>
   );
 }

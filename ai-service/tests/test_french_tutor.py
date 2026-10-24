@@ -37,6 +37,11 @@ class FrenchTutorTests(unittest.TestCase):
         self.assertIn('2 activities', report['overallSummary'])
         self.assertIn('without assessing', report['overallSummary'])
 
+    def test_report_includes_playback_without_claiming_attention(self):
+        report = _fallback({'language':'en','videoProgress':[{'activeMs':30500,'coverage':12}], 'student':{'name':'Camille'}})
+        self.assertIn('30 seconds', report['overallSummary'])
+        self.assertIn('without assessing', report['overallSummary'])
+
     def test_french_transcription_is_supported(self):
         self.assertIn('fr', SUPPORTED_LANGUAGES)
 

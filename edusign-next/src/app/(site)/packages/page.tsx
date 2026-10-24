@@ -7,8 +7,11 @@ import {
   Sprout,
   CircleHelp,
   BookOpen,
+  School,
+  Mail,
 } from "lucide-react";
 import { T } from "@/components/i18n/locale-provider";
+import { getLocale } from "@/lib/i18n/server";
 import { getTranslator } from "@/lib/i18n/server";
 import { getUser } from "@/lib/auth";
 
@@ -58,7 +61,7 @@ const plans = [
   },
   {
     id: "subscription",
-    name: "Abonnement",
+    name: "Standard",
     label: "POUR ALLER PLUS LOIN",
     icon: Sparkles,
     tint: "bg-[#dceaff]",
@@ -77,6 +80,38 @@ const plans = [
 ];
 export default async function Packages() {
   const user = await getUser();
+  const locale = await getLocale();
+  const price = (value: string | undefined) =>
+    value &&
+    /^\d+(?:[.,]\d{1,2})?$/.test(value) &&
+    Number(value.replace(",", ".")) > 0
+      ? new Intl.NumberFormat(locale === "fr" ? "fr-FR" : "en-GB", {
+          style: "currency",
+          currency: "EUR",
+        }).format(Number(value.replace(",", ".")))
+      : "Tarif à confirmer";
+  const email = process.env.EDUSIGN_SCHOOLS_EMAIL?.trim();
+  const schoolEmail =
+    email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null;
+  const monthlyPlans = plans
+    .map((plan) => ({
+      ...plan,
+      price:
+        plan.id === "free"
+          ? plan.price
+          : price(
+              plan.id === "personal"
+                ? process.env.EDUSIGN_TUTOR_MONTHLY_EUR
+                : process.env.EDUSIGN_STANDARD_MONTHLY_EUR,
+            ),
+      cadence:
+        plan.id === "free" ? plan.cadence : "Par mois · offre en préparation",
+    }))
+    .sort(
+      (a, b) =>
+        ["free", "subscription", "personal"].indexOf(a.id) -
+        ["free", "subscription", "personal"].indexOf(b.id),
+    );
   return (
     <div className="container py-12 sm:py-16">
       <header className="mx-auto max-w-3xl text-center">
@@ -95,7 +130,7 @@ export default async function Packages() {
         </p>
       </header>
       <div className="mt-12 grid items-stretch gap-6 lg:grid-cols-3">
-        {plans.map((plan) => (
+        {monthlyPlans.map((plan) => (
           <article
             key={plan.id}
             className={`relative flex flex-col rounded-[1.8rem] border bg-white p-7 sm:p-8 ${plan.available ? "border-primary/45 shadow-[0_12px_40px_-20px_rgba(36,54,107,.25)]" : "border-border"}`}
@@ -173,6 +208,41 @@ export default async function Packages() {
           </article>
         ))}
       </div>
+      <section
+        id="schools"
+        className="mt-10 grid gap-7 rounded-[2rem] bg-primary p-7 text-white sm:p-10 md:grid-cols-[1fr_auto] md:items-center"
+      >
+        <div>
+          <School aria-hidden className="size-8" />
+          <p className="mt-4 text-xs font-bold tracking-wider">
+            <T text="ÉCOLES ET ÉTABLISSEMENTS" />
+          </p>
+          <h2 className="mt-2 text-3xl font-bold">
+            <T text="Apprendre ensemble, à l’échelle d’une classe." />
+          </h2>
+          <p className="mt-4 max-w-xl text-sm leading-relaxed text-white/80">
+            <T text="Parlons de vos élèves, de votre calendrier et de l’accompagnement souhaité. Une formule adaptée à votre établissement, sur devis." />
+          </p>
+        </div>
+        <div className="rounded-2xl bg-white p-6 text-foreground">
+          <p className="font-bold">
+            <T text="Informations et devis" />
+          </p>
+          {schoolEmail ? (
+            <a
+              href={`mailto:${schoolEmail}`}
+              className="mt-4 inline-flex min-h-11 items-center gap-2 break-all text-sm font-semibold text-primary"
+            >
+              <Mail className="size-4 shrink-0" />
+              {schoolEmail}
+            </a>
+          ) : (
+            <p className="mt-3 max-w-xs text-sm text-muted-foreground">
+              <T text="Les coordonnées de notre contact écoles seront publiées prochainement." />
+            </p>
+          )}
+        </div>
+      </section>
       <section
         id="upcoming-plans"
         className="mt-10 scroll-mt-28 rounded-3xl bg-[#fff0b5]/60 p-7 sm:p-9"
