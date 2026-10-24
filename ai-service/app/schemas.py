@@ -1,6 +1,6 @@
-from typing import Any, Optional
+from typing import Any, Optional, Literal, Annotated
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, StringConstraints
 
 
 class ChatMessage(BaseModel):
@@ -49,7 +49,8 @@ class TtsRequest(BaseModel):
 
 
 class RecognizeRequest(BaseModel):
-    frames: list[str]  # base64-encoded jpeg frames
+    frames: list[Annotated[str, StringConstraints(max_length=180000, pattern=r"^data:image/jpeg;base64,[A-Za-z0-9+/=]+$")]] = Field(min_length=10, max_length=30)
+    target: Literal["A", "B", "C", "1", "2", "3"]
 
 
 class ReportInsightsRequest(BaseModel):

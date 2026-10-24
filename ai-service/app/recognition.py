@@ -7,6 +7,7 @@ The labels .pkl was missing in the legacy repo, so labels are hardcoded to the
 model's 6 training classes.
 """
 import base64
+from threading import Lock
 from pathlib import Path
 
 # The .h5 was saved with Keras 3 (uses `batch_shape`), so we load it with
@@ -18,6 +19,7 @@ SEQUENCE_LENGTH = 30
 
 _model = None
 _hands = None
+_lock = Lock()
 
 
 def _ensure_loaded():
@@ -25,7 +27,7 @@ def _ensure_loaded():
     if _model is None:
         import tensorflow as tf
 
-        _model = tf.keras.models.load_model(str(MODEL_PATH))
+        _model = tf.keras.models.load_model(str(MODEL_PATH), compile=False)
     if _hands is None:
         # Explicit submodule path — `mediapipe.solutions` isn't always exposed
         # as an attribute in 0.10.x, especially off the main thread.
@@ -76,7 +78,7 @@ def _preprocess(sequence):
     return np.array(out)
 
 
-def recognize(frames: list[str]) -> dict:
+def _recognize(frames: list[str]) -> dict:
     if not frames:
         return {"detected_sign": "unknown", "confidence": 0.0, "message": "No frames provided"}
 
@@ -84,6 +86,7 @@ def recognize(frames: list[str]) -> dict:
 
     _ensure_loaded()
 
+    _hands.reset()  # Clear tracking state between learners/attempts.
     all_landmarks = []
     for frame_b64 in frames:
         try:
@@ -96,11 +99,13 @@ def recognize(frames: list[str]) -> dict:
         except Exception:
             continue  # skip unreadable frames
 
-    if not all_landmarks:
-        return {"detected_sign": "unknown", "confidence": 0.0, "message": "No hand detected"}
+    if len(all_landmarks) < max(8, len(frames) // 2):
+        return {"detected_sign": "unknown", "confidence": 0.0, "message": "Not enough visible hand frames"}
 
     sequence = _preprocess(all_landmarks)
-    prediction = _model.predict(np.expand_dims(sequence, axis=0), verbose=0)[0]
+    prediction = np.asarray(_model(np.expand_dims(sequence, axis=0), training=False))[0]
+    if prediction.shape != (len(LABELS),) or not np.isfinite(prediction).all():
+        raise ValueError("Unexpected classifier output")
     idx = int(np.argmax(prediction))
     confidence = float(prediction[idx])
     detected = LABELS[idx] if idx < len(LABELS) else "unknown"
@@ -112,5 +117,35 @@ def recognize(frames: list[str]) -> dict:
         "detected_sign": detected,
         "confidence": confidence,
         "all_predictions": all_predictions,
+        "hand_frames": len(all_landmarks),
         "message": f"Hand detected in {len(all_landmarks)}/{len(frames)} frames",
     }
+
+
+# The original class mapping is assumed, not independently verified for LSF.
+# Thresholds are demo heuristics, not calibrated educational correctness scores.
+TARGETS = {"A":"a", "B":"b", "C":"c", "1":"one", "2":"two", "3":"three"}
+
+def demo_feedback(result: dict, target: str) -> dict:
+    confidence = float(result.get("confidence", 0))
+    detected = result.get("detected_sign", "unknown")
+    scores = sorted(result.get("all_predictions", {}).values(), reverse=True)
+    decisive = detected in LABELS and confidence >= 0.70 and len(scores) == 6 and scores[0] - scores[1] >= 0.15
+    verdict = ("match" if detected == TARGETS[target] else "different") if decisive else "uncertain"
+    return {"mode":"legacy_demo", "lsf_validated":False, "label_mapping":"assumed_legacy_order", "target":target,
+            "detected_sign":detected, "confidence":confidence, "verdict":verdict,
+            "correct":(detected == TARGETS[target]) if decisive else None,
+            "hand_frames":result.get("hand_frames", 0), "saved_to_report":False}
+
+def recognize(frames: list[str], target: str) -> dict:
+    if target not in TARGETS:
+        raise ValueError("Unsupported demo target")
+    with _lock:
+        return demo_feedback(_recognize(frames), target)
+
+def recognition_status() -> dict:
+    with _lock:
+        _ensure_loaded()
+        if tuple(_model.input_shape[1:]) != (30,63) or _model.output_shape[-1] != len(LABELS):
+            raise ValueError("Unexpected model shape")
+    return {"ready":True, "mode":"legacy_demo", "lsf_validated":False, "targets":list(TARGETS)}

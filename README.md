@@ -6,7 +6,7 @@ Un espace de découverte de la **langue des signes française (LSF)** pour les �
 
 - Interface en français et en anglais : accueil, leçons, activités, assistant, carnet et bilan.
 - Deux ateliers — alphabet et nombres — avec vidéos YouTube LSF, crédits et liens directs vers les créateurs.
-- Un défi caméra après chaque vidéo : capture locale et comparaison au modèle. Correction automatique LSF en attente d’un modèle validé.
+- Un défi caméra après chaque vidéo : capture, replay et analyse expérimentale par le modèle historique pour A/B/C et 1/2/3. Correspondance, différence ou résultat incertain ; ce modèle n’est pas validé pour la LSF.
 - Quiz de compréhension facultatif : correction expliquée, nouvel essai et résultats Supabase.
 - Suivi vidéo : temps de lecture visible, couverture unique et dernière position, inclus dans le bilan connecté.
 - Recherche et filtres par thème, objectifs simples et conseils aux parents.
@@ -24,7 +24,7 @@ Une activité terminée est une **déclaration de pratique**, pas une évaluatio
 | `ai-service/` | FastAPI : assistant, transcription, synthèse vocale, bilan et modèle de reconnaissance historique |
 | `docs/EDUSIGN_PLAN.md` | État du projet, choix de produit et travail restant |
 
-L’ancienne bibliothèque vidéo et les poids du modèle sont conservés. Ils ne sont pas utilisés comme démonstrations LSF dans le parcours public. La reconnaissance n’a pas été entraînée ou validée pour la LSF.
+L’ancienne bibliothèque vidéo et les poids du modèle sont conservés. Ils ne sont pas utilisés comme démonstrations LSF dans le parcours public. Le modèle historique est connecté uniquement pour la démonstration, à la demande du propriétaire. L’ordre de ses six classes est supposé ; sa reconnaissance n’a pas été validée pour la LSF. Les résultats démo ne deviennent pas des notes dans le bilan.
 
 ## Démarrer
 
@@ -91,4 +91,4 @@ Les instructions du dépôt sont dans [AGENTS.md](AGENTS.md). Le sélecteur FR /
 
 [Configurer Google et l’e-mail](docs/AUTH_SETUP.md) : les comptes restent dans Supabase. Le fournisseur Google doit être activé dans le tableau de bord ; un SMTP de production et un test de délivrabilité restent nécessaires pour l’inscription publique par e-mail.
 
-`/packages` présente la découverte gratuite, le tutorat personnel et l’abonnement. Les offres Standard et Tuteur personnel sont en préparation. Leurs prix mensuels et le contact écoles sont configurables côté serveur (`EDUSIGN_STANDARD_MONTHLY_EUR`, `EDUSIGN_TUTOR_MONTHLY_EUR`, `EDUSIGN_SCHOOLS_EMAIL`) et restent à confirmer ; aucun achat ni paiement n’est activé. `/about` présente la mission et l’approche du projet. `/community` propose des activités à partager et un outil de partage de leçons ; ce n’est pas encore un forum de membres. Les aperçus des cours proviennent des vidéos LSF originales sur YouTube et gardent les crédits des créateurs.
+`/packages` présente la découverte gratuite, le tutorat personnel et l’abonnement. Les offres Standard et Tuteur personnel sont en préparation. Leurs prix mensuels et le contact écoles sont configurables côté serveur (`EDUSIGN_STANDARD_MONTHLY_EUR`, `EDUSIGN_TUTOR_MONTHLY_EUR`, `EDUSIGN_SCHOOLS_EMAIL`) ; le Tuteur personnel est affiché à 99 €/mois et le contact écoles est amithkm9@gmail.com. Le prix Standard reste à confirmer. Aucun achat ni paiement n’est activé. `/about` présente la mission et l’approche du projet. `/community` propose des activités à partager et un outil de partage de leçons ; ce n’est pas encore un forum de membres. Les aperçus des cours proviennent des vidéos LSF originales sur YouTube et gardent les crédits des créateurs.

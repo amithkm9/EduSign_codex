@@ -238,7 +238,11 @@ export function LessonPlayer({
         >
           {quizOpen && (
             <div className="space-y-5">
-              <CameraPractice courseId={lesson.id} onReplay={replay} />
+              <CameraPractice
+                courseId={lesson.id}
+                onReplay={replay}
+                track={track}
+              />
               <details className="rounded-2xl border border-border p-4">
                 <summary className="cursor-pointer font-semibold text-primary">
                   {_t("Quiz de compréhension (facultatif)")}

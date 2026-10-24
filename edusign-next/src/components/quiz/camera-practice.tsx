@@ -1,5 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Camera, Square, RotateCcw, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/i18n/locale-provider";
@@ -7,9 +8,11 @@ import { useLocale } from "@/components/i18n/locale-provider";
 export function CameraPractice({
   courseId,
   onReplay,
+  track,
 }: {
   courseId: string;
   onReplay(): void;
+  track: boolean;
 }) {
   const { t } = useLocale();
   const targets =
@@ -21,6 +24,15 @@ export function CameraPractice({
   const [error, setError] = useState("");
   const [url, setUrl] = useState("");
   const [remaining, setRemaining] = useState(3);
+  const [analysing, setAnalysing] = useState(false);
+  const [result, setResult] = useState<{
+    verdict: "match" | "different" | "uncertain";
+    detected_sign: string;
+    confidence: number;
+  } | null>(null);
+  const frames = useRef<string[]>([]);
+  const frameTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const analysis = useRef<AbortController | null>(null);
   const preview = useRef<HTMLVideoElement>(null);
   const stream = useRef<MediaStream | null>(null);
   const recorder = useRef<MediaRecorder | null>(null);
@@ -31,9 +43,13 @@ export function CameraPractice({
   const clearTimers = useCallback(() => {
     if (timeout.current) clearTimeout(timeout.current);
     if (interval.current) clearInterval(interval.current);
+    if (frameTimer.current) clearInterval(frameTimer.current);
   }, []);
   const stop = useCallback(() => {
     generation.current++;
+    analysis.current?.abort();
+    setAnalysing(false);
+    frames.current = [];
     clearTimers();
     if (recorder.current?.state === "recording") {
       recorder.current.onstop = null;
@@ -47,6 +63,9 @@ export function CameraPractice({
   useEffect(
     () => () => {
       generation.current++;
+      analysis.current?.abort();
+      frames.current = [];
+      if (frameTimer.current) clearInterval(frameTimer.current);
       if (timeout.current) clearTimeout(timeout.current);
       if (interval.current) clearInterval(interval.current);
       if (recorder.current?.state === "recording") {
@@ -107,9 +126,43 @@ export function CameraPractice({
       }
     }
   }
+  async function analyse(capturedFrames: string[], version: number) {
+    if (!track) return;
+    setError("");
+    setResult(null);
+    setAnalysing(true);
+    const controller = new AbortController();
+    analysis.current = controller;
+    const limit = setTimeout(() => controller.abort(), 50000);
+    try {
+      const response = await fetch("/api/ml/recognize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          target: targets[index],
+          frames: capturedFrames,
+        }),
+        signal: controller.signal,
+      });
+      if (!response.ok) throw new Error();
+      const data = await response.json();
+      if (version === generation.current) setResult(data);
+    } catch {
+      if (version === generation.current)
+        setError(
+          "L’analyse est indisponible. Reprenez une capture pour réessayer.",
+        );
+    } finally {
+      clearTimeout(limit);
+      if (version === generation.current) setAnalysing(false);
+    }
+  }
   function capture() {
     if (!stream.current) return;
     const version = generation.current;
+    setResult(null);
+    setError("");
+    frames.current = [];
     try {
       const type = ["video/webm;codecs=vp8", "video/webm", "video/mp4"].find(
         (value) => MediaRecorder.isTypeSupported(value),
@@ -139,12 +192,29 @@ export function CameraPractice({
         );
         setUrl(objectUrl.current);
         setState("captured");
+        const images = frames.current;
+        frames.current = [];
+        if (track) void analyse(images, version);
       };
       recording.onerror = () => {
         stop();
         setError("La capture a échoué. Réessayez.");
       };
+      const canvas = document.createElement("canvas");
+      canvas.width = 384;
+      canvas.height = Math.round(
+        384 * (preview.current!.videoHeight / preview.current!.videoWidth),
+      );
+      const context = canvas.getContext("2d");
+      if (!context || !canvas.height) throw new Error("Camera not ready");
+      function sampleFrame() {
+        if (frames.current.length >= 30 || !preview.current) return;
+        context!.drawImage(preview.current, 0, 0, canvas.width, canvas.height);
+        frames.current.push(canvas.toDataURL("image/jpeg", 0.7));
+      }
       recording.start();
+      sampleFrame();
+      frameTimer.current = setInterval(sampleFrame, 100);
       setState("recording");
       setRemaining(3);
       interval.current = setInterval(
@@ -165,6 +235,7 @@ export function CameraPractice({
     objectUrl.current = "";
     setUrl("");
     setError("");
+    setResult(null);
     if (next) setIndex((index + 1) % targets.length);
   }
   return (
@@ -173,12 +244,12 @@ export function CameraPractice({
       <h2 className="mt-3 text-2xl font-bold">{t("À vous de signer !")}</h2>
       <p className="mt-3 text-sm leading-relaxed">
         {t(
-          "Regardez le modèle LSF, placez vos mains dans le cadre, puis capturez votre essai pendant trois secondes.",
+          "Placez une main dans le cadre et gardez le signe visible pendant les trois secondes de capture. Le modèle de démonstration reconnaît uniquement A, B, C, 1, 2 et 3.",
         )}
       </p>
       <p className="mt-4 rounded-xl bg-[#fff0b5] p-3 text-sm leading-relaxed">
         {t(
-          "Mode entraînement : la correction automatique LSF n’est pas encore disponible. Aucun verdict correct/incorrect ni score de geste ne sera attribué.",
+          "Mode démo expérimental : le modèle historique et l’ordre de ses classes ne sont pas validés pour la LSF. Le résultat compare une prédiction au signe demandé ; il n’est pas enregistré comme note de maîtrise.",
         )}
       </p>
       <div className="mt-5 flex items-center justify-between gap-3">
@@ -228,7 +299,7 @@ export function CameraPractice({
       </div>
       <p className="mt-3 text-xs text-muted-foreground">
         {t(
-          "Votre capture reste dans ce navigateur. Aucun son n’est enregistré et aucune vidéo n’est envoyée ni conservée sur nos serveurs.",
+          "En mode connecté, des images de votre capture sont envoyées au service de reconnaissance pour l’analyse. Aucun son n’est capturé et les images ne sont pas conservées sur le serveur.",
         )}
       </p>
       <div className="mt-5 flex flex-wrap gap-3">
@@ -246,7 +317,7 @@ export function CameraPractice({
         {state === "ready" && (
           <Button onClick={capture}>
             <Camera className="size-4" />
-            {t("Capturer mon signe")}
+            {t(track ? "Capturer et analyser" : "Capturer mon signe")}
           </Button>
         )}
         {(state === "ready" || state === "recording") && (
@@ -278,11 +349,53 @@ export function CameraPractice({
         </Button>
       </div>
       {state === "captured" && (
-        <p role="status" className="mt-4 font-semibold text-primary">
-          {t(
-            "Essai capturé, non évalué. Comparez-le à la démonstration LSF avec votre parent ou votre enseignant.",
+        <div
+          role="status"
+          aria-live="polite"
+          className="mt-5 rounded-2xl bg-white p-4 text-sm"
+        >
+          {analysing && <p>{t("Analyse de votre signe…")}</p>}
+          {result && (
+            <>
+              <p className="font-bold text-primary">
+                {t(
+                  result.verdict === "match"
+                    ? "Correspondance détectée — démo"
+                    : result.verdict === "different"
+                      ? "Un autre signe a été détecté — réessayez"
+                      : "Résultat incertain — montrez bien votre main",
+                )}
+              </p>
+              {result.detected_sign !== "unknown" && (
+                <p className="mt-2">
+                  {t("Prédiction du modèle :")}{" "}
+                  {(
+                    {
+                      one: "1",
+                      two: "2",
+                      three: "3",
+                      a: "A",
+                      b: "B",
+                      c: "C",
+                    } as Record<string, string>
+                  )[result.detected_sign] ?? "—"}{" "}
+                  · {Math.round(result.confidence * 100)}%{" "}
+                  {t("de confiance du modèle (non calibrée)")}
+                </p>
+              )}
+            </>
           )}
-        </p>
+          {!track && (
+            <Link
+              href={`/login?redirectTo=/learn/${courseId}`}
+              className="font-semibold text-primary underline"
+            >
+              {t(
+                "Connectez-vous pour analyser vos signes avec le modèle démo.",
+              )}
+            </Link>
+          )}
+        </div>
       )}
       {error && (
         <p role="alert" className="mt-4 text-sm text-destructive">

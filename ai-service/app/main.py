@@ -63,15 +63,18 @@ def recognize_endpoint(req: RecognizeRequest):
     try:
         from .recognition import recognize
 
-        return recognize(req.frames)
-    except Exception as e:
-        # Never 500 the gateway — return a clean result the quiz can handle.
-        return {
-            "detected_sign": "unknown",
-            "confidence": 0,
-            "message": "Recognition is temporarily unavailable.",
-            "error": str(e)[:300],
-        }
+        return recognize(req.frames, req.target)
+    except Exception:
+        raise HTTPException(status_code=503, detail="Recognition is temporarily unavailable.")
+
+
+@app.get("/recognize/status", dependencies=[Depends(require_internal_token)])
+def recognize_status_endpoint():
+    try:
+        from .recognition import recognition_status
+        return recognition_status()
+    except Exception:
+        raise HTTPException(status_code=503, detail="Recognition is temporarily unavailable.")
 
 
 @app.post("/voice/tts", dependencies=[Depends(require_internal_token)])

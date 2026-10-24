@@ -90,7 +90,9 @@ export default async function Packages() {
           currency: "EUR",
         }).format(Number(value.replace(",", ".")))
       : "Tarif à confirmer";
-  const email = process.env.EDUSIGN_SCHOOLS_EMAIL?.trim();
+  const email = (
+    process.env.EDUSIGN_SCHOOLS_EMAIL || "amithkm9@gmail.com"
+  ).trim();
   const schoolEmail =
     email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : null;
   const monthlyPlans = plans
@@ -101,7 +103,7 @@ export default async function Packages() {
           ? plan.price
           : price(
               plan.id === "personal"
-                ? process.env.EDUSIGN_TUTOR_MONTHLY_EUR
+                ? process.env.EDUSIGN_TUTOR_MONTHLY_EUR || "99"
                 : process.env.EDUSIGN_STANDARD_MONTHLY_EUR,
             ),
       cadence:
@@ -257,7 +259,7 @@ export default async function Packages() {
               <T text="Et les formules à venir ?" />
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-              <T text="Le tutorat personnel et l’abonnement ne sont pas encore commercialisés. Leurs tarifs, leurs intervenants et leurs avantages seront précisés avant le lancement. Il n’y a actuellement ni réservation ni paiement à effectuer." />
+              <T text="Les formules payantes sont en préparation. Le tarif affiché pour le tuteur personnel est mensuel ; la réservation et le paiement ne sont pas encore ouverts." />
             </p>
           </div>
         </div>

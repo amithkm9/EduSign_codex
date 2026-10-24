@@ -153,27 +153,48 @@ try {
   assert.equal(watched.watchedMs, 15000);
   assert.equal(watched.coverage, 12);
   assert.equal(watched.positionMs, 15000);
-  const direct = await client
-    .from("learning_events")
-    .insert({
-      user_id: id,
-      course_id: "lsf-alphabet",
-      type: "heartbeat",
-      active_ms: 999999,
-      source: "youtube",
-    });
+  const direct = await client.from("learning_events").insert({
+    user_id: id,
+    course_id: "lsf-alphabet",
+    type: "heartbeat",
+    active_ms: 999999,
+    source: "youtube",
+  });
   assert.equal(direct.error?.code, "42501");
-  const capability = await (await fetch(base + "/api/ml/recognize")).json();
-  assert.equal(capability.ready, false);
+  const capability = await (
+    await fetch(base + "/api/ml/recognize", { headers })
+  ).json();
+  assert.equal(capability.ready, true);
+  assert.equal(capability.mode, "legacy_demo");
+  assert.equal(capability.lsf_validated, false);
   const unvalidated = await fetch(base + "/api/ml/recognize", {
     method: "POST",
     headers,
     body: JSON.stringify({ frames: [] }),
   });
-  assert.equal(unvalidated.status, 503);
-  assert.equal((await unvalidated.json()).correct, null);
+  assert.equal(unvalidated.status, 400);
+  const blank = await readFile(
+    new URL("../tests/fixtures/blank.jpg", import.meta.url),
+  );
+  const demo = await fetch(base + "/api/ml/recognize", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({
+      target: "A",
+      frames: Array(30).fill(
+        "data:image/jpeg;base64," + blank.toString("base64"),
+      ),
+    }),
+  });
+  assert.equal(demo.status, 200);
+  const prediction = await demo.json();
+  assert.equal(prediction.mode, "legacy_demo");
+  assert.equal(prediction.verdict, "uncertain");
+  assert.equal(prediction.correct, null);
+  assert.equal(prediction.lsf_validated, false);
+  assert.equal(prediction.saved_to_report, false);
   console.log(
-    "PASS playback persistence, retries, unique coverage, invalid telemetry and unvalidated recognition guard",
+    "PASS playback persistence, retries, unique coverage, invalid telemetry and demo-model inference",
   );
   const quizzes = JSON.parse(
     await readFile(

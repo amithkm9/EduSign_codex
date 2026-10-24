@@ -719,5 +719,18 @@
   "Une vidéo, puis un défi signé": "A video, then a signing challenge",
   "Le défi caméra s’ouvre à la fin de la vidéo. Un quiz de compréhension est aussi disponible.": "The camera challenge opens when the video ends. A comprehension quiz is also available.",
   "Commencer le défi caméra": "Start the camera challenge",
-  "L’alphabet et les nombres en LSF : regardez, capturez votre essai et comparez-le au modèle. Le quiz de compréhension reste disponible.": "The alphabet and numbers in LSF: watch, record your attempt and compare it with the example. The comprehension quiz is still available."
+  "L’alphabet et les nombres en LSF : regardez, capturez votre essai et comparez-le au modèle. Le quiz de compréhension reste disponible.": "The alphabet and numbers in LSF: watch, record your attempt and compare it with the example. The comprehension quiz is still available.",
+  "Placez une main dans le cadre et gardez le signe visible pendant les trois secondes de capture. Le modèle de démonstration reconnaît uniquement A, B, C, 1, 2 et 3.": "Place one hand in the frame and hold the sign throughout the three-second capture. The demo model supports only A, B, C, 1, 2 and 3.",
+  "Mode démo expérimental : le modèle historique et l’ordre de ses classes ne sont pas validés pour la LSF. Le résultat compare une prédiction au signe demandé ; il n’est pas enregistré comme note de maîtrise.": "Experimental demo: the historical model and its class order are not validated for LSF. The result compares a prediction with the requested sign; it is not saved as a proficiency score.",
+  "En mode connecté, des images de votre capture sont envoyées au service de reconnaissance pour l’analyse. Aucun son n’est capturé et les images ne sont pas conservées sur le serveur.": "When signed in, frames from your recording are sent to the recognition service for analysis. No audio is captured and the images are not stored on the server.",
+  "Capturer et analyser": "Capture and analyse",
+  "Analyse de votre signe…": "Analysing your sign…",
+  "Correspondance détectée — démo": "Match detected — demo",
+  "Un autre signe a été détecté — réessayez": "A different sign was detected — try again",
+  "Résultat incertain — montrez bien votre main": "Uncertain result — keep your hand clearly visible",
+  "Prédiction du modèle :": "Model prediction:",
+  "de confiance du modèle (non calibrée)": "model confidence (uncalibrated)",
+  "Connectez-vous pour analyser vos signes avec le modèle démo.": "Sign in to analyse your signs using the demo model.",
+  "L’analyse est indisponible. Reprenez une capture pour réessayer.": "Analysis is unavailable. Make a new recording to try again.",
+  "Les formules payantes sont en préparation. Le tarif affiché pour le tuteur personnel est mensuel ; la réservation et le paiement ne sont pas encore ouverts.": "Paid plans are in preparation. The displayed Personal Tutor price is monthly; booking and payments are not open yet."
 }
