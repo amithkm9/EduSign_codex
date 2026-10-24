@@ -1,0 +1,77 @@
+/**
+ * Upload the sign/course videos to a Supabase Storage bucket so the deployed app
+ * can serve them (they're too big for git/Vercel). Mirrors the /assets/videos/…
+ * path so `mediaUrl()` resolves: <NEXT_PUBLIC_MEDIA_BASE_URL>/assets/videos/…
+ *
+ * Run from edusign-next/ with env loaded:
+ *   node --env-file=.env.local scripts/upload-media.mjs
+ *
+ * NEXT_PUBLIC_MEDIA_BASE_URL then =
+ *   https://<project>.supabase.co/storage/v1/object/public/media
+ */
+import { supabaseConfig, safeError } from "./env.mjs";
+import { readdir, readFile } from "node:fs/promises";
+import { join, relative, extname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { createClient } from "@supabase/supabase-js";
+
+const { url: SUPABASE_URL, secret: KEY } = supabaseConfig();
+const BUCKET = process.env.MEDIA_BUCKET || "media";
+if (!SUPABASE_URL || !KEY) {
+  console.error("Missing Supabase server secret for media uploads.");
+  process.exit(1);
+}
+
+const root = join(fileURLToPath(new URL(".", import.meta.url)), "..");
+const VIDEOS_DIR = join(root, "public", "assets", "videos");
+const CONTENT_TYPE = { ".webm": "video/webm", ".mp4": "video/mp4" };
+
+const supabase = createClient(SUPABASE_URL, KEY, {
+  auth: { persistSession: false },
+});
+
+async function* walk(dir) {
+  for (const entry of await readdir(dir, { withFileTypes: true })) {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) yield* walk(p);
+    else yield p;
+  }
+}
+
+async function main() {
+  // Ensure a public bucket exists (ignore "already exists").
+  const { error: be } = await supabase.storage.createBucket(BUCKET, {
+    public: true,
+  });
+  if (be && !/exist/i.test(be.message)) throw be;
+
+  let ok = 0,
+    fail = 0;
+  for await (const file of walk(VIDEOS_DIR)) {
+    const ext = extname(file).toLowerCase();
+    if (!CONTENT_TYPE[ext]) continue;
+    const key = `assets/videos/${relative(VIDEOS_DIR, file).split("\\").join("/")}`;
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(key, await readFile(file), {
+        contentType: CONTENT_TYPE[ext],
+        upsert: true,
+      });
+    if (error) {
+      console.error("✗", key, error.message);
+      fail++;
+    } else {
+      ok++;
+      if (ok % 25 === 0) console.log(`  …${ok} uploaded`);
+    }
+  }
+  console.log(`\nDone: ${ok} uploaded, ${fail} failed → bucket "${BUCKET}".`);
+  console.log(
+    `Set NEXT_PUBLIC_MEDIA_BASE_URL=${SUPABASE_URL}/storage/v1/object/public/${BUCKET}`,
+  );
+}
+
+main().catch((e) => {
+  console.error("Media upload failed:", safeError(e));
+  process.exit(1);
+});
