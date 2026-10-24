@@ -2,7 +2,7 @@
 const base = process.env.BASE ?? "http://localhost:3100";
 
 const checks = [
-  { path: "/", marker: "Apprenez la LSF." },
+  { path: "/", marker: "langue des signes française." },
   { path: "/courses", marker: "Votre prochain signe commence ici." },
   { path: "/courses/5-10", marker: "Les petits explorateurs" },
   { path: "/learn/lsf-alphabet", marker: "Voir sur YouTube" },

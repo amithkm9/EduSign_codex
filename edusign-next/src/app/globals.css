@@ -184,7 +184,7 @@
 
 /* Restrained surface treatment for the public landing experience. */
 .landing-hero {
-  background: #f7f7f2;
+  background: linear-gradient(120deg, #f6f8fc 0%, #eef3ff 100%);
 }
 .landing-page h1,
 .landing-page h2,

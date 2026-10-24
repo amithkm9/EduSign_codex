@@ -5,8 +5,7 @@ import {
   BookOpen,
   Check,
   ChevronDown,
-  Globe2,
-  Heart,
+  Hand,
   MessageCircle,
   Play,
   Sprout,
@@ -15,14 +14,14 @@ import {
 import { T } from "@/components/i18n/locale-provider";
 import { CourseCard } from "@/components/courses/course-card";
 import { LessonPreview } from "@/components/landing/lesson-preview";
-import { LSF_LESSONS, getLsfLesson } from "@/lib/data/lsf";
+import { getLsfLesson } from "@/lib/data/lsf";
 import { getTranslator } from "@/lib/i18n/server";
 import { getUser } from "@/lib/auth";
 
 export async function generateMetadata() {
   const t = await getTranslator();
   return {
-    title: t("Apprendre la LSF, ensemble"),
+    title: t("Apprendre la langue des signes française"),
     description: t(
       "Découvrez la langue des signes française avec des ateliers vidéo, des activités à partager et des repères pour les parents. Gratuit, en français et en anglais.",
     ),
@@ -54,118 +53,90 @@ export default async function HomePage() {
       <section className="landing-hero relative overflow-hidden border-b border-border/60">
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-40 -top-40 size-[44rem] rounded-full border-[100px] border-[#e8eee6]/60"
+          className="pointer-events-none absolute -right-24 top-12 size-[38rem] rounded-full bg-[#dbe5ff]/60 blur-3xl"
         />
-        <div className="container relative grid items-center gap-10 pb-12 pt-10 sm:pb-16 sm:pt-14 lg:grid-cols-[1fr_1fr] lg:gap-14 lg:py-16">
+        <div className="container relative grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[.95fr_1.05fr] lg:gap-16 lg:py-16">
           <div className="max-w-xl">
-            <p className="flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[.16em] text-primary">
-              <span className="h-px w-7 bg-primary/50" aria-hidden />
-              <T text="LA LANGUE DES SIGNES, À PARTAGER" />
+            <p className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-white/80 px-3 py-2 text-[11px] font-semibold tracking-wide text-primary">
+              <Hand aria-hidden className="size-4" />
+              <T text="LA LANGUE DES SIGNES POUR DÉBUTER" />
             </p>
-            <h1 className="mt-6 text-[clamp(2.6rem,4.5vw,4.25rem)] font-semibold leading-[1.08] tracking-[-.055em]">
-              <T text="Apprenez la LSF." />
-              <br />
-              <span>
-                <T text="Un signe." />
-                <br />
-                <span className="hero-accent">
-                  <T text="Un lien de plus." />
-                </span>
+            <h1 className="mt-6 text-[clamp(2.6rem,4.1vw,3.8rem)] font-semibold leading-[1.1] tracking-[-.045em]">
+              <T text="Apprenez la" />{" "}
+              <span className="text-primary">
+                <T text="langue des signes française." />
               </span>
             </h1>
-            <p className="mt-7 max-w-md text-base leading-[1.8] text-muted-foreground sm:text-lg">
-              <T text="Des ateliers visuels pour découvrir la langue des signes française. Des activités simples pour apprendre avec votre enfant, un proche ou à votre rythme." />
+            <p className="mt-5 text-xl font-medium leading-relaxed text-foreground sm:text-2xl">
+              <T text="Regardez un signe. À votre tour d’essayer." />
             </p>
-            <div className="mt-8 flex flex-col items-stretch gap-3 min-[400px]:flex-row min-[400px]:items-center">
+            <p className="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
+              <T text="Commencez par l’alphabet et les nombres. Des démonstrations vidéo, de la pratique avec votre caméra et des quiz pour apprendre pas à pas, seul ou en famille." />
+            </p>
+            <div className="mt-7 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
               <Link
-                href="/courses"
-                className="inline-flex min-h-[3.25rem] items-center justify-center gap-3 rounded-xl bg-primary px-6 py-4 text-sm font-semibold text-white shadow-[0_6px_16px_-6px_rgba(44,74,180,.5)] transition-colors hover:bg-primary/90"
+                href="/learn/lsf-alphabet"
+                className="inline-flex min-h-14 items-center justify-center gap-3 rounded-xl bg-primary px-5 py-4 text-sm font-semibold text-white shadow-lg shadow-primary/15 transition-colors hover:bg-primary/90"
               >
-                <T text="Commencer gratuitement" />
-                <ArrowRight aria-hidden className="size-4" />
+                <Play aria-hidden className="size-4" fill="currentColor" />
+                <T text="Commencer ma première leçon" />
               </Link>
               <a
-                href="#how-it-works"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold text-foreground hover:bg-white"
+                href="#lessons"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-2 py-3 text-sm font-semibold text-primary hover:bg-white"
               >
-                <T text="Comment ça marche" />
-                <ArrowUpRight aria-hidden className="size-4" />
+                <T text="Explorer les leçons" />
+                <ArrowRight aria-hidden className="size-4" />
               </a>
             </div>
             <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
-              <span className="inline-flex items-center gap-1.5">
-                <Check aria-hidden className="size-3.5 text-[#3b765c]" />
-                <T text="Sans carte bancaire" />
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <Check aria-hidden className="size-3.5 text-[#3b765c]" />
-                <T text="À votre rythme" />
-              </span>
+              {["Gratuit pour commencer", "Aucun compte nécessaire"].map(
+                (text) => (
+                  <span key={text} className="inline-flex items-center gap-1.5">
+                    <Check aria-hidden className="size-3.5 text-emerald-700" />
+                    <T text={text} />
+                  </span>
+                ),
+              )}
             </div>
           </div>
-          <div className="hero-preview relative rounded-[1.75rem] px-5 py-7 sm:p-8 lg:p-9">
-            <LessonPreview />
-          </div>
+          <LessonPreview />
         </div>
       </section>
 
-      <section
-        aria-label="EduSign"
-        className="border-b border-border/70 bg-white"
-      >
-        <div className="container grid divide-y divide-border/70 py-3 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:py-7">
-          {[
-            {
-              value: String(LSF_LESSONS.length),
-              label: "ateliers LSF à explorer",
-              Icon: BookOpen,
-            },
-            {
-              value: "FR / EN",
-              label: "des explications dans votre langue",
-              Icon: Globe2,
-            },
-            {
-              value: "À deux ou en solo",
-              label: "un espace pour tous les débutants",
-              Icon: Users,
-            },
-          ].map(({ value, label, Icon }) => (
-            <div
-              key={label}
-              className="flex items-center gap-4 py-5 sm:justify-center sm:px-5 sm:py-1"
+      <section className="border-b border-border bg-white">
+        <div className="container grid gap-6 py-7 md:grid-cols-[.75fr_1.3fr_1fr] md:items-center md:gap-10">
+          <div className="flex items-center gap-4">
+            <span
+              aria-hidden
+              className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#e9efff] text-lg font-bold text-primary"
             >
-              <Icon
-                aria-hidden
-                className="size-5 shrink-0 text-primary/70"
-                strokeWidth={1.5}
-              />
-              <div>
-                <p className="text-lg font-semibold tracking-tight">
-                  <T text={value} />
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  <T text={label} />
-                </p>
-              </div>
-            </div>
-          ))}
+              LSF
+            </span>
+            <h2 className="text-lg font-semibold">
+              <T text="La LSF, c’est quoi ?" />
+            </h2>
+          </div>
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            <T text="LSF signifie Langue des signes française. C’est la langue des signes enseignée dans toutes les leçons EduSign." />
+          </p>
+          <p className="border-l-2 border-primary/20 pl-4 text-sm leading-relaxed text-muted-foreground">
+            <T text="L’interface existe en français et en anglais. Les signes restent ceux de la LSF." />
+          </p>
         </div>
       </section>
 
-      <section className="container py-16 sm:py-24">
+      <section id="lessons" className="container scroll-mt-24 py-14 sm:py-20">
         <div className="mb-9 flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-xl">
             <p className="eyebrow">
-              <T text="LE PREMIER PAS" />
+              <T text="VOTRE PARCOURS DÉBUTANT" />
             </p>
             <h2 className="mt-3 text-3xl font-semibold leading-tight tracking-tight sm:text-4xl">
-              <T text="Une petite découverte." />
-              <br />
-              <T text="Une nouvelle façon d’échanger." />
+              <T text="Vos deux premières leçons." />
             </h2>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground sm:text-base">
-              <T text="Deux essentiels pour commencer : l’alphabet et les nombres. Regardez, pratiquez, puis testez votre compréhension." />
+              <T text="Apprenez à former les lettres de votre prénom et découvrez comment signer les nombres. Choisissez votre point de départ." />
             </p>
           </div>
           <Link
@@ -238,35 +209,38 @@ export default async function HomePage() {
               <T text="Quelques minutes et un peu de curiosité suffisent pour faire une place à la LSF dans votre journée." />
             </p>
           </div>
-          <div className="mt-10 grid gap-8 md:grid-cols-3 md:gap-10">
+          <div className="mt-10 grid gap-4 md:grid-cols-3">
             {[
               {
                 number: "01",
                 Icon: Play,
-                title: "Choisissez votre découverte",
-                text: "L’alphabet ou les nombres : choisissez votre premier atelier LSF.",
+                title: "Regardez la démonstration",
+                text: "Observez les mains et le mouvement dans une vidéo. Faites pause et revoyez chaque passage à votre rythme.",
               },
               {
                 number: "02",
-                Icon: Heart,
-                title: "Observez, puis essayez",
-                text: "Regardez les mains, le visage et le mouvement. Faites pause, essayez à deux et revenez à la vidéo.",
+                Icon: Hand,
+                title: "Entraînez-vous à signer",
+                text: "Reproduisez le geste. La caméra vous permet d’enregistrer et de revoir votre essai ; l’analyse automatique est une démo expérimentale.",
               },
               {
                 number: "03",
                 Icon: Sprout,
-                title: "Testez vos découvertes",
-                text: "Essayez le défi caméra ou le quiz de compréhension, à votre rythme. Un compte gratuit permet de retrouver votre activité dans le bilan.",
+                title: "Vérifiez votre compréhension",
+                text: "Répondez à trois questions avec des explications. Un compte gratuit permet de retrouver vos résultats et votre activité.",
               },
             ].map(({ number, Icon, title, text }) => (
-              <article key={number} className="border-t border-border pt-6">
+              <article
+                key={number}
+                className="rounded-2xl border border-border bg-[#f7f9fd] p-6 sm:p-7"
+              >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold tracking-wider text-muted-foreground">
                     {number}
                   </span>
                   <Icon
                     aria-hidden
-                    className="size-5 text-primary"
+                    className="size-7 text-primary"
                     strokeWidth={1.5}
                   />
                 </div>
@@ -288,9 +262,7 @@ export default async function HomePage() {
             <T text="BIEN ACCOMPAGNÉ, DÈS LE DÉBUT" />
           </p>
           <h2 className="mt-3 text-3xl font-semibold sm:text-4xl">
-            <T text="Chacun son rythme." />
-            <br />
-            <T text="Toujours un point de départ." />
+            <T text="Apprendre seul. Partager en famille." />
           </h2>
         </div>
         <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr]">
