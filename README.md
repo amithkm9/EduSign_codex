@@ -4,9 +4,9 @@
 
 ### Watch. Try. Connect.
 
-A bilingual learning platform for students and families discovering **French Sign Language (LSF)**.
+An **AI-powered platform for learning French Sign Language (LSF)**, designed for **children aged 3–15 and their parents**.
 
-**French & English interface · Video workshops · Interactive assistant · Family learning**
+**Ages 3–15 · French & English · Video lessons · AI learning assistant · Parent–child learning**
 
 [Explore the product](#the-product) · [Architecture](#architecture) · [Run locally](#run-locally) · [Documentation](#documentation)
 
@@ -14,11 +14,13 @@ A bilingual learning platform for students and families discovering **French Sig
 
 ---
 
-EduSign brings credited sign-language videos, guided practice, and a bilingual assistant into one learning journey. A parent can find a supported word, watch its demonstration with their child, and return to a workshop or a short learning activity.
+EduSign helps children aged 3–15 and their parents learn French Sign Language together through video lessons, guided practice, interactive activities, and an AI-powered learning assistant. Parents can support their child while learning alongside them, even when they are new to sign language themselves.
+
+For example, a parent who wants to teach their child “bonjour” can ask the assistant, find the supported demonstration in the sourced LSF collection, and watch it together. The bilingual coach also offers short learning plans and questions to help families decide what to practise next.
 
 **LSF** means *Langue des signes française* — French Sign Language. Switching the interface to English translates the experience; the lessons continue to teach LSF.
 
-*En français : EduSign accompagne les élèves et leurs parents dans la découverte de la langue des signes française, avec des vidéos, des activités et un assistant bilingue.*
+*En français : EduSign est une plateforme d’apprentissage de la langue des signes française, enrichie par l’intelligence artificielle, conçue pour les enfants de 3 à 15 ans et leurs parents. Elle réunit des leçons vidéo, des activités interactives et un assistant bilingue pour apprendre ensemble.*
 
 ## Contents
 
@@ -38,7 +40,7 @@ EduSign brings credited sign-language videos, guided practice, and a bilingual a
 
 ## The product
 
-A focused starting point for learning together, built around two workshops: **the alphabet** and **numbers**.
+The product centres on **children learning with their parents**: watch a demonstration, try an activity, ask for guidance, and return to learning together. The current lesson catalogue begins with two workshops: **the alphabet** and **numbers**.
 
 ```mermaid
 flowchart LR
@@ -380,7 +382,7 @@ Private project clips are served through authenticated catalogue IDs and tempora
 
 ## Current scope and next steps
 
-EduSign is a working discovery prototype with deliberately limited teaching scope.
+EduSign’s intended audience is children aged **3–15 and their parents**. The current release provides a focused set of beginner learning experiences, with the following scope and development priorities.
 
 - **Learning content:** two workshops and a small sourced LSF clip collection. Review the pedagogy and demonstrations with qualified LSF contributors before expanding the curriculum.
 - **Gesture analysis:** the legacy model covers A/B/C and 1/2/3. Its class ordering is assumed, confidence is uncalibrated, and accuracy has not been validated for LSF. Feedback can be a match, a different prediction, or uncertain.

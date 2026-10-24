@@ -1,6 +1,6 @@
 # EduSign — plan et état du produit
 
-Mis à jour le 24 octobre 2026. Public confirmé : élèves et parents qui les accompagnent. Langues d’interface : français et anglais. Langue enseignée dans les ressources : LSF. Dépôt cible : https://github.com/amithkm9/EduSign_codex.git.
+Positionnement confirmé le 25 octobre 2026 : plateforme d’apprentissage de la langue des signes française enrichie par l’intelligence artificielle, destinée aux enfants de 3 à 15 ans et à leurs parents. Langues d’interface : français et anglais. Langue enseignée dans les ressources : LSF. Dépôt cible : https://github.com/amithkm9/EduSign_codex.git. L’historique d’implémentation ci-dessous conserve ses dates d’origine.
 
 ## Réalisé
 
