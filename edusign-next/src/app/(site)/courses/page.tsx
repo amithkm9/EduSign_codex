@@ -44,7 +44,7 @@ export default async function CoursesPage() {
         </div>
         <Link
           href="/parents"
-          className="flex max-w-xs items-center gap-4 rounded-2xl border border-[#dce6dc] bg-[#edf2e9] p-5"
+          className="flex max-w-xs items-center gap-4 rounded-2xl border border-border bg-secondary p-5"
         >
           <Heart className="size-8 shrink-0" />
           <span className="text-sm">

@@ -136,3 +136,11 @@ Le propriétaire a demandé l’utilisation de la bibliothèque locale : 354 Web
 Interface remplacée par un studio : démonstration dédiée à gauche, guide et saisie à droite, bibliothèque dépliable, ralenti, boucle et signes déjà explorés. Un seul clip actif. Français ou anglais détecté depuis le message, indépendamment de l’interface ; « bonjour » produit une réponse française et uniquement le clip correspondant. Les titres et la synthèse vocale suivent cette langue. Les mots partagés et ambigus utilisent la langue de l’interface.
 
 Validation : 36 tests Node et 33 tests Python, TypeScript, lint et build réussis. Téléversement des 354 paires confirmé sans erreur ; contrôles connectés des empreintes, du seek et de la confidentialité réussis. API vocale réelle vérifiée avec les mots synthétiques Bonjour et Hello et la langue d’interface opposée. Les essais sur microphone physique et téléphone réel restent à réaliser.
+
+## Palette commune — 24 octobre 2026
+
+Toutes les pages utilisent désormais les mêmes tokens : `primary` pour les actions bleues et les états sélectionnés, `navy`/`media` pour les surfaces vidéo sombres, `background`/`card`/`secondary`/`muted` pour les fonds, `foreground`/`muted-foreground` pour le texte. Les sections décoratives vertes, roses, pêche et jaunes sont remplacées par les surfaces communes. Les retours corrects gardent `success` en vert ; avertissements et essais à revoir utilisent `warning` en ambre. Les couleurs officielles du bouton Google sont conservées.
+
+Les valeurs sont centralisées dans `edusign-next/src/app/globals.css` et exposées par `tailwind.config.ts`. Pour les nouvelles pages, réutiliser ces tokens plutôt qu’ajouter des couleurs hexadécimales locales. Les graphiques utilisent déjà `primary`. La mise en page et les comportements bilingues du studio sont conservés.
+
+Validation : TypeScript, lint, 36 tests Node, 33 tests Python et build de production réussis. Contrôle HTTP des pages produit réussi ; accueil et feuille de style répondent en 200 sur le port 3100. Revue visuelle Safari de l’accueil, du guide parents et des formules : fonds, boutons, titres et cartes cohérents. Les écrans authentifiés, le mode sombre et les appareils mobiles n’ont pas fait l’objet d’une nouvelle revue visuelle pour ce changement de couleurs.

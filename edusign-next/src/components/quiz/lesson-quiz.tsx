@@ -105,7 +105,7 @@ export function LessonQuiz({
     );
   }
   return (
-    <div className="rounded-3xl border border-primary/20 bg-[#f4f7ff] p-5 sm:p-7">
+    <div className="rounded-3xl border border-primary/20 bg-secondary/50 p-5 sm:p-7">
       <p className="eyebrow">{t("VOTRE MINI-QUIZ")}</p>
       <h2
         ref={heading}
@@ -271,7 +271,7 @@ export function LessonQuiz({
           {checked && (
             <div
               role="status"
-              className={`mt-5 rounded-2xl p-4 text-sm leading-relaxed ${correct ? "bg-[#d9efdf]" : "bg-[#fff0b5]"}`}
+              className={`mt-5 rounded-2xl p-4 text-sm leading-relaxed ${correct ? "bg-success-subtle text-success-foreground" : "bg-warning-subtle text-warning-foreground"}`}
             >
               <p className="font-bold">
                 {t(correct ? "Bien joué !" : "On apprend ensemble !")}

@@ -49,7 +49,19 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // EduSign brand accents — lavender primary + playful kid palette.
+        navy: "hsl(var(--navy))",
+        media: "hsl(var(--media))",
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          subtle: "hsl(var(--success-subtle))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          subtle: "hsl(var(--warning-subtle))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        // Compatibility aliases; new UI uses semantic palette tokens.
         brand: {
           DEFAULT: "hsl(var(--brand))",
           light: "hsl(var(--brand-light))",
@@ -68,7 +80,8 @@ const config: Config = {
       },
       boxShadow: {
         soft: "0 1px 2px rgba(16,24,40,0.04), 0 8px 24px -12px hsl(var(--primary) / 0.18)",
-        "soft-lg": "0 2px 4px rgba(16,24,40,0.04), 0 18px 48px -12px hsl(var(--primary) / 0.32)",
+        "soft-lg":
+          "0 2px 4px rgba(16,24,40,0.04), 0 18px 48px -12px hsl(var(--primary) / 0.32)",
       },
       keyframes: {
         "accordion-down": {

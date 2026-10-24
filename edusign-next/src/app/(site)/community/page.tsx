@@ -22,7 +22,7 @@ export async function generateMetadata() {
 export default function Community() {
   return (
     <div className="container py-12 sm:py-16">
-      <header className="relative overflow-hidden rounded-[2rem] bg-[#f7dbea]/60 p-7 sm:p-12 lg:p-16">
+      <header className="relative overflow-hidden rounded-[2rem] bg-secondary/60 p-7 sm:p-12 lg:p-16">
         <div
           aria-hidden
           className="absolute -right-16 -top-16 size-72 rounded-full border-[45px] border-white/40"
@@ -49,7 +49,7 @@ export default function Community() {
             </Link>
           </div>
           <div className="relative mx-auto w-full max-w-xs rotate-3 rounded-[1.8rem] bg-white p-8 shadow-[8px_10px_0_0_rgba(36,54,107,.08)]">
-            <span className="grid size-14 place-items-center rounded-2xl bg-[#fff0b5]">
+            <span className="grid size-14 place-items-center rounded-2xl bg-secondary">
               <Heart aria-hidden className="size-7 text-primary" />
             </span>
             <p className="mt-6 text-2xl font-extrabold leading-snug">
@@ -76,7 +76,7 @@ export default function Community() {
               text: "Rassemblez quelques objets. Regardez la vidéo des nombres, puis comptez-les ensemble et essayez le quiz.",
               label: "Explorer les nombres",
               href: "/learn/lsf-nombres",
-              tint: "bg-[#fff0b5]/60",
+              tint: "bg-secondary/60",
               tag: "À LA MAISON",
             },
             {
@@ -85,7 +85,7 @@ export default function Community() {
               text: "Regardez une vidéo ensemble, puis répondez chacun à votre tour aux questions du quiz.",
               label: "Essayer un quiz ensemble",
               href: "/quiz",
-              tint: "bg-[#dceaff]",
+              tint: "bg-secondary",
               tag: "ENTRE AMIS",
             },
             {
@@ -94,7 +94,7 @@ export default function Community() {
               text: "Avec un camarade ou un proche, recherchez les premières lettres de vos prénoms dans l’alphabet manuel.",
               label: "Explorer l’alphabet",
               href: "/learn/lsf-alphabet",
-              tint: "bg-[#d9efdf]",
+              tint: "bg-secondary",
               tag: "À DEUX OU EN PETIT GROUPE",
             },
           ].map(({ icon: Icon, title, text, label, href, tint, tag }) => (

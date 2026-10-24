@@ -22,7 +22,7 @@ export async function generateMetadata() {
 export default function Parents() {
   return (
     <div className="container py-12 sm:py-16">
-      <div className="grid items-center gap-8 rounded-[2rem] bg-[#fff0b5] p-8 sm:p-12 md:grid-cols-[1.5fr_1fr]">
+      <div className="grid items-center gap-8 rounded-[2rem] bg-secondary p-8 sm:p-12 md:grid-cols-[1.5fr_1fr]">
         <div>
           <p className="eyebrow">
             <T text={"LE COIN DES PARENTS"} />
@@ -49,7 +49,7 @@ export default function Parents() {
         </div>
         <div
           aria-hidden
-          className="mx-auto flex size-44 rotate-6 items-center justify-center rounded-[2.5rem] bg-white/70 shadow-[8px_8px_0_0_#e4c562]"
+          className="mx-auto flex size-44 rotate-6 items-center justify-center rounded-[2.5rem] bg-white/70 shadow-soft-lg"
         >
           <Heart className="size-24 text-primary" strokeWidth={1.3} />
         </div>
@@ -67,19 +67,19 @@ export default function Parents() {
               Icon: Eye,
               t: "On observe",
               d: "Choisissez une vidéo. Regardez les mains, mais aussi le visage et le mouvement du corps.",
-              c: "bg-[#dceaff]",
+              c: "bg-secondary",
             },
             {
               Icon: Hand,
               t: "On essaie",
               d: "Mettez en pause. Chacun tente à son rythme. Revenez au modèle quand vous en avez envie.",
-              c: "bg-[#ffdfc8]",
+              c: "bg-muted",
             },
             {
               Icon: MessageCircle,
               t: "On partage",
               d: "Rejouez une petite situation ou choisissez ensemble ce que vous aimeriez découvrir demain.",
-              c: "bg-[#d9efdf]",
+              c: "bg-secondary",
             },
           ].map((x, i) => (
             <div
@@ -102,7 +102,7 @@ export default function Parents() {
         </div>
       </div>
       <div className="grid gap-6 md:grid-cols-2">
-        <div className="rounded-3xl bg-[#dceaff] p-8">
+        <div className="rounded-3xl bg-secondary p-8">
           <BookOpen className="size-7 text-primary" />
           <h2 className="mt-4 text-2xl font-bold">
             <T text={"Un carnet pour encourager."} />{" "}

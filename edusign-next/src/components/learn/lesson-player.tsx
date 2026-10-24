@@ -130,7 +130,7 @@ export function LessonPlayer({
       </div>
       <div
         ref={videoRegion}
-        className="aspect-video min-h-[200px] scroll-mt-28 bg-[#24366b]"
+        className="aspect-video min-h-[200px] scroll-mt-28 bg-navy"
       >
         {loaded ? (
           <YouTubePlayer
@@ -151,12 +151,12 @@ export function LessonPlayer({
               />
             </div>
             <div
-              className="absolute inset-0 -z-10 bg-[#142247]/75"
+              className="absolute inset-0 -z-10 bg-media/75"
               aria-hidden
             />
             <button
               onClick={() => setLoaded(true)}
-              className="flex size-16 items-center justify-center rounded-full bg-[#fff0b5] text-[#24366b] shadow-lg transition-transform hover:scale-105 sm:size-20"
+              className="flex size-16 items-center justify-center rounded-full bg-secondary text-navy shadow-lg transition-transform hover:scale-105 sm:size-20"
               aria-label={_t(`Charger la vidéo : ${lesson.sourceTitle}`)}
             >
               <Play className="ml-1 size-7" fill="currentColor" />

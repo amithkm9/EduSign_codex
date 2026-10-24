@@ -68,9 +68,9 @@ export function SignVideoCard({
       aria-label={`${t("Démonstration du signe")} ${sign.label[locale]}`}
       className="overflow-hidden rounded-2xl bg-white shadow-sm"
     >
-      <div className="flex items-center justify-between gap-3 bg-[#142d27] px-5 py-4 text-white">
+      <div className="flex items-center justify-between gap-3 bg-navy px-5 py-4 text-white">
         <div>
-          <p className="text-[9px] font-medium uppercase tracking-[0.16em] text-[#adc5b6]">
+          <p className="text-[9px] font-medium uppercase tracking-[0.16em] text-white/70">
             {t("REGARDEZ LE SIGNE")}
           </p>
           <h3 className="mt-1 text-2xl font-medium">
@@ -82,11 +82,11 @@ export function SignVideoCard({
             )}
           </h3>
         </div>
-        <span className="max-w-[140px] rounded-full border border-white/20 px-2.5 py-1 text-center text-[10px] text-[#d6e2da]">
+        <span className="max-w-[140px] rounded-full border border-white/20 px-2.5 py-1 text-center text-[10px] text-white/85">
           {sign.language === "LSF" ? "LSF" : t("Langue non vérifiée")}
         </span>
       </div>
-      <div className="bg-[#101c19]">
+      <div className="bg-media">
         <video
           ref={video}
           controls
@@ -115,13 +115,13 @@ export function SignVideoCard({
           <button
             onClick={() => void replay()}
             disabled={failed}
-            className="flex min-h-10 items-center gap-2 rounded-full bg-[#244b40] px-3 py-2 text-xs font-medium text-white disabled:opacity-50"
+            className="flex min-h-10 items-center gap-2 rounded-full bg-primary px-3 py-2 text-xs font-medium text-white disabled:opacity-50"
           >
             <RotateCcw size={15} />
             {t("Revoir le signe")}
           </button>
           <div
-            className="flex items-center gap-1 rounded-full bg-[#f1f4ee] p-1"
+            className="flex items-center gap-1 rounded-full bg-muted p-1"
             role="group"
             aria-label={t("Vitesse de la démonstration")}
           >
@@ -144,7 +144,7 @@ export function SignVideoCard({
               type="checkbox"
               checked={loop}
               onChange={(event) => setLoop(event.target.checked)}
-              className="accent-[#244b40]"
+              className="accent-primary"
             />
             {t("En boucle")}
           </label>
@@ -152,14 +152,14 @@ export function SignVideoCard({
         {(failed || playError) && (
           <p
             role="alert"
-            className="mt-3 rounded-xl bg-amber-50 p-3 text-sm text-amber-900"
+            className="mt-3 rounded-xl bg-warning-subtle p-3 text-sm text-warning-foreground"
           >
             {t(
               "La vidéo ne démarre pas. Essayez le bouton de lecture ou ouvrez la source ci-dessous.",
             )}
           </p>
         )}
-        <details className="mt-3 border-t pt-3 text-xs text-[#496253]">
+        <details className="mt-3 border-t pt-3 text-xs text-muted-foreground">
           <summary className="cursor-pointer font-medium">
             {t("À essayer ensemble")}
           </summary>

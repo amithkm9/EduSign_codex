@@ -44,7 +44,7 @@ export function SiteFooter() {
             )}
           </p>
           <span className="mt-5 inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-[11px] font-medium text-muted-foreground">
-            <span aria-hidden className="size-1.5 rounded-full bg-[#3b765c]" />
+            <span aria-hidden className="size-1.5 rounded-full bg-primary" />
             {t("Langue enseignée : LSF · Interface : FR / EN")}
           </span>
         </div>

@@ -18,7 +18,7 @@ export default async function Dashboard() {
   const s = await getDashboardSummary(p.id);
   return (
     <div className="container py-12">
-      <div className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-[#dce6dc] bg-[#edf2e9] p-8 sm:p-10">
+      <div className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-border bg-secondary p-8 sm:p-10">
         <div>
           <p className="eyebrow">
             <T text={"MON CARNET DE DÉCOUVERTES"} />
@@ -46,19 +46,19 @@ export default async function Dashboard() {
             Icon: CheckCircle2,
             value: s.totalCompleted,
             label: "Activités déclarées terminées",
-            color: "bg-[#d9efdf]",
+            color: "bg-secondary",
           },
           {
             Icon: BookOpen,
             value: s.coursesInProgress,
             label: "Activités en cours",
-            color: "bg-[#ffdfc8]",
+            color: "bg-muted",
           },
           {
             Icon: Heart,
             value: s.totalDaysActive,
             label: "Jours de découverte",
-            color: "bg-[#f7dbea]",
+            color: "bg-secondary",
           },
         ].map((x) => (
           <div
@@ -122,7 +122,7 @@ export default async function Dashboard() {
           ))}
         </div>
       </section>
-      <div className="mt-9 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-[#fff0b5] p-7">
+      <div className="mt-9 flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-secondary p-7">
         <div>
           <h2 className="text-xl font-bold">
             <T text={"Un moment à partager en famille."} />{" "}

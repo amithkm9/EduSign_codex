@@ -8,17 +8,17 @@ import { Brand } from "@/components/layout/brand";
 export function AuthShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-dvh lg:grid lg:grid-cols-[1fr_1fr]">
-      <aside className="relative hidden overflow-hidden bg-[#24366b] p-12 text-white lg:flex lg:flex-col xl:p-16">
+      <aside className="relative hidden overflow-hidden bg-navy p-12 text-white lg:flex lg:flex-col xl:p-16">
         <Brand light />
         <div className="relative z-10 my-auto max-w-lg py-16">
-          <p className="text-xs font-semibold uppercase tracking-[.22em] text-[#dceaff]">
+          <p className="text-xs font-semibold uppercase tracking-[.22em] text-secondary">
             <T text={"Un geste à la fois"} />{" "}
           </p>
           <h1 className="mt-6 text-5xl font-medium leading-[1.12] tracking-[-.04em] xl:text-6xl">
             <T text={"Les petits gestes"} /> <br />
             <T text={"créent de"} />
             <T text={" "} />
-            <em className="font-serif font-normal text-[#fff0b5]">
+            <em className="font-serif font-normal text-secondary">
               <T text={"grands liens."} />{" "}
             </em>
           </h1>
@@ -35,7 +35,7 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
                 key={i}
                 className="flex h-24 w-24 flex-col items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5"
               >
-                <Icon className="size-7 text-[#fff0b5]" strokeWidth={1.5} />
+                <Icon className="size-7 text-secondary" strokeWidth={1.5} />
                 <span className="text-[11px] text-white/70">
                   <T text={["Observer", "Pratiquer", "Recommencer"][i]} />
                 </span>

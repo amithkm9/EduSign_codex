@@ -102,7 +102,7 @@ export default async function Lesson({
               ))}
             </ol>
           </div>
-          <div className="rounded-2xl border border-[#dce6dc] bg-[#edf2e9] p-6">
+          <div className="rounded-2xl border border-border bg-secondary p-6">
             <h2 className="flex items-center gap-2 font-bold">
               <Heart className="size-5" />{" "}
               <T text={"Le petit coup de pouce parent"} />{" "}

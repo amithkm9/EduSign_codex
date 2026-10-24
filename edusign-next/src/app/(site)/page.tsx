@@ -53,7 +53,7 @@ export default async function HomePage() {
       <section className="landing-hero relative overflow-hidden border-b border-border/60">
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-24 top-12 size-[38rem] rounded-full bg-[#dbe5ff]/60 blur-3xl"
+          className="pointer-events-none absolute -right-24 top-12 size-[38rem] rounded-full bg-secondary/60 blur-3xl"
         />
         <div className="container relative grid items-center gap-10 py-10 sm:py-14 lg:grid-cols-[.95fr_1.05fr] lg:gap-16 lg:py-16">
           <div className="max-w-xl">
@@ -93,7 +93,7 @@ export default async function HomePage() {
               {["Gratuit pour commencer", "Aucun compte nécessaire"].map(
                 (text) => (
                   <span key={text} className="inline-flex items-center gap-1.5">
-                    <Check aria-hidden className="size-3.5 text-emerald-700" />
+                    <Check aria-hidden className="size-3.5 text-success" />
                     <T text={text} />
                   </span>
                 ),
@@ -109,7 +109,7 @@ export default async function HomePage() {
           <div className="flex items-center gap-4">
             <span
               aria-hidden
-              className="grid size-14 shrink-0 place-items-center rounded-2xl bg-[#e9efff] text-lg font-bold text-primary"
+              className="grid size-14 shrink-0 place-items-center rounded-2xl bg-secondary text-lg font-bold text-primary"
             >
               LSF
             </span>
@@ -232,7 +232,7 @@ export default async function HomePage() {
             ].map(({ number, Icon, title, text }) => (
               <article
                 key={number}
-                className="rounded-2xl border border-border bg-[#f7f9fd] p-6 sm:p-7"
+                className="rounded-2xl border border-border bg-muted/50 p-6 sm:p-7"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold tracking-wider text-muted-foreground">
@@ -266,7 +266,7 @@ export default async function HomePage() {
           </h2>
         </div>
         <div className="grid gap-6 lg:grid-cols-[1.15fr_1fr]">
-          <article className="flex flex-col rounded-[1.5rem] bg-[#eaf0fa] p-7 sm:p-10">
+          <article className="flex flex-col rounded-[1.5rem] bg-secondary p-7 sm:p-10">
             <div className="flex items-center gap-2 text-xs font-semibold text-primary">
               <Users aria-hidden className="size-4" />
               <T text="POUR LES PARENTS" />
@@ -316,7 +316,7 @@ export default async function HomePage() {
                 <T text="Il vous oriente ; il ne remplace pas un enseignant de LSF." />
               </p>
             </article>
-            <article className="rounded-[1.5rem] bg-[#f3eee4] p-7 sm:p-8">
+            <article className="rounded-[1.5rem] bg-muted p-7 sm:p-8">
               <h3 className="text-xl font-semibold">
                 <T text="Les découvertes se partagent." />
               </h3>
@@ -372,14 +372,14 @@ export default async function HomePage() {
       </section>
 
       <section className="container pb-16 sm:pb-20">
-        <div className="relative overflow-hidden rounded-[1.5rem] bg-[#20335e] px-7 py-12 text-white sm:px-12 lg:px-14">
+        <div className="relative overflow-hidden rounded-[1.5rem] bg-navy px-7 py-12 text-white sm:px-12 lg:px-14">
           <div
             aria-hidden
             className="pointer-events-none absolute -right-20 -top-36 size-[28rem] rounded-full border-[60px] border-white/[.035]"
           />
           <div className="relative flex flex-col justify-between gap-8 lg:flex-row lg:items-center">
             <div className="max-w-xl">
-              <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-[#b9caef]">
+              <p className="text-[10px] font-semibold uppercase tracking-[.16em] text-white/75">
                 <T text="VOTRE PROCHAINE DÉCOUVERTE" />
               </p>
               <h2 className="mt-4 text-3xl font-semibold leading-tight sm:text-4xl">
@@ -392,7 +392,7 @@ export default async function HomePage() {
             <div className="flex shrink-0 flex-col gap-3">
               <Link
                 href={user ? "/dashboard" : "/register"}
-                className="inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-[#20335e] hover:bg-[#edf2ff]"
+                className="inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-white px-6 py-3.5 text-sm font-semibold text-navy hover:bg-secondary"
               >
                 <T
                   text={

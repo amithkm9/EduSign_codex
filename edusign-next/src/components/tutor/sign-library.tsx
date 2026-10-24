@@ -32,7 +32,7 @@ export function SignLibrary({
   );
   return (
     <details className="group">
-      <summary className="cursor-pointer py-2 text-xs font-medium text-[#496253]">
+      <summary className="cursor-pointer py-2 text-xs font-medium text-muted-foreground">
         {t("Parcourir les vidéos")}{" "}
         <span className="text-muted-foreground">({catalog.length})</span>
       </summary>

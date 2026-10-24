@@ -45,7 +45,7 @@ export function LessonCatalog({
     <div>
       <div className="mb-7 flex flex-col justify-between gap-5 lg:flex-row lg:items-center">
         <div
-          className="flex flex-wrap gap-1 rounded-xl bg-[#eceef2] p-1"
+          className="flex flex-wrap gap-1 rounded-xl bg-muted p-1"
           aria-label={_t("Thèmes des leçons")}
         >
           {topics.map((t) => (

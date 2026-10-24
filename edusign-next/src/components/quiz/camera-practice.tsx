@@ -248,7 +248,7 @@ export function CameraPractice({
     if (next) setIndex((index + 1) % targets.length);
   }
   return (
-    <section className="rounded-3xl border border-primary/20 bg-[#f4f7ff] p-5 sm:p-7">
+    <section className="rounded-3xl border border-primary/20 bg-secondary/50 p-5 sm:p-7">
       <p className="eyebrow">{t("LE DÉFI CAMÉRA")}</p>
       <h2 className="mt-3 text-2xl font-bold">{t("À vous de signer !")}</h2>
       <p className="mt-3 text-sm leading-relaxed">
@@ -256,7 +256,7 @@ export function CameraPractice({
           "Placez une main dans le cadre et gardez le signe visible pendant les trois secondes de capture. Le modèle de démonstration reconnaît uniquement A, B, C, 1, 2 et 3.",
         )}
       </p>
-      <p className="mt-4 rounded-xl bg-[#fff0b5] p-3 text-sm leading-relaxed">
+      <p className="mt-4 rounded-xl bg-warning-subtle text-warning-foreground p-3 text-sm leading-relaxed">
         {t(
           "Mode démo expérimental : le modèle historique et l’ordre de ses classes ne sont pas validés pour la LSF. Le résultat compare une prédiction au signe demandé ; il n’est pas enregistré comme note de maîtrise.",
         )}
@@ -275,9 +275,9 @@ export function CameraPractice({
         </span>
       </div>
       <div
-        className={`relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-[#182342] ${
+        className={`relative mt-5 aspect-[4/3] overflow-hidden rounded-2xl bg-media ${
           state === "captured" && result?.verdict === "match"
-            ? "ring-4 ring-emerald-500"
+            ? "ring-4 ring-success"
             : ""
         }`}
       >
@@ -322,12 +322,12 @@ export function CameraPractice({
               key={analysing ? "analysing" : result?.verdict}
               className={`flex items-start gap-3 rounded-xl border-2 p-3 shadow-lg animate-in fade-in zoom-in-95 duration-300 motion-reduce:animate-none sm:p-4 ${
                 analysing
-                  ? "border-white bg-white text-slate-800"
+                  ? "border-white bg-white text-foreground"
                   : result?.verdict === "match"
-                    ? "border-emerald-500 bg-emerald-50 text-emerald-950"
+                    ? "border-success bg-success-subtle text-success-foreground"
                     : result?.verdict === "different"
-                      ? "border-amber-400 bg-amber-50 text-amber-950"
-                      : "border-slate-300 bg-slate-50 text-slate-800"
+                      ? "border-warning bg-warning-subtle text-warning-foreground"
+                      : "border-border bg-muted text-foreground"
               }`}
             >
               {analysing ? (
@@ -338,12 +338,12 @@ export function CameraPractice({
               ) : result?.verdict === "match" ? (
                 <CircleCheck
                   aria-hidden
-                  className="mt-0.5 size-7 shrink-0 text-emerald-700"
+                  className="mt-0.5 size-7 shrink-0 text-success"
                 />
               ) : result?.verdict === "different" ? (
                 <CircleAlert
                   aria-hidden
-                  className="mt-0.5 size-7 shrink-0 text-amber-700"
+                  className="mt-0.5 size-7 shrink-0 text-warning"
                 />
               ) : (
                 <CircleHelp aria-hidden className="mt-0.5 size-7 shrink-0" />

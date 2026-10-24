@@ -40,7 +40,7 @@ export function LessonPreview() {
       <div className="overflow-hidden rounded-[1.5rem] border border-white bg-white p-2 shadow-[0_16px_50px_-20px_rgba(35,59,112,.3)]">
         <Link
           href={`/learn/${lesson.id}`}
-          className="group relative block aspect-[4/3] overflow-hidden rounded-[1.1rem] bg-slate-900"
+          className="group relative block aspect-[4/3] overflow-hidden rounded-[1.1rem] bg-media"
           aria-label={`${t("Regarder la leçon")} : ${t(current.title)}`}
         >
           <CourseCover
@@ -51,7 +51,7 @@ export function LessonPreview() {
           />
           <div
             aria-hidden
-            className="absolute inset-0 bg-gradient-to-t from-[#142247]/95 via-transparent to-transparent"
+            className="absolute inset-0 bg-gradient-to-t from-media/95 via-transparent to-transparent"
           />
           <span className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full bg-white/95 px-3 py-2 text-[11px] font-semibold text-foreground">
             <span aria-hidden className="size-1.5 rounded-full bg-primary" />

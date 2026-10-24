@@ -237,12 +237,12 @@ export function TutorChat() {
     ...new Set(messages.flatMap((m) => m.sign_ids || [])),
   ].slice(-8);
   return (
-    <div className="overflow-hidden rounded-3xl border border-[#dce3de] bg-white shadow-[0_16px_60px_-30px_rgba(25,55,44,0.22)]">
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e7ece8] px-5 py-3 sm:px-7">
+    <div className="overflow-hidden rounded-3xl border border-border bg-white shadow-soft">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3 sm:px-7">
         <div
           role="group"
           aria-label={t("Que souhaitez-vous faire ?")}
-          className="flex gap-1 rounded-full bg-[#f1f4f1] p-1"
+          className="flex gap-1 rounded-full bg-muted p-1"
         >
           {(["sign", "coach"] as const).map((mode) => (
             <button
@@ -253,7 +253,7 @@ export function TutorChat() {
                 setIntent(mode);
                 voice.stopSpeech();
               }}
-              className={`flex min-h-10 items-center gap-2 rounded-full px-4 text-xs font-semibold transition disabled:opacity-50 ${intent === mode ? "bg-[#244b40] text-white shadow-sm" : "text-slate-600 hover:bg-white"}`}
+              className={`flex min-h-10 items-center gap-2 rounded-full px-4 text-xs font-semibold transition disabled:opacity-50 ${intent === mode ? "bg-primary text-white shadow-sm" : "text-muted-foreground hover:bg-white"}`}
             >
               {mode === "sign" ? (
                 <Hand size={16} />
@@ -267,7 +267,7 @@ export function TutorChat() {
         <button
           onClick={reset}
           disabled={loading || capturing || !messages.length}
-          className="flex min-h-10 items-center gap-2 rounded-full px-3 text-xs font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-35"
+          className="flex min-h-10 items-center gap-2 rounded-full px-3 text-xs font-medium text-muted-foreground hover:bg-muted disabled:opacity-35"
         >
           <Plus size={16} />
           {t("Nouvelle conversation")}
@@ -277,10 +277,10 @@ export function TutorChat() {
       <div className="grid lg:grid-cols-[1.1fr_1fr]">
         <section
           aria-label={t("Espace de démonstration")}
-          className="min-w-0 bg-[#f5f7f3] p-4 sm:p-6 lg:border-r lg:border-[#e7ece8]"
+          className="min-w-0 bg-muted/50 p-4 sm:p-6 lg:border-r lg:border-border"
         >
           <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#496253]">
+            <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
               {t("Regarder & essayer")}
             </span>
             <label className="max-w-full">
@@ -291,7 +291,7 @@ export function TutorChat() {
                 onChange={(event) =>
                   setCollection(event.target.value as "project" | "lsf")
                 }
-                className="min-h-10 max-w-full cursor-pointer rounded-full border border-[#dbe2da] bg-transparent px-3 text-xs text-[#415347] focus:ring-2 focus:ring-[#244b40]"
+                className="min-h-10 max-w-full cursor-pointer rounded-full border border-border bg-transparent px-3 text-xs text-foreground focus:ring-2 focus:ring-primary"
               >
                 <option value="project">
                   {t("Bibliothèque · 354 vidéos")}
@@ -308,12 +308,12 @@ export function TutorChat() {
               active={!loading && !capturing && !voice.speaking}
             />
           ) : (
-            <div className="relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-2xl bg-[#193e34] p-7 text-white sm:min-h-[350px] sm:p-8">
+            <div className="relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-2xl bg-navy p-7 text-white sm:min-h-[350px] sm:p-8">
               <div className="flex items-center justify-between">
                 <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20">
                   <Hand size={23} />
                 </span>
-                <span className="text-[11px] tracking-widest text-[#c1d4b8]">
+                <span className="text-[11px] tracking-widest text-white/75">
                   EDUSIGN STUDIO
                 </span>
               </div>
@@ -321,7 +321,7 @@ export function TutorChat() {
                 <p className="text-3xl font-medium leading-tight tracking-tight sm:text-4xl">
                   {t("Un petit signe. Un grand lien.")}
                 </p>
-                <p className="mt-4 max-w-[260px] text-sm leading-6 text-[#c9d8ce]">
+                <p className="mt-4 max-w-[260px] text-sm leading-6 text-white/80">
                   {t("Choisissez un mot. Regardez le geste. Essayez ensemble.")}
                 </p>
               </div>
@@ -335,7 +335,7 @@ export function TutorChat() {
                     "sign",
                   )
                 }
-                className="relative z-10 flex min-h-11 w-fit items-center gap-3 rounded-full bg-[#dcebbd] py-2 pl-4 pr-5 text-sm font-semibold text-[#193e34] hover:bg-white disabled:opacity-50"
+                className="relative z-10 flex min-h-11 w-fit items-center gap-3 rounded-full bg-white py-2 pl-4 pr-5 text-sm font-semibold text-navy hover:bg-white disabled:opacity-50"
               >
                 <Play size={15} fill="currentColor" />
                 {t("Commencer par bonjour")}
@@ -347,7 +347,7 @@ export function TutorChat() {
             </div>
           )}
           <div className="mt-5">
-            <p className="mb-2.5 text-xs font-medium text-[#58675d]">
+            <p className="mb-2.5 text-xs font-medium text-muted-foreground">
               {t(
                 recentSigns.length
                   ? "Vos signes explorés"
@@ -364,7 +364,7 @@ export function TutorChat() {
                           key={id}
                           onClick={() => setSelectedSign(id)}
                           aria-pressed={selectedSign === id}
-                          className={`min-h-10 rounded-full border px-3.5 text-xs transition ${selectedSign === id ? "border-[#244b40] bg-[#244b40] text-white" : "border-[#dbe2da] bg-white text-[#415347] hover:border-[#244b40]"}`}
+                          className={`min-h-10 rounded-full border px-3.5 text-xs transition ${selectedSign === id ? "border-primary bg-primary text-white" : "border-border bg-white text-foreground hover:border-primary"}`}
                         >
                           {item.label[locale]}
                         </button>
@@ -383,7 +383,7 @@ export function TutorChat() {
                           "sign",
                         )
                       }
-                      className="min-h-10 rounded-full border border-[#dbe2da] bg-white px-3.5 text-xs text-[#415347] hover:border-[#244b40] disabled:opacity-40"
+                      className="min-h-10 rounded-full border border-border bg-white px-3.5 text-xs text-foreground hover:border-primary disabled:opacity-40"
                     >
                       {item.label[locale]}
                     </button>
@@ -398,12 +398,12 @@ export function TutorChat() {
         >
           <div className="flex items-center justify-between gap-3 px-5 pt-5 sm:px-6">
             <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#edf2e7] text-[#244b40]">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-primary">
                 <Sparkles size={15} />
               </span>
               <h2 className="text-sm font-semibold">{t("Votre guide")}</h2>
             </div>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[11px] text-muted-foreground">
               {intent === "sign"
                 ? t("Français & anglais")
                 : t(
@@ -432,7 +432,7 @@ export function TutorChat() {
                       : "Avançons à votre rythme.",
                   )}
                 </h3>
-                <p className="mt-3 max-w-sm text-sm leading-6 text-slate-500">
+                <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
                   {t(
                     intent === "sign"
                       ? "Dites-moi un mot, en français ou en anglais. Je trouverai la vidéo pour vous et votre enfant."
@@ -474,7 +474,7 @@ export function TutorChat() {
                             : undefined,
                         )
                       }
-                      className="flex min-h-11 w-full items-center justify-between gap-3 border-b border-[#edf0ed] py-3 text-left text-xs text-[#466252] hover:text-[#163e30] disabled:opacity-50"
+                      className="flex min-h-11 w-full items-center justify-between gap-3 border-b border-border py-3 text-left text-xs text-primary hover:text-primary/90 disabled:opacity-50"
                     >
                       {t(item.title)}
                       <ArrowUpRight size={15} />
@@ -494,7 +494,7 @@ export function TutorChat() {
                 }
                 className={
                   message.role === "user"
-                    ? "ml-auto w-fit max-w-[90%] rounded-2xl rounded-br-md bg-[#edf2e7] px-4 py-2.5"
+                    ? "ml-auto w-fit max-w-[90%] rounded-2xl rounded-br-md bg-secondary px-4 py-2.5"
                     : "max-w-full"
                 }
               >
@@ -502,13 +502,13 @@ export function TutorChat() {
                   {message.role === "user" ? t("Vous") : "EduSign"}
                 </span>
                 {message.mode === "fallback" && (
-                  <p className="mb-2 text-[11px] text-amber-800">
+                  <p className="mb-2 text-[11px] text-warning-foreground">
                     {t("Réponse guidée")}
                   </p>
                 )}
                 {message.exercise_result && (
                   <p
-                    className={`mb-2 flex items-center gap-2 rounded-lg p-3 text-xs font-medium ${message.exercise_result.correct ? "bg-emerald-50 text-emerald-800" : "bg-amber-50 text-amber-900"}`}
+                    className={`mb-2 flex items-center gap-2 rounded-lg p-3 text-xs font-medium ${message.exercise_result.correct ? "bg-success-subtle text-success-foreground" : "bg-warning-subtle text-warning-foreground"}`}
                   >
                     <Check size={15} />
                     {t(
@@ -539,7 +539,7 @@ export function TutorChat() {
                             key={id}
                             onClick={() => setSelectedSign(id)}
                             aria-pressed={selectedSign === id}
-                            className="flex min-h-10 items-center gap-2 rounded-full border border-[#dbe2da] px-3 text-xs font-semibold text-[#244b40] hover:bg-[#f1f5ed]"
+                            className="flex min-h-10 items-center gap-2 rounded-full border border-border px-3 text-xs font-semibold text-primary hover:bg-secondary"
                           >
                             <Play size={13} />
                             {item.label[message.language]}
@@ -563,7 +563,7 @@ export function TutorChat() {
                           ? "noopener noreferrer"
                           : undefined
                       }
-                      className="mt-3 flex min-h-10 items-center gap-2 text-xs font-semibold text-[#244b40] underline underline-offset-4"
+                      className="mt-3 flex min-h-10 items-center gap-2 text-xs font-semibold text-primary underline underline-offset-4"
                     >
                       {resource.title}
                       <ArrowUpRight size={13} />
@@ -577,7 +577,7 @@ export function TutorChat() {
                 {message.exercise && (
                   <fieldset
                     disabled={loading || capturing || message.answered}
-                    className="mt-4 rounded-xl bg-[#f5f7f3] p-3"
+                    className="mt-4 rounded-xl bg-muted/50 p-3"
                   >
                     <legend className="text-xs font-semibold">
                       {t("À vous de jouer")}
@@ -600,14 +600,14 @@ export function TutorChat() {
                               message.language,
                             )
                           }
-                          className="w-full rounded-lg border bg-white p-3 text-left text-xs hover:border-[#244b40] disabled:opacity-50"
+                          className="w-full rounded-lg border bg-white p-3 text-left text-xs hover:border-primary disabled:opacity-50"
                         >
                           {choice}
                         </button>
                       ))}
                     </div>
                     {message.answered && (
-                      <p className="mt-2 text-xs text-slate-500">
+                      <p className="mt-2 text-xs text-muted-foreground">
                         {t("Réponse envoyée")}
                       </p>
                     )}
@@ -629,7 +629,7 @@ export function TutorChat() {
                         message.language,
                       )
                     }
-                    className="mt-2 flex min-h-9 items-center gap-1.5 text-[11px] text-slate-500 hover:text-[#244b40] disabled:opacity-50"
+                    className="mt-2 flex min-h-9 items-center gap-1.5 text-[11px] text-muted-foreground hover:text-primary disabled:opacity-50"
                   >
                     {voice.speaking === message.id ? (
                       voice.preparing ? (
@@ -653,7 +653,7 @@ export function TutorChat() {
             {loading && (
               <div
                 role="status"
-                className="flex items-center gap-2 text-xs text-slate-500"
+                className="flex items-center gap-2 text-xs text-muted-foreground"
               >
                 <Loader2 size={15} className="animate-spin" />
                 {t(
@@ -680,7 +680,7 @@ export function TutorChat() {
                       key={suggestion}
                       disabled={capturing}
                       onClick={() => void send(suggestion)}
-                      className="min-h-9 rounded-full bg-[#f4f6f3] px-3 text-[11px] text-[#496253] hover:bg-[#e8eee3] disabled:opacity-50"
+                      className="min-h-9 rounded-full bg-muted px-3 text-[11px] text-muted-foreground hover:bg-accent disabled:opacity-50"
                     >
                       {suggestion}
                     </button>
@@ -690,7 +690,7 @@ export function TutorChat() {
             {(error || voice.error) && (
               <p
                 role="alert"
-                className="mb-3 rounded-lg bg-amber-50 p-3 text-xs text-amber-900"
+                className="mb-3 rounded-lg bg-warning-subtle p-3 text-xs text-warning-foreground"
               >
                 {t(error || voice.error)}
               </p>
@@ -698,11 +698,11 @@ export function TutorChat() {
             {capturing && (
               <div
                 role="status"
-                className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-[#f1f5ed] p-3 text-xs"
+                className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-secondary p-3 text-xs"
               >
                 <span className="flex flex-1 items-center gap-2">
                   {voice.phase === "recording" ? (
-                    <Mic size={15} className="text-red-600" />
+                    <Mic size={15} className="text-destructive" />
                   ) : (
                     <Loader2 size={15} className="animate-spin" />
                   )}
@@ -717,7 +717,7 @@ export function TutorChat() {
                 {voice.phase === "recording" && (
                   <button
                     onClick={voice.stop}
-                    className="min-h-10 rounded-full bg-[#244b40] px-3 text-white"
+                    className="min-h-10 rounded-full bg-primary px-3 text-white"
                   >
                     {t("Terminer")}
                   </button>
@@ -736,7 +736,7 @@ export function TutorChat() {
                 event.preventDefault();
                 void send(input);
               }}
-              className="rounded-2xl border border-[#dce3de] bg-[#fafbf9] p-3 focus-within:border-[#52745e] focus-within:ring-2 focus-within:ring-[#52745e]/10"
+              className="rounded-2xl border border-border bg-background p-3 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/10"
             >
               <label htmlFor="tutor-question" className="sr-only">
                 {t("Votre question")}
@@ -772,14 +772,14 @@ export function TutorChat() {
                   disabled={loading || capturing}
                   onClick={() => void voice.start()}
                   aria-label={t("Dicter une question")}
-                  className="flex min-h-10 items-center gap-2 rounded-full px-2.5 text-xs text-slate-500 hover:bg-[#edf2e7] disabled:opacity-40"
+                  className="flex min-h-10 items-center gap-2 rounded-full px-2.5 text-xs text-muted-foreground hover:bg-secondary disabled:opacity-40"
                 >
                   <Mic size={17} />
                   {t("Dicter")}
                 </button>
                 <div className="flex items-center gap-2">
                   {input.length > 1800 && (
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-[10px] text-muted-foreground">
                       {input.length}/2000
                     </span>
                   )}
@@ -787,14 +787,14 @@ export function TutorChat() {
                     type="submit"
                     disabled={!input.trim() || loading || capturing}
                     aria-label={t("Envoyer la question")}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-[#244b40] text-white hover:bg-[#173b30] disabled:opacity-30"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white hover:bg-primary/90 disabled:opacity-30"
                   >
                     <ArrowUp size={19} />
                   </button>
                 </div>
               </div>
             </form>
-            <label className="mt-2 flex min-h-9 w-fit cursor-pointer items-center gap-2 text-[10px] text-slate-500">
+            <label className="mt-2 flex min-h-9 w-fit cursor-pointer items-center gap-2 text-[10px] text-muted-foreground">
               <input
                 type="checkbox"
                 checked={automaticAudio}
@@ -802,14 +802,14 @@ export function TutorChat() {
                   setAutomaticAudio(event.target.checked);
                   if (!event.target.checked) voice.stopSpeech();
                 }}
-                className="accent-[#244b40]"
+                className="accent-primary"
               />
               {t("Lire les réponses à voix haute")}
             </label>
           </div>
         </section>
       </div>
-      <div className="border-t border-[#e7ece8] px-5 py-3 sm:px-7">
+      <div className="border-t border-border px-5 py-3 sm:px-7">
         <SignLibrary
           collection={collection}
           disabled={loading || capturing}
@@ -819,7 +819,7 @@ export function TutorChat() {
           }}
         />
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-[#e7ece8] bg-[#fafbf9] px-5 py-3 text-[10px] leading-5 text-slate-500 sm:px-7">
+      <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-border bg-background px-5 py-3 text-[10px] leading-5 text-muted-foreground sm:px-7">
         <span>
           {t(
             collection === "project"

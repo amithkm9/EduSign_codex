@@ -28,6 +28,14 @@
     --border: 220 19% 88%;
     --input: 222 25% 80%;
     --ring: 226 65% 49%;
+    --navy: 220 39% 21%;
+    --media: 222 45% 13%;
+    --success: 151 55% 32%;
+    --success-subtle: 145 50% 95%;
+    --success-foreground: 151 55% 23%;
+    --warning: 35 85% 40%;
+    --warning-subtle: 45 90% 95%;
+    --warning-foreground: 30 75% 25%;
     --radius: 1rem;
     --brand: 226 65% 49%;
     --brand-light: 220 80% 87%;
@@ -40,37 +48,43 @@
   }
 
   .dark {
-    --background: 248 30% 8%;
-    --foreground: 250 40% 96%;
+    --background: 222 35% 9%;
+    --foreground: 220 30% 96%;
 
-    --card: 248 28% 11%;
-    --card-foreground: 250 40% 96%;
+    --card: 222 32% 12%;
+    --card-foreground: 220 30% 96%;
 
-    --popover: 248 28% 11%;
-    --popover-foreground: 250 40% 96%;
+    --popover: 222 32% 12%;
+    --popover-foreground: 220 30% 96%;
 
-    --primary: 249 76% 72%;
-    --primary-foreground: 248 30% 10%;
+    --primary: 226 75% 72%;
+    --primary-foreground: 222 35% 10%;
 
-    --secondary: 248 20% 18%;
-    --secondary-foreground: 250 40% 96%;
+    --secondary: 222 25% 18%;
+    --secondary-foreground: 220 30% 96%;
 
-    --muted: 248 20% 18%;
-    --muted-foreground: 250 15% 65%;
+    --muted: 222 25% 18%;
+    --muted-foreground: 220 18% 70%;
 
-    --accent: 248 20% 22%;
-    --accent-foreground: 250 40% 96%;
+    --accent: 222 22% 23%;
+    --accent-foreground: 220 30% 96%;
 
     --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 248 20% 22%;
-    --input: 248 20% 22%;
-    --ring: 249 76% 72%;
+    --border: 222 22% 23%;
+    --input: 222 22% 23%;
+    --ring: 226 75% 72%;
 
-    --brand: 249 76% 72%;
-    --brand-light: 249 86% 80%;
-    --brand-dark: 248 45% 53%;
+    --success: 151 55% 63%;
+    --success-subtle: 151 35% 16%;
+    --success-foreground: 145 50% 85%;
+    --warning: 40 85% 65%;
+    --warning-subtle: 35 40% 16%;
+    --warning-foreground: 45 75% 85%;
+    --brand: 226 75% 72%;
+    --brand-light: 220 70% 82%;
+    --brand-dark: 224 49% 23%;
     --brand-orange: 28 100% 64%;
     --brand-green: 152 53% 46%;
     --brand-blue: 227 100% 65%;
@@ -96,9 +110,9 @@
 }
 
 @layer utilities {
-  /* Playful gradient text for headlines */
+  /* Brand emphasis uses the same blue and navy as actions and navigation. */
   .text-gradient {
-    @apply bg-gradient-to-r from-primary via-brand-pink to-brand-orange bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary to-navy bg-clip-text text-transparent;
   }
   /* Subtle dotted background texture */
   .bg-dots {
@@ -136,8 +150,8 @@
     outline-offset: 4px;
   }
   ::selection {
-    background: #dceaff;
-    color: #24366b;
+    background: hsl(var(--secondary));
+    color: hsl(var(--foreground));
   }
   html {
     scroll-padding-top: 6rem;
@@ -184,7 +198,11 @@
 
 /* Restrained surface treatment for the public landing experience. */
 .landing-hero {
-  background: linear-gradient(120deg, #f6f8fc 0%, #eef3ff 100%);
+  background: linear-gradient(
+    120deg,
+    hsl(var(--background)),
+    hsl(var(--secondary))
+  );
 }
 .landing-page h1,
 .landing-page h2,
@@ -218,13 +236,13 @@
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.045em;
-  color: #367269;
+  color: hsl(var(--primary));
 }
 .hero-preview {
-  background: #202f49;
+  background: hsl(var(--navy));
   background-image: radial-gradient(
     ellipse at 90% 0%,
-    #39576a 0,
+    hsl(var(--primary) / 0.35) 0,
     transparent 65%
   );
 }

@@ -46,10 +46,10 @@ export default function About() {
             <ArrowRight aria-hidden className="size-4" />
           </Link>
         </div>
-        <div className="relative rounded-[2.5rem] bg-[#dceaff] p-6 sm:p-9">
+        <div className="relative rounded-[2.5rem] bg-secondary p-6 sm:p-9">
           <div
             aria-hidden
-            className="absolute -right-2 -top-4 grid size-16 rotate-12 place-items-center rounded-2xl bg-[#fff0b5] text-primary shadow-sm"
+            className="absolute -right-2 -top-4 grid size-16 rotate-12 place-items-center rounded-2xl bg-secondary text-primary shadow-sm"
           >
             <Sparkles className="size-8" />
           </div>
@@ -101,19 +101,19 @@ export default function About() {
               icon: Eye,
               title: "Observer avec attention",
               text: "Les mains, le visage et le mouvement font partie de la langue. Les vidéos LSF restent notre point de départ.",
-              tint: "bg-[#ffe1ce]",
+              tint: "bg-muted",
             },
             {
               icon: Heart,
               title: "Apprendre côte à côte",
               text: "Un parent, un ami, un camarade : partager une activité aide à prendre le temps et à oser essayer.",
-              tint: "bg-[#f7dbea]",
+              tint: "bg-secondary",
             },
             {
               icon: BookOpen,
               title: "Respecter la langue et ses créateurs",
               text: "Nous créditons les ressources utilisées et invitons à poursuivre l’apprentissage auprès de personnes compétentes en LSF.",
-              tint: "bg-[#d9efdf]",
+              tint: "bg-secondary",
             },
           ].map(({ icon: Icon, title, text, tint }) => (
             <article key={title} className={`rounded-3xl p-7 ${tint}`}>
@@ -162,7 +162,7 @@ export default function About() {
       </section>
       <section className="mt-12 flex flex-col items-start justify-between gap-6 rounded-3xl bg-primary p-8 text-white sm:flex-row sm:items-center sm:p-10">
         <div>
-          <Users aria-hidden className="mb-4 size-7 text-[#fff0b5]" />
+          <Users aria-hidden className="mb-4 size-7 text-secondary" />
           <h2 className="text-2xl font-bold">
             <T text="La prochaine découverte se partage." />
           </h2>
@@ -172,7 +172,7 @@ export default function About() {
         </div>
         <Link
           href="/community"
-          className="inline-flex min-h-12 shrink-0 items-center gap-3 rounded-full bg-[#fff0b5] px-6 py-3 text-sm font-bold text-primary"
+          className="inline-flex min-h-12 shrink-0 items-center gap-3 rounded-full bg-secondary px-6 py-3 text-sm font-bold text-primary"
         >
           <T text="Découvrir la communauté" />
           <ArrowRight aria-hidden className="size-4" />

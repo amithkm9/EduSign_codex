@@ -28,7 +28,7 @@ const plans = [
     name: "Découverte",
     label: "VERSION GRATUITE",
     icon: Sprout,
-    tint: "bg-[#d9efdf]",
+    tint: "bg-secondary",
     price: "0 €",
     cadence: "Pour commencer, tout simplement",
     description:
@@ -46,7 +46,7 @@ const plans = [
     name: "Tuteur personnel",
     label: "UN ACCOMPAGNEMENT INDIVIDUEL",
     icon: HeartHandshake,
-    tint: "bg-[#ffe1ce]",
+    tint: "bg-muted",
     price: "À venir",
     cadence: "Tarif et modalités à confirmer",
     description:
@@ -64,7 +64,7 @@ const plans = [
     name: "Standard",
     label: "POUR ALLER PLUS LOIN",
     icon: Sparkles,
-    tint: "bg-[#dceaff]",
+    tint: "bg-secondary",
     price: "À venir",
     cadence: "Tarif et fréquence à confirmer",
     description:
@@ -249,7 +249,7 @@ export default async function Packages() {
       </section>
       <section
         id="upcoming-plans"
-        className="mt-10 scroll-mt-28 rounded-3xl bg-[#fff0b5]/60 p-7 sm:p-9"
+        className="mt-10 scroll-mt-28 rounded-3xl bg-secondary/60 p-7 sm:p-9"
       >
         <div className="flex max-w-3xl gap-4">
           <CircleHelp

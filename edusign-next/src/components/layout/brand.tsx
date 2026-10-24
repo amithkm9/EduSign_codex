@@ -26,7 +26,7 @@ export function Brand({
     >
       <span
         className={cn(
-          "grid size-8 place-items-center rounded-lg sm:size-9 sm:rounded-xl bg-[#202f49] text-white",
+          "grid size-8 place-items-center rounded-lg sm:size-9 sm:rounded-xl bg-navy text-white",
           light && "bg-white/15",
         )}
       >
@@ -39,7 +39,7 @@ export function Brand({
         )}
       >
         <T text="EduSign" />
-        <span className="mt-1 size-1.5 rounded-full bg-[#df8b62]" aria-hidden />
+        <span className="mt-1 size-1.5 rounded-full bg-primary" aria-hidden />
       </span>
     </Link>
   );
