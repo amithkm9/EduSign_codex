@@ -1,0 +1,199 @@
+1
+00:00:07,640 --> 00:00:10,080
+Hi everyone this is Amit So this is what
+
+2
+00:00:09,960 --> 00:00:13,600
+I built during my weekend using Codex and OpenAI
+
+3
+00:00:13,480 --> 00:00:16,060
+credits So this is a platform called EduSign which
+
+4
+00:00:15,940 --> 00:00:18,440
+is an AI powered French Sign Language learning platform
+
+5
+00:00:18,320 --> 00:00:21,880
+especially for children of 3 to 15 ages So
+
+6
+00:00:21,760 --> 00:00:24,920
+we have classes of each session where a student
+
+7
+00:00:24,800 --> 00:00:26,740
+can go and watch classes
+
+8
+00:00:27,340 --> 00:00:30,060
+Rather than only watching the classes he can go
+
+9
+00:00:29,940 --> 00:00:33,380
+to the quiz section which is the major
+
+10
+00:00:33,260 --> 00:00:36,200
+novelty of here So he can go there and
+
+11
+00:00:36,080 --> 00:00:39,840
+start the camera challenge where he can sign a
+
+12
+00:00:39,720 --> 00:00:42,640
+letter A So basically it's A this way he
+
+13
+00:00:42,520 --> 00:00:45,860
+can capture it and he can just analyze it
+
+14
+00:00:45,740 --> 00:00:48,380
+and yeah he can just see whether the sign
+
+15
+00:00:48,260 --> 00:00:50,820
+is correct or not So this is one way
+
+16
+00:00:50,700 --> 00:00:53,960
+of one way of practicing sign language rather than
+
+17
+00:00:53,840 --> 00:00:56,940
+only seeing the videos and not progressing well
+
+18
+00:00:57,300 --> 00:01:00,680
+So we have also My Assistants where you can
+
+19
+00:01:00,560 --> 00:01:03,980
+find my sign We have two categories here Basically
+
+20
+00:01:03,860 --> 00:01:07,560
+it's a situation where a parent cannot know every
+
+21
+00:01:07,440 --> 00:01:09,960
+sign of it So rather than she going back
+
+22
+00:01:09,840 --> 00:01:12,060
+to the video searching for the sign she can
+
+23
+00:01:11,940 --> 00:01:14,820
+type it here so that every sign pops up
+
+24
+00:01:15,080 --> 00:01:18,800
+here Something like hi So here a video demonstrated
+
+25
+00:01:18,680 --> 00:01:22,720
+like how to put it hi and all So
+
+26
+00:01:22,600 --> 00:01:24,680
+we have voice session as well where we can
+
+27
+00:01:24,560 --> 00:01:25,960
+translate good morning
+
+28
+00:01:28,440 --> 00:01:29,680
+So basically
+
+29
+00:01:29,560 --> 00:01:33,680
+so we have this thing
+
+30
+00:01:33,560 --> 00:01:36,840
+where we can translate it So basically good and
+
+31
+00:01:36,720 --> 00:01:39,160
+morning we can have the two words combining how
+
+32
+00:01:39,040 --> 00:01:42,200
+to sign it This is one major thing And
+
+33
+00:01:42,080 --> 00:01:45,770
+we have French well as well
+
+34
+00:01:59,360 --> 00:02:02,500
+So we have a bonjour sign where it tries
+
+35
+00:02:02,380 --> 00:02:05,060
+to demonstrate how to show bonjour and all those
+
+36
+00:02:05,160 --> 00:02:09,060
+So this is what a major assistant thing for
+
+37
+00:02:08,940 --> 00:02:11,620
+the parents and children so that they can type
+
+38
+00:02:11,500 --> 00:02:13,460
+their sign here and learn the sign and teach
+
+39
+00:02:13,340 --> 00:02:16,120
+the sign to the child So this is one
+
+40
+00:02:16,000 --> 00:02:18,000
+of the major thing which we have built using
+
+41
+00:02:17,880 --> 00:02:19,500
+the API OpenAI credits
+
+42
+00:02:20,360 --> 00:02:23,020
+And then we have used my progress thing where
+
+43
+00:02:22,900 --> 00:02:26,340
+you can just view my report where it report
+
+44
+00:02:26,220 --> 00:02:29,080
+generates like how many how much time does it
+
+45
+00:02:28,960 --> 00:02:33,040
+take for each each video to
+
+46
+00:02:32,920 --> 00:02:35,140
+take in and how much quiz part and all
+
+47
+00:02:35,020 --> 00:02:37,080
+how much like how did he do and all
+
+48
+00:02:36,960 --> 00:02:37,520
+those
+
+49
+00:02:38,400 --> 00:02:42,000
+This is what we have done with over the
+
+50
+00:02:41,880 --> 00:02:43,640
+weekend Thank you
