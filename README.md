@@ -16,9 +16,9 @@ An **AI-powered platform for learning French Sign Language (LSF)**, designed for
 
 Press **Play** below to watch here in the README. Use the player’s **speaker control** to hear the narration and music.
 
-https://github.com/user-attachments/assets/c3237f88-99ec-4322-b64b-74215bad81e3
+https://github.com/user-attachments/assets/0de8ae36-4071-4515-82be-25f71b9c6e64
 
-*2 minutes · 1080p · English narration · Captions · Music*
+*2 minutes 52 seconds · 1080p · Original narration · Captions · Music*
 
 ---
 
@@ -447,13 +447,13 @@ The [product plan](docs/EDUSIGN_PLAN.md) records implementation history and earl
 
 ## Product film
 
-**[▶ Play the film in this README](#watch-edusign)** · [Download the MP4](docs/media/EduSign-launch.mp4) · [English captions](docs/media/EduSign-launch.en.srt)
+**[▶ Play the film in this README](#watch-edusign)** · [Download the MP4](EduSign-demo.mp4) · [English captions](docs/media/EduSign-demo.en.srt)
 
-The **120-second, 1920 × 1080 launch film** combines real application screenshots, editorial motion, English AI narration, captions, an original instrumental score, and a separately credited Elix source-video excerpt. The GitHub video attachment above plays directly inside the README with its embedded audio track. It is the original `launch-film/renders/EduSign-launch-120s.mp4` export.
+The **172-second, 1920 × 1080 demo** combines Amith’s application screen recording and original narration with a Remotion animated intro and outro, chapter headings, captions, and an original instrumental score. The GitHub video attachment above plays directly inside the README with its embedded audio track. It is the `EduSign-demo.mp4` export at the repository root.
 
-See the [production guide and credits](launch-film/production-guide.html), [edit plan](launch-film/edit-plan.json), and [production record](launch-film/production-report.json).
+See the [Remotion project and production notes](demo-remotion/README.md), [editable timeline](demo-remotion/src/Demo.tsx), and [production record](demo-remotion/production-report.json).
 
-The published MP4, preview image, and subtitle file are versioned in `docs/media/`. Original captures, audio sources, and intermediate renders remain local and excluded from Git. Re-rendering requires the original capture/audio directories, FFmpeg, Pillow, NumPy, and the fonts documented by the renderer. The film is an animated product walkthrough, not continuous screen recording.
+The published MP4 is versioned at the repository root; its preview image and subtitle file are in `docs/media/`. Source footage, audio sources, and intermediate renders remain local and excluded from Git. Re-rendering requires the source media, FFmpeg, local fonts, and the Remotion setup documented in `demo-remotion/README.md`.
 
 ## Documentation
 
