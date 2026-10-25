@@ -1,0 +1,20 @@
+{
+  "name": "edusign-remotion-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "render": "remotion render src/index.ts EduSignDemo renders/EduSign-demo.mp4 --codec=h264 --crf=18 --concurrency=4 --port=3322"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.538",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.538",
+    "typescript": "7.0.2"
+  }
+}

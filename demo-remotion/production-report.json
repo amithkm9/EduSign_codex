@@ -1,0 +1,46 @@
+{
+  "title": "EduSign — One sign. A closer connection.",
+  "renderer": "Remotion 4.0.538",
+  "duration_seconds": 172,
+  "resolution": [
+    1920,
+    1080
+  ],
+  "fps": 30,
+  "source": "Screen Recording 2026-10-25 at 6.36.05 PM.mp4",
+  "source_sha256": "f1eaa98a57091ecfa9777fcad062b69fbf43150bf6fed7af8a08fb08a1ddd5d2",
+  "source_duration_seconds": 158.12284,
+  "timeline": [
+    {
+      "start": 0,
+      "end": 7,
+      "content": "Animated intro"
+    },
+    {
+      "start": 7,
+      "end": 158,
+      "content": "Original screen recording from 0 to 151 seconds, with chapter headings and captions"
+    },
+    {
+      "start": 158,
+      "end": 165.333,
+      "content": "Codex and OpenAI role cards; original closing narration continues"
+    },
+    {
+      "start": 165.333,
+      "end": 172,
+      "content": "EduSign outro and creator handle"
+    }
+  ],
+  "audio": "Original narration preserved; quiet original instrumental score; mixed at -16 LUFS and -1.5 dBTP",
+  "captions": "50 English cues aligned with whisper-1. Product and provider name spellings normalized. French dictated snippets are not translated.",
+  "verification": {
+    "typescript": "passed",
+    "sample_frames": "intro, walkthrough and closing inspected",
+    "final_export": "Passed: 1920×1080, 30fps, 5160 frames, 172 seconds, stereo AAC, full-file decode without errors, original checksum unchanged.",
+    "exported_frames": "Nine-frame contact sheet and final outro inspected after encoding; no layout clipping in the editorial overlays."
+  },
+  "original_preserved": true,
+  "output_bytes": 23206738,
+  "output_sha256": "e4d179640d4f4961e11d175e184cef32ba31bf4acfdb2e4615a8d61b0422534b"
+}
