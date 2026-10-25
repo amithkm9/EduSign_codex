@@ -14,13 +14,11 @@ An **AI-powered platform for learning French Sign Language (LSF)**, designed for
 
 ## Watch EduSign
 
-[![Watch the EduSign demo — One sign. A closer connection.](docs/media/EduSign-demo-cover.png)](EduSign-demo.mp4)
+Press **Play** below to watch here in the README. Use the player’s **speaker control** to hear the narration and music.
 
-**[▶ Watch the demo](EduSign-demo.mp4)** · [Download the MP4](EduSign-demo.mp4?raw=true) · [English captions](docs/media/EduSign-demo.en.srt)
+https://github.com/user-attachments/assets/c3237f88-99ec-4322-b64b-74215bad81e3
 
-*2 minutes 52 seconds · 1080p · Original narration · Captions · Music*
-
-A real product walkthrough with an animated intro and outro, including how Codex helped build EduSign and how the OpenAI API powers its assistant. Click the preview above to open the video.
+*2 minutes · 1080p · English narration · Captions · Music*
 
 ---
 
@@ -449,13 +447,13 @@ The [product plan](docs/EDUSIGN_PLAN.md) records implementation history and earl
 
 ## Product film
 
-**[▶ Watch the latest demo](EduSign-demo.mp4)** · [Download the MP4](EduSign-demo.mp4?raw=true) · [English captions](docs/media/EduSign-demo.en.srt)
+**[▶ Play the film in this README](#watch-edusign)** · [Download the MP4](docs/media/EduSign-launch.mp4) · [English captions](docs/media/EduSign-launch.en.srt)
 
-The **2-minute-52-second, 1920 × 1080 demo** uses the real application screen recording and Amith’s original narration. Remotion adds an animated intro and outro, chapter headings, captions, subtle motion, and background music. The closing cards explain Codex’s role as a development partner and the OpenAI API’s role in the running assistant.
+The **120-second, 1920 × 1080 launch film** combines real application screenshots, editorial motion, English AI narration, captions, an original instrumental score, and a separately credited Elix source-video excerpt. The GitHub video attachment above plays directly inside the README with its embedded audio track. It is the original `launch-film/renders/EduSign-launch-120s.mp4` export.
 
-The video is versioned as [`EduSign-demo.mp4`](EduSign-demo.mp4), with its cover image and subtitles in `docs/media/`. See the [editable Remotion project and rendering instructions](demo-remotion/README.md) and [production and verification record](demo-remotion/production-report.json). The original recording and intermediate assets remain local.
+See the [production guide and credits](launch-film/production-guide.html), [edit plan](launch-film/edit-plan.json), and [production record](launch-film/production-report.json).
 
-The earlier **120-second launch film** is also preserved: [watch the original attachment](https://github.com/user-attachments/assets/c3237f88-99ec-4322-b64b-74215bad81e3), [download its MP4](docs/media/EduSign-launch.mp4), or read its [production guide and credits](launch-film/production-guide.html). That earlier film combines application screenshots, AI narration, and a separately credited Elix excerpt.
+The published MP4, preview image, and subtitle file are versioned in `docs/media/`. Original captures, audio sources, and intermediate renders remain local and excluded from Git. Re-rendering requires the original capture/audio directories, FFmpeg, Pillow, NumPy, and the fonts documented by the renderer. The film is an animated product walkthrough, not continuous screen recording.
 
 ## Documentation
 
