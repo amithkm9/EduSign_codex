@@ -1,9 +1,13 @@
 """Grounded bilingual coaching; model output can only link to curated resources."""
 import json
+import logging
 import re
 import unicodedata
-from .config import has_openai, TUTOR_MODEL
+from .config import has_openai, TUTOR_MODEL, DATA_DIR
 from .llm import get_openai_client
+
+COACH_PROMPT = (DATA_DIR / 'coach_prompt.txt').read_text(encoding='utf-8')
+logger = logging.getLogger(__name__)
 
 RESOURCES = {
     "alphabet": ("Les lettres prennent vie", "Letters come to life", "/learn/lsf-alphabet"),
@@ -111,7 +115,8 @@ def process_french_message(message: str, history=None, profile=None, language='f
             # Only factual aggregate learning context is used; names, email, inferred learning styles and age are omitted.
             context = {key: (profile or {}).get(key) for key in ("coursesCompleted", "recentQuizScores", "totalMinutes") if key in (profile or {})}
             system = (
-                "You are EduSign's friendly, capable learning coach for French Sign Language (LSF). "
+                COACH_PROMPT
+                + "\n"
                 + ("Reply entirely in English. " if language == "en" else "Réponds entièrement en français. ")
                 + "Answer the actual question directly. Use the conversation to handle follow-ups. Be concrete, warm and concise (usually 80–180 words, fewer for simple questions). "
                 "Offer one useful next step and at most one relevant question. Adapt to a beginner, parent or experienced learner when they tell you. "
@@ -143,7 +148,8 @@ def process_french_message(message: str, history=None, profile=None, language='f
             if not isinstance(suggestions, list) or not all(isinstance(x, str) and 0 < len(x) <= 150 for x in suggestions):
                 raise ValueError("Invalid suggestions")
             reply = {"type": "coaching", "response": text.strip(), "resources": resource_items(ids, language), "suggestions": suggestions[:3], "language": language, "mode": "ai"}
-        except Exception:
+        except Exception as error:
             # A graceful fallback is explicitly labelled; it must never masquerade as a live model reply.
+            logger.warning("Coach reply unavailable (%s)", type(error).__name__)
             reply = fallback
     return {"response": reply, "language": language, "text_for_speech": reply["response"]}

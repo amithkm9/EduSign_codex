@@ -31,10 +31,30 @@ class SignLookupTests(unittest.TestCase):
         self.assertEqual(sign_reply('hi in ASL','en',explicit=True,collection='project')['response']['sign_ids'],[])
 
     def test_unknown_words_sentences_and_substrings_do_not_return_wrong_video(self):
-        for text in ['this', 'I love you', 'please translate this whole sentence', 'hello and nonexistentword', 'javascript:alert(1)', 'nonexistentword']:
+        for text in ['this', 'please translate this whole sentence', 'javascript:alert(1)', 'nonexistentword']:
             reply=sign_reply(text,'en',explicit=True,collection='project')['response']
             self.assertEqual(reply['sign_ids'],[],text)
             self.assertEqual(reply['type'],'sign_not_found')
+
+    def test_phrases_preserve_word_order_and_exact_lsf_greeting(self):
+        for text in ['good morning', 'Good morning!', 'How do I sign good morning?', 'Show me "good morning"']:
+            reply = sign_reply(text, 'en', explicit=True, collection='project')['response']
+            self.assertEqual(reply['sign_ids'], ['project-good', 'project-morning'])
+            self.assertIn('separate word demonstrations', reply['response'])
+        reply = sign_reply('good morning', 'en', explicit=True, collection='lsf')['response']
+        self.assertEqual(reply['sign_ids'], ['bonjour'])
+        reply = sign_reply('good good morning', 'en', explicit=True, collection='project')['response']
+        self.assertEqual(reply['sign_ids'], ['project-good', 'project-good', 'project-morning'])
+
+    def test_partial_phrases_name_missing_words(self):
+        reply = sign_reply('hello and nonexistentword', 'en', explicit=True, collection='project')['response']
+        self.assertEqual(reply['sign_ids'], ['project-hello'])
+        self.assertIn('No clip was found for: nonexistentword', reply['response'])
+
+    def test_learning_questions_reach_coach_in_both_modes(self):
+        for message in ['What is the best way to learn sign language?', 'Help me learn', 'Make it easier', 'learn best language', 'What is sign language?', 'Comment apprendre la LSF ?', 'Propose-moi un programme de cinq minutes']:
+            for explicit in [True, False]:
+                self.assertIsNone(sign_reply(message, 'en', explicit=explicit, collection='project'), message)
 
     def test_typo_asks_before_showing_and_replay_uses_context(self):
         reply=sign_reply('helllo','en',explicit=True,collection='project')['response']

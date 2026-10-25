@@ -11,10 +11,12 @@ export function SignVideoCard({
   id,
   active,
   language,
+  onEnded,
 }: {
   id: string;
   active: boolean;
   language?: Locale;
+  onEnded?: () => void;
 }) {
   const { locale: interfaceLocale } = useLocale();
   const locale = language ?? interfaceLocale;
@@ -97,6 +99,9 @@ export function SignVideoCard({
           aria-label={`${t("Démonstration du signe")} ${sign.label[locale]}`}
           className="mx-auto h-[250px] w-full object-contain sm:h-[300px]"
           onError={() => setFailed(true)}
+          onEnded={() => {
+            if (active && !loop) onEnded?.();
+          }}
           onPlay={() =>
             document.dispatchEvent(
               new CustomEvent("edusign-sign-play", { detail: video.current }),

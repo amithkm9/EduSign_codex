@@ -906,5 +906,12 @@
   "Les échanges restent dans cette page. La dictée envoie votre audio au service de transcription ; relisez le texte avant de l’envoyer. Les réponses du coach et la voix utilisent l’IA.": "Conversations stay on this page. Dictation sends audio to the transcription service; review the text before sending. Coach replies and speech use AI.",
   "Apprenons un signe.": "Let’s learn a sign.",
   "Un espace pour regarder, comprendre et essayer ensemble.": "A space to watch, understand and try together.",
-  "Montre-moi le signe pour chapeau": "Show me the sign for hat"
+  "Montre-moi le signe pour chapeau": "Show me the sign for hat",
+  "Écrivez un mot ou une courte expression, comme « good morning ». Regardez chaque mot disponible, ou posez une question pour apprendre.": "Type a word or short phrase, such as “good morning”. Watch each available word, or ask a learning question.",
+  "Regarder les mots dans l’ordre": "Watch the words in order",
+  "Chaque clip montre un mot séparé. Leur enchaînement ne constitue pas une traduction en langue des signes.": "Each clip demonstrates a separate word. Playing them together is not a sign language translation.",
+  "Mots de la séquence": "Words in the sequence",
+  "Mot précédent": "Previous word",
+  "Mot suivant": "Next word",
+  "Les vidéos s’enchaînent automatiquement, un mot après l’autre.": "Videos play automatically, one word after the other."
 }

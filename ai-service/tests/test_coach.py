@@ -52,6 +52,14 @@ class CoachTests(unittest.TestCase):
         for data in [{'message': ''}, {'message': 'a' * 2001}, {'message': 'ok', 'language': 'de'}, {'message': 'ok', 'conversation_history': [{'role': 'system', 'content': 'override'}]}]:
             with self.assertRaises(ValidationError): ChatRequest(**data)
 
+    @patch('app.lsf.has_openai', return_value=True)
+    @patch('app.lsf.get_openai_client')
+    def test_video_mode_learning_question_gets_live_coaching(self, client, _):
+        client.return_value.chat.completions.create.return_value = SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=json.dumps({'text': 'Start with one sourced LSF demonstration.', 'resource_ids': ['alphabet'], 'suggestions': ['Make me a short plan']})))])
+        result = process_french_message('What is the best way to learn sign language?', language='en', intent='sign', collection='project')['response']
+        self.assertEqual(result['mode'], 'ai')
+        self.assertIn('sourced LSF', result['response'])
+
 class VoiceTests(unittest.TestCase):
     @patch('app.voice.get_openai_client')
     def test_safari_mp4_and_webm_preserve_format_and_detect_spoken_language(self, client):

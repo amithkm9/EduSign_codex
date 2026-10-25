@@ -58,6 +58,42 @@ def find_signs(target, catalog):
     return []
 
 
+def phrase_signs(target, catalog):
+    """Resolve short vocabulary phrases, preserving order and reporting gaps."""
+    words = normalize(target).split()
+    if not 2 <= len(words) <= 8 or re.search(r'[:/(){}<>]', target):
+        return [], []
+    aliases = {normalize(alias): item for item in reversed(catalog) for alias in item['aliases']}
+    found, missing = [], []
+    index = 0
+    while index < len(words):
+        if words[index] in ('and', 'et'):
+            index += 1
+            continue
+        for end in range(len(words), index, -1):
+            item = aliases.get(' '.join(words[index:end]))
+            if item:
+                found.append(item)
+                index = end
+                break
+        else:
+            missing.append(words[index])
+            index += 1
+    return found, missing
+
+
+def is_coaching_request(message):
+    """Keep questions and follow-ups out of vocabulary decomposition."""
+    clean = normalize(message)
+    return bool(re.search(
+        r'\b(plan|programme|routine|minute|minutes|practice|practise|pratiquer|exercice|'
+        r'exercise|quiz|explain|explique|why|pourquoi|help|aide|advice|conseil|'
+        r'beginner|debutant|start|commencer|best|meilleur|easier|shorter|simpler|'
+        r'confused|understand|comprendre|difference|motivation)\b', clean)
+        or re.search(r'^(what|which|can you|could you|how|comment|quel|quelle|est ce|peux tu|pouvez vous)\b', clean)
+        or re.search(r'\b(learn|learning|apprendre|teach)\b.*\b(lsf|language|langue)\b', clean))
+
+
 def sign_reply(message, language='fr', history=None, explicit=False, collection='lsf'):
     from .bilingual import reply_language
     language = reply_language(message, language)
@@ -69,20 +105,32 @@ def sign_reply(message, language='fr', history=None, explicit=False, collection=
     catalog = COLLECTIONS.get(collection, COLLECTIONS['lsf'])
     target = extract_target(message)
     matches = find_signs(target, catalog)
-    if not (explicit or matches):
+    missing = []
+    replay = clean in ['again', 'show it again', 'replay', 'slower', 'show that again', 'encore', 'revoir', 'plus lentement', 'montre encore']
+    if replay and history:
+        matches = []
+    # Exact vocabulary wins (e.g. "help"); ordinary questions always reach the coach.
+    direct_sign = bool(re.search(r'\b(?:how (?:do i |can i |to )?(?:sign|say)|comment (?:signer|dire)|sign for|signe pour|montre|show)\b|["“«]', message.lower()))
+    if not matches and is_coaching_request(message) and not direct_sign:
+        return None
+    if not matches and not replay and not re.search(r'[:/(){}<>]', message):
+        matches, missing = phrase_signs(target, catalog)
+        if missing and not explicit:
+            return None
+    if not (explicit or matches or replay):
         return None
     if re.search(r'\b(asl|bsl|american sign|langue des signes americaine|british sign)\b', clean):
         text = ('I can’t verify an ASL or BSL demonstration in these collections. Choose the sourced LSF collection if you want French Sign Language.' if en else 'Je ne peux pas confirmer une démonstration ASL ou BSL dans ces collections. Choisissez la collection LSF sourcée pour la langue des signes française.')
         ids, suggestions = [], []
     else:
-        if not matches and clean in ['again', 'show it again', 'replay', 'slower', 'show that again', 'encore', 'revoir', 'plus lentement', 'montre encore']:
+        if not matches and replay:
             for item in reversed(history or []):
                 if item.get('role') == 'assistant':
                     quoted = re.findall(r'«\s*([^»]+?)\s*»', item.get('content', ''))
                     if quoted: matches = find_signs(', '.join(quoted), catalog)
                     break
         if matches:
-            selected = matches[:3]
+            selected = matches[:8]
             labels = ', '.join('« ' + item['label'][language] + ' »' for item in selected)
             if collection == 'project':
                 text = (f'Here is {labels} from your video library. Watch the demonstration, then try it together. You can replay or slow it down.' if en else f'Voici {labels} dans votre bibliothèque vidéo. Regardez le geste, puis essayez ensemble. Vous pouvez le revoir ou le ralentir.')
@@ -90,6 +138,8 @@ def sign_reply(message, language='fr', history=None, explicit=False, collection=
                 text = (f'Here is {labels} in French Sign Language (LSF). Watch the demonstration, then take turns trying it with your child.' if en else f'Voici {labels} en langue des signes française (LSF). Regardez la démonstration, puis essayez chacun votre tour avec votre enfant.')
             if len(selected) > 1:
                 text += (' These are separate word demonstrations, not a signed sentence.' if en else ' Ce sont des démonstrations de mots séparés, pas une phrase traduite en LSF.')
+            if missing:
+                text += (f' No clip was found for: {", ".join(missing)}.' if en else f' Aucun clip trouvé pour : {", ".join(missing)}.')
             ids = [item['id'] for item in selected]
             preferred = ['HI', 'HELLO', 'BYE', 'MOTHER', 'WATER', 'APPLE']
             options = [item for item in catalog if item.get('key') in preferred] if collection == 'project' else catalog
@@ -102,7 +152,7 @@ def sign_reply(message, language='fr', history=None, explicit=False, collection=
                 suggestions = list(dict.fromkeys(aliases[alias]['label'][language] for alias in near))
                 text = ('Did you mean one of these words? Choose it below to see the demonstration.' if en else 'Vouliez-vous dire l’un de ces mots ? Choisissez-le ci-dessous pour voir la démonstration.')
             else:
-                text = ('I couldn’t find that word in the selected collection. Try a single word in French or English, or browse the video library. A whole sentence cannot be translated by joining word clips.' if en else 'Je n’ai pas trouvé ce mot dans la collection choisie. Essayez un seul mot en français ou en anglais, ou parcourez la bibliothèque vidéo. Assembler des vidéos de mots ne traduit pas une phrase en langue des signes.')
+                text = ('I couldn’t find those words in the selected collection. Try a word or short phrase in French or English, or browse the video library. Word clips are vocabulary practice, not a signed translation.' if en else 'Je n’ai pas trouvé ces mots dans la collection choisie. Essayez un mot ou une courte expression en français ou en anglais, ou parcourez la bibliothèque vidéo. Ces clips servent à pratiquer le vocabulaire, pas à traduire une phrase.')
                 preferred = ['HI', 'HELLO', 'BYE', 'MOTHER', 'WATER', 'APPLE']
                 suggestions = [item['label'][language] for item in catalog if collection != 'project' or item.get('key') in preferred][:6]
     response = {'type': 'sign_video' if ids else 'sign_not_found', 'mode': 'library', 'response': text, 'language': language, 'collection': collection, 'sign_ids': ids, 'suggestions': suggestions, 'resources': [] if ids or collection == 'project' else [{'title': 'Le Dico Elix', 'url': 'https://dico.elix-lsf.fr/'}]}

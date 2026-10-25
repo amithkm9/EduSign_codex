@@ -186,6 +186,34 @@ try {
     if (expected) assert.ok(reply.sign_ids.includes(expected));
     else assert.deepEqual(reply.sign_ids, []);
   }
+  for (const intent of ["sign", "coach"]) {
+    const response = await fetch(base + "/api/tutor/chat", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ message: "good morning", language: "en", intent, collection: "project" }),
+    });
+    assert.equal(response.status, 200);
+    assert.deepEqual((await response.json()).response.sign_ids, ["project-good", "project-morning"]);
+  }
+  for (const word of ["good", "morning"]) {
+    const video = await fetch(base + `/api/signs/project-${word}/video`, { headers });
+    assert.equal(video.status, 200);
+    assert.ok(video.headers.get("content-type").includes("video/mp4"));
+    assert.ok((await video.arrayBuffer()).byteLength > 1000);
+  }
+  console.log("PASS good → morning sequence in both modes and both playable video files");
+  if (process.argv.includes("--live-api")) {
+    const response = await fetch(base + "/api/tutor/chat", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ message: "What is the best way to learn sign language?", language: "en", intent: "sign", collection: "project" }),
+    });
+    assert.equal(response.status, 200);
+    const reply = (await response.json()).response;
+    assert.equal(reply.mode, "ai");
+    assert.ok(reply.response.length > 30);
+    console.log("PASS video-search learning question receives a live coaching reply");
+  }
   assert.equal((await fetch(base + "/api/signs/project-hi/video")).status, 401);
   assert.equal(
     (await fetch(base + "/api/signs/not-in-catalog/video", { headers })).status,

@@ -74,7 +74,7 @@ const starters = [
 
 export function TutorChat() {
   const { t, locale } = useLocale();
-  const [intent, setIntent] = useState<"sign" | "coach">("sign");
+  const [intent, setIntent] = useState<"sign" | "coach">("coach");
   const [collection, setCollection] = useState<"project" | "lsf">("project");
   const featured =
     collection === "lsf"
@@ -95,7 +95,18 @@ export function TutorChat() {
   const [automaticAudio, setAutomaticAudio] = useState(false);
   const request = useRef<AbortController | null>(null);
   const busy = useRef(false);
-  const [selectedSign, setSelectedSign] = useState<string | null>(null);
+  const [sequence, setSequence] = useState<string[]>([]);
+  const [sequenceIndex, setSequenceIndex] = useState(0);
+  const [sequenceLanguage, setSequenceLanguage] = useState<Locale>(locale);
+  const [sequenceRun, setSequenceRun] = useState(0);
+  const selectedSign = sequence[sequenceIndex] ?? null;
+  function playSequence(ids: string[], language: Locale, startIndex = 0) {
+    voice.stopSpeech();
+    setSequence(ids);
+    setSequenceIndex(startIndex);
+    setSequenceLanguage(language);
+    setSequenceRun((run) => run + 1);
+  }
   const messageLog = useRef<HTMLDivElement>(null);
   const latestReply = useRef<HTMLElement>(null);
   const composer = useRef<HTMLTextAreaElement>(null);
@@ -194,11 +205,11 @@ export function TutorChat() {
         ),
         reply,
       ]);
-      if (reply.sign_ids) setSelectedSign(reply.sign_ids[0] ?? null);
+      if (reply.sign_ids) playSequence(reply.sign_ids, reply.language);
       if (reply.collection) setCollection(reply.collection);
       if (reply.mode === "fallback") setConnection("unavailable");
       if (reply.mode === "ai") setConnection("ready");
-      if (automaticAudio)
+      if (automaticAudio && (reply.sign_ids?.length ?? 0) <= 1)
         void voice.speak(
           reply.id,
           reply.text + (reply.exercise ? " " + reply.exercise.question : ""),
@@ -223,16 +234,13 @@ export function TutorChat() {
     voice.stopSpeech();
     voice.setError("");
     setMessages([]);
-    setSelectedSign(null);
+    setSequence([]);
     setInput("");
     setError("");
     composer.current?.focus();
   }
   const latest = messages.at(-1);
   const catalog = [...projectCatalog, ...signCatalog];
-  const selectedLanguage =
-    messages.findLast((m) => m.sign_ids?.includes(selectedSign ?? ""))
-      ?.language ?? locale;
   const recentSigns = [
     ...new Set(messages.flatMap((m) => m.sign_ids || [])),
   ].slice(-8);
@@ -301,12 +309,60 @@ export function TutorChat() {
             </label>
           </div>
           {selectedSign ? (
-            <SignVideoCard
-              key={selectedSign}
-              id={selectedSign}
-              language={selectedLanguage}
-              active={!loading && !capturing && !voice.speaking}
-            />
+            <div>
+              {sequence.length > 1 && (
+                <div className="mb-3">
+                  <div className="flex flex-wrap gap-2" role="group" aria-label={t("Mots de la séquence")}>
+                    {sequence.map((id, index) => (
+                      <button
+                        key={`${id}-${index}`}
+                        aria-pressed={index === sequenceIndex}
+                        onClick={() => playSequence(sequence, sequenceLanguage, index)}
+                        className={`min-h-10 rounded-full px-4 text-sm ${index === sequenceIndex ? "bg-primary text-white" : "bg-secondary text-foreground"}`}
+                      >
+                        {index + 1}. {catalog.find((item) => item.id === id)?.label[sequenceLanguage]}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    {t("Les vidéos s’enchaînent automatiquement, un mot après l’autre.")}
+                  </p>
+                </div>
+              )}
+              <SignVideoCard
+                key={`${sequenceRun}-${sequenceIndex}-${selectedSign}`}
+                id={selectedSign}
+                language={sequenceLanguage}
+                active={!loading && !capturing && !voice.speaking}
+                onEnded={() => setSequenceIndex((index) => Math.min(index + 1, sequence.length - 1))}
+              />
+              {sequence.length > 1 && (
+                <div className="mt-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <button
+                      disabled={sequenceIndex === 0}
+                      onClick={() => setSequenceIndex((index) => index - 1)}
+                      className="min-h-11 rounded-full border px-4 text-xs disabled:opacity-40"
+                    >
+                      {t("Mot précédent")}
+                    </button>
+                    <span role="status" className="text-xs text-muted-foreground">
+                      {sequenceIndex + 1} / {sequence.length}
+                    </span>
+                    <button
+                      disabled={sequenceIndex >= sequence.length - 1}
+                      onClick={() => setSequenceIndex((index) => index + 1)}
+                      className="min-h-11 rounded-full border px-4 text-xs disabled:opacity-40"
+                    >
+                      {t("Mot suivant")}
+                    </button>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                    {t("Chaque clip montre un mot séparé. Leur enchaînement ne constitue pas une traduction en langue des signes.")}
+                  </p>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="relative flex min-h-[300px] flex-col justify-between overflow-hidden rounded-2xl bg-navy p-7 text-white sm:min-h-[350px] sm:p-8">
               <div className="flex items-center justify-between">
@@ -362,7 +418,7 @@ export function TutorChat() {
                       item && (
                         <button
                           key={id}
-                          onClick={() => setSelectedSign(id)}
+                          onClick={() => playSequence([id], locale)}
                           aria-pressed={selectedSign === id}
                           className={`min-h-10 rounded-full border px-3.5 text-xs transition ${selectedSign === id ? "border-primary bg-primary text-white" : "border-border bg-white text-foreground hover:border-primary"}`}
                         >
@@ -435,7 +491,7 @@ export function TutorChat() {
                 <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
                   {t(
                     intent === "sign"
-                      ? "Dites-moi un mot, en français ou en anglais. Je trouverai la vidéo pour vous et votre enfant."
+                      ? "Écrivez un mot ou une courte expression, comme « good morning ». Regardez chaque mot disponible, ou posez une question pour apprendre."
                       : "Une idée d’activité, une question ou un peu de pratique ? Je suis là pour vous accompagner.",
                   )}
                 </p>
@@ -531,13 +587,21 @@ export function TutorChat() {
                 </p>
                 {!!message.sign_ids?.length && (
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {message.sign_ids.slice(0, 3).map((id) => {
+                    {message.sign_ids.length > 1 && (
+                      <button
+                        onClick={() => playSequence(message.sign_ids!, message.language)}
+                        className="min-h-10 rounded-full bg-primary px-4 text-xs font-semibold text-white"
+                      >
+                        {t("Regarder les mots dans l’ordre")}
+                      </button>
+                    )}
+                    {message.sign_ids.map((id, index) => {
                       const item = catalog.find((x) => x.id === id);
                       return (
                         item && (
                           <button
-                            key={id}
-                            onClick={() => setSelectedSign(id)}
+                            key={`${id}-${index}`}
+                            onClick={() => playSequence(message.sign_ids!, message.language, index)}
                             aria-pressed={selectedSign === id}
                             className="flex min-h-10 items-center gap-2 rounded-full border border-border px-3 text-xs font-semibold text-primary hover:bg-secondary"
                           >

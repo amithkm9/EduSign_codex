@@ -75,7 +75,7 @@ flowchart LR
 | **Watch** | Follow alphabet and numbers resources with learning objectives, creator credits, and direct source links. |
 | **Practise** | Record a short camera attempt, replay it, and try again. Experimental recognition is available for a limited demo vocabulary. |
 | **Reflect** | Answer optional comprehension questions and see explanations. Saved scores are recalculated on the server. |
-| **Find a sign** | Search supported French or English words, open one matching video, and use slow playback or looping. |
+| **Find a sign** | Search supported French or English words and short phrases, play matching clips in order in the side panel, and use slow playback or looping. |
 | **Ask the coach** | Request short learning plans, answer interactive questions, dictate a message, or listen to a response. |
 | **Learn together** | View activity records and quiz results, read parent guidance, and share a lesson link. |
 
@@ -173,7 +173,9 @@ flowchart TD
 - **Voice is optional.** Dictation records up to 60 seconds and offers an editable transcript. Replies have individual playback controls; automatic reading is optional.
 - **Conversation history is temporary.** Messages remain in the current page session and survive an interface-language switch; there is no persistent conversation archive.
 
-Text lookup and guided exercises require the Python service but do not require an OpenAI key. Generative coaching and speech require a working provider configuration. The workshops remain available when the AI service is offline.
+The assistant opens in coaching mode. Known words and short supported phrases still select videos automatically; learning questions also reach the coach from video-search mode. For example, “good morning” in the imported collection plays Good, then Morning in the side panel. The sourced LSF collection retains its Bonjour greeting. Separate word clips are vocabulary practice, not a signed sentence translation.
+
+The active French/English coaching instructions are in `ai-service/app/data/coach_prompt.txt`. Text lookup and guided exercises require the Python service but do not require an OpenAI key. Generative coaching and speech require a working provider configuration. The workshops remain available when the AI service is offline.
 
 ## Built with Codex
 
